@@ -1,6 +1,12 @@
 # Network
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.0.4.
+![Network banner](docs/network-banner.png)
+
+Network is TODD's relationship graph — every contact, company, deal, and interaction, read continuously by TODD to surface who needs attention, which relationships are gaining momentum, and what's at risk of going cold. Built by [Taliferro Tech](https://taliferro.com) as part of the [TODD](https://todd.taliferro.tech) product family.
+
+**Live:** [network.taliferro.tech](https://network.taliferro.tech)
+
+Extracted from TODD's own `features/contact/*` into its own standalone Angular app — same shared `taliferrotech` Firebase project and `api.taliferro.tech` backend as TODD itself (and as the other extracted products, `find`/`sayit`/`email-signature-builder`), just a separate frontend deployment. Nothing about the data layer or backend routes changes; TODD's own contact-data services stay in place for the other modules (Outreach, Docs, Lead Vault, etc.) that depend on them internally.
 
 ## Development server
 
@@ -11,20 +17,6 @@ ng serve
 ```
 
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
 
 ## Building
 
@@ -43,17 +35,3 @@ To execute unit tests with the [Karma](https://karma-runner.github.io) test runn
 ```bash
 ng test
 ```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
