@@ -1,0 +1,25 @@
+<div class="network-success-page">
+    <section class="network-success-card card shadow-sm border-0" *ngIf="isConfirming">
+        <div class="network-success-eyebrow">Network Success</div>
+        <h1>Confirming your subscription..</h1>
+        <p> We are checking your checkout session now so Network access can be activated for you. </p>
+    </section>
+    <section class="network-success-card card shadow-sm border-0" *ngIf="!isConfirming && isSuccess">
+        <div class="network-success-eyebrow">Network Activated</div>
+        <h1>Network access is now active</h1>
+        <p> You can now save and manage more contacts, firms, and relationship activity inside Network. </p>
+        <div class="network-success-actions">
+            <button type="button" class="btn btn-dark" (click)="goToNetwork()">Go to Network</button>
+            <a class="btn btn-outline-dark" routerLink="/pricing">View pricing</a>
+        </div>
+    </section>
+    <section class="network-success-card card shadow-sm border-0 network-success-error-card" *ngIf="!isConfirming && !isSuccess">
+        <div class="network-success-eyebrow">Network Confirmation</div>
+        <h1>We could not confirm your subscription</h1>
+        <p>{{ errorMessage }}</p>
+        <div class="network-success-actions">
+            <a class="btn btn-primary" routerLink="/pricing">Back to Network pricing</a>
+            <button type="button" class="btn btn-outline-primary" (click)="goToNetwork()">Go to Network</button>
+        </div>
+    </section>
+</div>

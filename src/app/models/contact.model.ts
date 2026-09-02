@@ -21,6 +21,7 @@ export interface Company {
   name?: string;
   url?: string;
   logoUrl?: string;
+  products?: import( './product.model' ).Product[];
 }
 
 export interface Contact {

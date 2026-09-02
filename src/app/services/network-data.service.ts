@@ -3,6 +3,7 @@ import {
   addDoc,
   collection,
   doc,
+  getDoc,
   getDocs,
   limit,
   orderBy,
@@ -51,5 +52,12 @@ export class NetworkDataService {
     const docRef = await addDoc( ref, data );
     await updateDoc( doc( ref, docRef.id ), { id: docRef.id } );
     return docRef.id;
+  }
+
+  /** Mirrors DataService.getContactFullByIdOnce(contactId, user). */
+  async getContact ( tenantId: string, contactId: string ): Promise<Contact | null> {
+    if ( !contactId ) return null;
+    const snap = await getDoc( doc( this.contactsRef( tenantId ), contactId ) );
+    return snap.exists() ? ( { id: snap.id, ...( snap.data() as any ) } as Contact ) : null;
   }
 }

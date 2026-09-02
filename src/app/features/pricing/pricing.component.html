@@ -1,0 +1,61 @@
+<div class="network-pricing-page">
+    <section class="network-pricing-hero card shadow-sm border-0">
+        <div class="network-pricing-copy">
+            <div class="network-pricing-eyebrow">Network Pricing</div>
+            <h1>Keep more relationships in motion</h1>
+            <p class="network-pricing-lead"> Network helps you keep contacts, firms, and next moves tied together. The paid plan gives you more room to save, organize, and work the relationship graph without hitting the free wall. </p>
+            <div class="network-pricing-actions">
+                <a class="btn btn-outline-dark" routerLink="/">Back to Network</a>
+                <a class="btn btn-outline-dark" *ngIf="!(entitlements$ | async)?.suite" href="https://todd.taliferro.tech/suite/pricing">Suite Pricing</a>
+                <a class="btn btn-outline-dark" href="https://todd.taliferro.tech/pricing">Enterprise pricing</a>
+            </div>
+        </div>
+        <div class="network-pricing-visual">
+            <img src="assets/network/network.png" alt="Network" class="network-heading-logo img-fluid">
+        </div>
+    </section>
+    <section class="network-pricing-grid">
+        <article class="network-pricing-card card shadow-sm border-0 network-pricing-offer-card">
+            <div class="network-pricing-card-header">
+                <span class="network-pricing-badge">What you get</span>
+                <h2>Network Expanded</h2>
+                <p>More room to manage the people, firms, and pipeline connections behind your work.</p>
+            </div>
+            <div class="network-pricing-price-row">
+                <div>
+                    <div class="network-pricing-price-label">Monthly price</div>
+                    <div class="network-pricing-price">{{ monthlyPrice }}</div>
+                </div>
+                <div class="network-pricing-price-note">Start small for free, then upgrade when your relationship data needs more room.</div>
+            </div>
+            <ul class="network-pricing-list">
+                <li *ngFor="let item of highlights">{{ item }}</li>
+            </ul>
+            <div class="network-pricing-form">
+                <div class="network-pricing-login-callout" *ngIf="requiresLogin">
+                    <div class="network-pricing-login-title">Sign in first</div>
+                    <p class="network-pricing-login-text"> We use your login to find you before starting checkout. </p>
+                    <button type="button" class="btn btn-dark network-pricing-login-btn" (click)="goToLogin()"> Sign in to purchase </button>
+                </div>
+                <label class="network-pricing-field" *ngIf="!requiresLogin">
+                    <span>Email</span>
+                    <input type="email" class="form-control" [(ngModel)]="email" placeholder="Enter your billing email">
+                </label>
+                <button *ngIf="!requiresLogin" type="button" class="btn btn-dark network-pricing-subscribe" (click)="startCheckout()" [disabled]="isStartingCheckout">
+                    {{ isStartingCheckout ? 'Starting checkout...' : 'Subscribe to Network' }}
+                </button>
+                <div class="network-pricing-error" *ngIf="checkoutError">{{ checkoutError }}</div>
+            </div>
+        </article>
+        <article class="network-pricing-card card shadow-sm border-0 network-pricing-card-accent">
+            <div class="network-pricing-card-header">
+                <span class="network-pricing-badge">Good to know</span>
+                <h2>How Network works</h2>
+                <p>Use the free tier to explore the relationship graph, then upgrade when you need more saved contacts and stronger continuity.</p>
+            </div>
+            <ul class="network-pricing-list network-pricing-list-notes">
+                <li *ngFor="let item of notes">{{ item }}</li>
+            </ul>
+        </article>
+    </section>
+</div>
