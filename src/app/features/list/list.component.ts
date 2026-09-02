@@ -11,6 +11,7 @@ import { NetworkContactStateService } from '../../services/network-contact-state
 import { Contact } from '../../models/contact.model';
 import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.component';
 import { PreloaderComponent } from '../../shared/preloader/preloader.component';
+import { CockpitBrowseModeBannerComponent } from '../../shared/cockpit-browse-mode-banner/cockpit-browse-mode-banner.component';
 
 /**
  * A ground-up rewrite, not a trim of features/contact/list/list.component.ts
@@ -32,7 +33,7 @@ import { PreloaderComponent } from '../../shared/preloader/preloader.component';
 @Component( {
   selector: 'app-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, BackToTopComponent, PreloaderComponent],
+  imports: [CommonModule, FormsModule, RouterModule, BackToTopComponent, PreloaderComponent, CockpitBrowseModeBannerComponent],
   templateUrl: './list.component.html',
   styleUrl: './list.component.css',
 } )
@@ -42,6 +43,8 @@ export class ListComponent implements OnInit, OnDestroy {
   searchText = '';
   isLoading = true;
   errorMessage = '';
+  /** null = auth state not resolved yet (still show the preloader); false = resolved and signed out. */
+  isSignedIn: boolean | null = null;
 
   private tenantId = '';
   private authSubscription?: Subscription;
@@ -59,9 +62,17 @@ export class ListComponent implements OnInit, OnDestroy {
 
     this.authSubscription = combineLatest( [this.authService.getUserId(), this.authService.getTenantId()] )
       .subscribe( ( [userId, tenantId] ) => {
-        const nextTenantId = userId ? tenantId : '';
-        if ( nextTenantId && nextTenantId !== this.tenantId ) {
-          this.tenantId = nextTenantId;
+        this.isSignedIn = !!userId;
+
+        if ( !userId ) {
+          // Resolved and signed out - stop spinning instead of waiting on a
+          // loadContacts() call that will never come.
+          this.isLoading = false;
+          return;
+        }
+
+        if ( tenantId && tenantId !== this.tenantId ) {
+          this.tenantId = tenantId;
           this.loadContacts();
         }
       } );

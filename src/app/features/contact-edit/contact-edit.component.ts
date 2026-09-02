@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
+import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { NetworkAuthService } from '../../services/network-auth.service';
 import { NetworkDataService } from '../../services/network-data.service';
@@ -14,6 +15,7 @@ import { Contact, EmailAddress, PhoneNumber } from '../../models/contact.model';
 import { StatusFlowComponent } from '../../shared/status-flow/status-flow.component';
 import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.component';
 import { PreloaderComponent } from '../../shared/preloader/preloader.component';
+import { CockpitBrowseModeBannerComponent } from '../../shared/cockpit-browse-mode-banner/cockpit-browse-mode-banner.component';
 
 /**
  * A ground-up rewrite of the create/edit surface, not a trim of
@@ -44,7 +46,7 @@ import { PreloaderComponent } from '../../shared/preloader/preloader.component';
 @Component( {
   selector: 'app-contact-edit',
   standalone: true,
-  imports: [CommonModule, FormsModule, StatusFlowComponent, BackToTopComponent, PreloaderComponent],
+  imports: [CommonModule, FormsModule, StatusFlowComponent, BackToTopComponent, PreloaderComponent, CockpitBrowseModeBannerComponent],
   templateUrl: './contact-edit.component.html',
   styleUrl: './contact-edit.component.css',
 } )
@@ -54,6 +56,7 @@ export class ContactEditComponent implements OnInit {
   isSaving = false;
   errorMessage = '';
   limitMessage = '';
+  isSignedIn = false;
 
   private tenantId = '';
   private userId = '';
@@ -76,7 +79,14 @@ export class ContactEditComponent implements OnInit {
     const queryId = this.route.snapshot.queryParamMap.get( 'id' );
     const cached = this.contactState.currentContact;
 
-    this.userId = this.authService.getCurrentUserIdSync();
+    // Wait for the real, resolved auth state (getUserId's first emission)
+    // rather than reading Auth.currentUser synchronously - on a fresh page
+    // load that can return empty for a split second before Firebase
+    // finishes restoring a signed-in session, which would incorrectly show
+    // "not signed in" and block a real user from adding a contact.
+    const userId = await firstValueFrom( this.authService.getUserId() );
+    this.userId = userId || '';
+    this.isSignedIn = !!userId;
     this.tenantId = this.userId ? await this.authService.resolveTenantId( this.userId ) : '';
 
     if ( queryId && this.tenantId ) {
@@ -88,7 +98,7 @@ export class ContactEditComponent implements OnInit {
 
     this.ensureCompany();
     this.ensureAtLeastOneRow();
-    await this.refreshLimitMessage();
+    if ( this.isSignedIn ) await this.refreshLimitMessage();
     this.isLoading = false;
   }
 

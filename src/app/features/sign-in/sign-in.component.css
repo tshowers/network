@@ -1,0 +1,48 @@
+:host {
+  display: block;
+}
+
+.sign-in-shell {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.sign-in-card {
+  width: 100%;
+  max-width: 380px;
+  background: #fff;
+  border: 1px solid rgba(15, 15, 15, 0.08);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.06);
+}
+
+.sign-in-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: rgba(15, 15, 15, 0.4);
+  font-size: 0.82rem;
+  margin: 1rem 0;
+}
+
+.sign-in-divider::before,
+.sign-in-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid rgba(15, 15, 15, 0.1);
+}
+
+.sign-in-divider span {
+  padding: 0 0.75rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}

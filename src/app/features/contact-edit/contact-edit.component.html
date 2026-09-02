@@ -5,6 +5,13 @@
   <h1 class="mb-1">{{ contact.id ? 'Edit Contact' : 'Add Contact' }}</h1>
   <p class="text-muted" *ngIf="limitMessage">{{ limitMessage }}</p>
 
+  <app-cockpit-browse-mode-banner
+    *ngIf="!isSignedIn"
+    surfaceLabel="this form"
+    customTitle="You can try this out, but you won't be able to save"
+    customCopy="You are not signed in, so feel free to explore this form. Sign in before you submit — guest sessions can't save new contacts."
+  ></app-cockpit-browse-mode-banner>
+
   <div class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</div>
 
   <form (ngSubmit)="onSubmit()" #form="ngForm">
