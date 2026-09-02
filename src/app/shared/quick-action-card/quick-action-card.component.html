@@ -1,0 +1,10 @@
+<div class="quick-action-card">
+  <div class="quick-action-card__head">
+    <div class="quick-action-card__eyebrow" *ngIf="eyebrow">{{ eyebrow }}</div>
+    <h3 class="quick-action-card__heading">{{ heading }}</h3>
+  </div>
+  <div class="quick-action-card__body" [class.quick-action-card__body--busy]="isSubmitting">
+    <ng-content></ng-content>
+  </div>
+  <p class="quick-action-card__error" *ngIf="errorMessage" role="alert">{{ errorMessage }}</p>
+</div>

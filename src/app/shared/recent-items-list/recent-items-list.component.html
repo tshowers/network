@@ -1,0 +1,20 @@
+<div class="recent-items-list">
+  <div class="recent-items-list__heading">{{ heading }}</div>
+
+  <app-preloader [isLoading]="isLoading" message="Loading…"></app-preloader>
+
+  <ng-container *ngIf="!isLoading">
+    <p class="recent-items-list__empty" *ngIf="!items.length">{{ emptyMessage }}</p>
+
+    <ul class="recent-items-list__items" *ngIf="items.length">
+      <li class="recent-items-list__item" *ngFor="let item of items">
+        <a [routerLink]="item.routerLink" class="recent-items-list__link">
+          <span class="recent-items-list__primary">{{ item.primaryText }}</span>
+          <span class="recent-items-list__secondary" *ngIf="item.secondaryText">{{ item.secondaryText }}</span>
+        </a>
+      </li>
+    </ul>
+  </ng-container>
+
+  <a *ngIf="viewAllRoute" [routerLink]="viewAllRoute" class="recent-items-list__view-all">{{ viewAllLabel }} →</a>
+</div>

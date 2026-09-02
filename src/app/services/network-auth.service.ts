@@ -10,7 +10,7 @@ import {
   User,
 } from 'firebase/auth';
 import { doc, getDoc, getFirestore } from 'firebase/firestore';
-import { Observable } from 'rxjs';
+import { Observable, shareReplay, switchMap, of } from 'rxjs';
 
 /**
  * Trimmed, purpose-built auth service for the standalone Network app -
@@ -34,11 +34,40 @@ export class NetworkAuthService {
     return getAuth();
   }
 
+  private userId$?: Observable<string>;
+  private tenantId$?: Observable<string>;
+
   getUser (): Observable<User | null> {
     return new Observable( ( subscriber ) => {
       const unsubscribe = onAuthStateChanged( this.auth, ( user ) => subscriber.next( user ) );
       return unsubscribe;
     } );
+  }
+
+  /** Matches TODD's own AuthService.getUserId() shape - components ported
+   * from features/contact/* call this by name, so keeping the signature
+   * identical means the rest of a component's logic ports unchanged. */
+  getUserId (): Observable<string> {
+    if ( !this.userId$ ) {
+      this.userId$ = new Observable<string>( ( subscriber ) => {
+        const unsubscribe = onAuthStateChanged( this.auth, ( user ) => subscriber.next( user?.uid || '' ) );
+        return unsubscribe;
+      } ).pipe( shareReplay( { bufferSize: 1, refCount: false } ) );
+    }
+    return this.userId$;
+  }
+
+  /** Resolved once per session and shared - every ported component needs
+   * this for `tenants/{tenantId}/...` reads, so it's cached here rather
+   * than making each component re-resolve it. */
+  getTenantId (): Observable<string> {
+    if ( !this.tenantId$ ) {
+      this.tenantId$ = this.getUserId().pipe(
+        switchMap( ( uid ) => ( uid ? this.resolveTenantId( uid ) : of( '' ) ) ),
+        shareReplay( { bufferSize: 1, refCount: false } ),
+      );
+    }
+    return this.tenantId$;
   }
 
   isLoggedIn (): Observable<boolean> {

@@ -1,0 +1,54 @@
+<app-quick-action-card
+  eyebrow="Getting Started"
+  heading="Add your first contact"
+  [isSubmitting]="isSubmitting"
+  [errorMessage]="errorMessage">
+  <form class="network-quick-actions__form" (ngSubmit)="addContact()" #form="ngForm">
+    <div class="form-group">
+      <label for="nqa-first-name">First name</label>
+      <input
+        id="nqa-first-name"
+        name="firstName"
+        class="form-control"
+        type="text"
+        [(ngModel)]="firstName"
+        placeholder="Jane"
+        required
+        [disabled]="isSubmitting" />
+    </div>
+    <div class="form-group">
+      <label for="nqa-last-name">Last name</label>
+      <input
+        id="nqa-last-name"
+        name="lastName"
+        class="form-control"
+        type="text"
+        [(ngModel)]="lastName"
+        placeholder="Doe"
+        [disabled]="isSubmitting" />
+    </div>
+    <div class="form-group">
+      <label for="nqa-company">Company</label>
+      <input
+        id="nqa-company"
+        name="companyName"
+        class="form-control"
+        type="text"
+        [(ngModel)]="companyName"
+        placeholder="Acme Inc."
+        [disabled]="isSubmitting" />
+    </div>
+    <button type="submit" class="btn btn-primary" [disabled]="isSubmitting || !firstName.trim()">
+      {{ isSubmitting ? 'Adding…' : 'Add Contact' }}
+    </button>
+  </form>
+
+  <app-recent-items-list
+    heading="Recently added"
+    [items]="recentContacts"
+    [isLoading]="isLoadingRecent"
+    emptyMessage="No contacts yet — add your first one above."
+    viewAllRoute="/contact-list"
+    viewAllLabel="View all contacts">
+  </app-recent-items-list>
+</app-quick-action-card>

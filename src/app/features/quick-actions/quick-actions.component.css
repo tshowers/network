@@ -1,0 +1,17 @@
+.network-quick-actions__form {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem 1.25rem;
+  align-items: end;
+}
+
+.network-quick-actions__form .btn {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+
+@media (max-width: 720px) {
+  .network-quick-actions__form {
+    grid-template-columns: 1fr;
+  }
+}
