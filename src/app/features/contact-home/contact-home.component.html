@@ -1,0 +1,210 @@
+<app-back-to-top *ngIf="!isEmbedded"></app-back-to-top>
+<div class="cockpit-shell" [class.cockpit-shell--embedded]="isEmbedded" data-demo="contact-list">
+  <app-cockpit-command-deck *ngIf="!isEmbedded"
+    demoId="contact-command-deck"
+    eyebrow="TODD Command Deck"
+    context="Relationships · Network"
+    title="Relationships"
+    iconSrc="assets/network/network.png"
+    iconAlt="Network"
+    [subtitle]="isLoggedIn
+      ? 'Diagnose relationship pain, watch TODD treat it, and see which contacts are moving back toward momentum.'
+      : 'Preview how TODD diagnoses relationship pain, treats it, and proves relief once your relationship graph is connected.'"
+    [scoreLabel]="isLoggedIn ? 'Relationship health' : 'Preview health'"
+    [scoreValue]="momentumScore + '%'"
+    [links]="relationshipsCommandDeckLinks"
+  ></app-cockpit-command-deck>
+
+  <app-cockpit-browse-mode-banner
+    *ngIf="!isLoggedIn"
+    surfaceLabel="Relationships"
+  ></app-cockpit-browse-mode-banner>
+
+  <section class="cockpit-panel diagnosis-health-panel" data-demo="network-health-panel">
+    <div class="cockpit-panel__kicker">Business Health</div>
+    <div class="diagnosis-health-grid">
+      <article class="diagnosis-health-card" *ngFor="let meter of healthMeters; let meterIndex = index; trackBy: trackById" [attr.data-demo]="meterIndex === 0 ? 'network-health-first-card' : null">
+        <div class="diagnosis-health-card__instrument">
+          <app-arc-gauge [value]="meter.value" [max]="meter.max" [tone]="meter.tone"></app-arc-gauge>
+        </div>
+        <div class="diagnosis-health-card__body">
+          <div class="diagnosis-health-card__label">{{ meter.label }}</div>
+          <div class="diagnosis-health-card__value">{{ meter.value }}%</div>
+          <div class="diagnosis-health-card__detail">{{ meter.detail }}</div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="cockpit-panel diagnosis-board" data-demo="network-diagnosis-board">
+    <div class="diagnosis-board__header">
+      <div>
+        <div class="cockpit-panel__kicker">Care Cycle</div>
+        <h2 class="diagnosis-board__title">Symptom, treatment, relief, and proof</h2>
+        <p class="diagnosis-board__subtitle">
+          {{ isLoggedIn
+            ? 'Each row shows what is hurting, what TODD is doing about it, and what proof of relief exists so far.'
+            : 'Guests see the same diagnostic board, but values, active treatment, and proof stay dark until live data is connected.' }}
+        </p>
+      </div>
+      <div class="diagnosis-board__status">
+        <span class="diagnosis-board__status-label">App status</span>
+        <span class="diagnosis-board__status-copy">{{ appStatusSummary }}</span>
+      </div>
+    </div>
+
+    <div class="diagnosis-board__table" role="table" aria-label="Relationships diagnosis board">
+      <div class="diagnosis-board__column-headers" role="row">
+        <span role="columnheader">Symptom</span>
+        <span role="columnheader">Treatment</span>
+        <span role="columnheader">Relief</span>
+        <span role="columnheader">Proof</span>
+      </div>
+
+      <article class="diagnosis-row" *ngFor="let row of diagnosisRows; trackBy: trackById" role="row">
+        <div class="diagnosis-cell diagnosis-cell--symptom" role="cell">
+          <div class="diagnosis-cell__topline">
+            <div class="diagnosis-indicator">
+              <app-status-led [tone]="row.statusTone" [pulse]="isLoggedIn && (row.reliefStatus === 'needs-relief' || row.reliefStatus === 'todd-working')"></app-status-led>
+              <div>
+                <div class="diagnosis-title">{{ row.title }}</div>
+                <div class="diagnosis-badges">
+                  <span class="diagnosis-badge diagnosis-badge--severity" [attr.data-severity]="row.severity">{{ row.severityLabel }}</span>
+                  <span class="diagnosis-badge diagnosis-badge--status" [attr.data-status]="row.reliefStatus">{{ row.reliefLabel }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="diagnosis-copy">{{ row.symptom }}</p>
+          <p class="diagnosis-support">{{ row.evidence }}</p>
+        </div>
+
+        <div class="diagnosis-cell" role="cell">
+          <div class="diagnosis-cell__label">What TODD is doing</div>
+          <p class="diagnosis-copy">{{ row.treatment }}</p>
+        </div>
+
+        <div class="diagnosis-cell" role="cell">
+          <div class="diagnosis-cell__label">Relief path</div>
+          <p class="diagnosis-copy">{{ row.relief }}</p>
+        </div>
+
+        <div class="diagnosis-cell diagnosis-cell--proof" role="cell">
+          <div class="diagnosis-proof">
+            <app-arc-gauge [value]="row.proofValue" [max]="row.proofMax" [tone]="isLoggedIn ? 'positive' : 'info'"></app-arc-gauge>
+            <div class="diagnosis-proof__body">
+              <div class="diagnosis-cell__label">{{ row.proofLabel }}</div>
+              <div class="diagnosis-proof__value">{{ row.proofValue | number }}</div>
+              <div class="diagnosis-support">{{ row.proofDetail }}</div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <div class="row g-3">
+    <div class="col-12 col-xl-7">
+      <div class="cockpit-panel ios-card h-100" data-demo="network-system-status">
+        <div class="cockpit-panel__kicker">System Status</div>
+        <div class="cockpit-metric-grid">
+          <div class="cockpit-metric-tile cockpit-metric-tile--cockpit">
+            <div class="mc-instrument-slot">
+              <app-status-led [tone]="isLoggedIn ? 'positive' : 'idle'"></app-status-led>
+            </div>
+            <div class="mc-instrument-text">
+              <div class="cockpit-metric-tile__label">Total contacts</div>
+              <div class="cockpit-metric-tile__value">{{ activeDashboardCounts.totalContacts | number }}</div>
+              <div class="cockpit-metric-tile__hint">{{ isLoggedIn ? 'records in relationship graph' : 'relationship graph not connected yet' }}</div>
+            </div>
+          </div>
+          <div class="cockpit-metric-tile cockpit-metric-tile--cockpit">
+            <div class="mc-instrument-slot">
+              <app-arc-gauge [value]="activeDashboardCounts.validEmailContacts" [max]="activeDashboardCounts.totalContacts || 1" tone="positive"></app-arc-gauge>
+            </div>
+            <div class="mc-instrument-text">
+              <div class="cockpit-metric-tile__label">Valid emails</div>
+              <div class="cockpit-metric-tile__value">{{ activeDashboardCounts.validEmailContacts | number }}</div>
+              <div class="cockpit-metric-tile__hint">ready for outreach</div>
+            </div>
+          </div>
+          <div class="cockpit-metric-tile cockpit-metric-tile--cockpit">
+            <div class="mc-instrument-slot">
+              <app-arc-gauge [value]="activeDashboardCounts.enrichedContacts" [max]="activeDashboardCounts.totalContacts || 1" tone="info"></app-arc-gauge>
+            </div>
+            <div class="mc-instrument-text">
+              <div class="cockpit-metric-tile__label">Enriched</div>
+              <div class="cockpit-metric-tile__value">{{ activeDashboardCounts.enrichedContacts | number }}</div>
+              <div class="cockpit-metric-tile__hint">data expanded</div>
+            </div>
+          </div>
+          <div class="cockpit-metric-tile cockpit-metric-tile--cockpit">
+            <div class="mc-instrument-slot">
+              <app-arc-gauge [value]="activeDashboardCounts.reconfiguredContacts" [max]="activeDashboardCounts.totalContacts || 1" [tone]="activeDashboardCounts.reconfiguredContacts > 0 ? 'attention' : 'info'"></app-arc-gauge>
+            </div>
+            <div class="mc-instrument-text">
+              <div class="cockpit-metric-tile__label">Next move ready</div>
+              <div class="cockpit-metric-tile__value">{{ activeDashboardCounts.reconfiguredContacts | number }}</div>
+              <div class="cockpit-metric-tile__hint">contacts staged</div>
+            </div>
+          </div>
+          <div class="cockpit-metric-tile cockpit-metric-tile--cockpit">
+            <div class="mc-instrument-slot">
+              <app-arc-gauge [value]="usagePercent" [max]="100" [tone]="usageWarningLevel === 'safe' ? 'positive' : (usageWarningLevel === 'warning' ? 'attention' : 'warn')"></app-arc-gauge>
+            </div>
+            <div class="mc-instrument-text">
+              <div class="cockpit-metric-tile__label">Capacity used</div>
+              <div class="cockpit-metric-tile__value">{{ usagePercent }}%</div>
+              <div class="cockpit-metric-tile__hint">{{ isLoggedIn ? (usageWarning || ((limits?.remaining || 0) + ' remaining')) : 'no live usage yet' }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="cockpit-progress-stack mt-4">
+          <div class="cockpit-progress-row">
+            <div class="cockpit-progress-row__topline">
+              <span>Reachability</span>
+              <span>{{ activeDashboardCounts.validEmailContacts | number }}</span>
+            </div>
+            <div class="network-progress-track">
+              <div class="network-progress-fill" [style.width.%]="(activeDashboardCounts.totalContacts || 0) > 0 ? (activeDashboardCounts.validEmailContacts / (activeDashboardCounts.totalContacts || 1)) * 100 : 0"></div>
+            </div>
+          </div>
+          <div class="cockpit-progress-row">
+            <div class="cockpit-progress-row__topline">
+              <span>Enrichment</span>
+              <span>{{ activeDashboardCounts.enrichedContacts | number }}</span>
+            </div>
+            <div class="network-progress-track">
+              <div class="network-progress-fill network-progress-fill-mid" [style.width.%]="(activeDashboardCounts.totalContacts || 0) > 0 ? (activeDashboardCounts.enrichedContacts / (activeDashboardCounts.totalContacts || 1)) * 100 : 0"></div>
+            </div>
+          </div>
+          <div class="cockpit-progress-row">
+            <div class="cockpit-progress-row__topline">
+              <span>Ready for next move</span>
+              <span>{{ activeDashboardCounts.reconfiguredContacts | number }}</span>
+            </div>
+            <div class="network-progress-track">
+              <div class="network-progress-fill network-progress-fill-strong" [style.width.%]="(activeDashboardCounts.totalContacts || 0) > 0 ? (activeDashboardCounts.reconfiguredContacts / (activeDashboardCounts.totalContacts || 1)) * 100 : 0"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-xl-5">
+      <div class="cockpit-panel ios-card h-100">
+        <div class="cockpit-panel__kicker">TODD Treatment Log</div>
+        <div class="cockpit-command-list">
+          <div class="cockpit-command-list__item" *ngFor="let row of diagnosisRows; trackBy: trackById">
+            <div>
+              <div class="cockpit-command-list__label">{{ row.title }}</div>
+              <div class="cockpit-command-list__value cockpit-command-list__value--left">{{ row.treatment }}</div>
+            </div>
+            <app-status-led [tone]="row.statusTone"></app-status-led>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

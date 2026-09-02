@@ -1,1 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
+
+/*
+ * TODD's brand blue, from frontend/src/styles.css :root. Several ported
+ * components' own CSS references these two by name (--tl-blue,
+ * --tl-blue-mid) without redeclaring them locally - true of TODD's own
+ * global stylesheet too, this is the only piece of it actually needed so
+ * far, not a port of the full 7000+ line stylesheet.
+ */
+:root {
+  --tl-blue: #00bfff;
+  --tl-blue-mid: #0095cc;
+}

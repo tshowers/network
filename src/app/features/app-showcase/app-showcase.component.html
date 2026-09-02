@@ -1,0 +1,93 @@
+<div class="fl-page">
+  <section class="fl-hero">
+    <div class="fl-hero__inner">
+      <div class="fl-hero__copy">
+        <div class="fl-eyebrow"><a href="https://todd.taliferro.tech">Home</a> · Network · iOS</div>
+        <h1 class="fl-hero__headline">TODD in your pocket</h1>
+        <p class="fl-hero__lead">The same relationship graph, wherever the relationship actually happens. Network for iOS puts your contacts, your signal, and a quick way to capture someone new right where you're standing — not back at your desk.</p>
+        <div class="fl-hero__actions">
+          <span class="fl-badge">Coming soon on the App Store</span>
+        </div>
+      </div>
+      <div class="fl-hero__visual">
+        <div class="fl-phone">
+          <div class="fl-phone__notch"></div>
+          <div class="fl-phone__screen">
+            <div class="fl-phone__label">{{ highlights[0].screenLabel }}</div>
+            <div class="fl-phone__rows">
+              <div class="fl-phone__row" *ngFor="let row of highlights[0].screenRows">
+                <div class="fl-phone__avatar"></div>
+                <div class="fl-phone__info">
+                  <div class="fl-phone__name">{{ row.name }}</div>
+                  <div class="fl-phone__meta">{{ row.meta }}</div>
+                </div>
+                <app-status-led [tone]="row.tone"></app-status-led>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="fl-solution">
+    <div class="fl-section__inner">
+      <div class="fl-section__heading">
+        <div class="fl-eyebrow">Built for the moment relationships happen</div>
+        <h2>Everything Network does on the web, ready wherever you are</h2>
+        <p class="fl-section__sub">Network for iOS isn't a separate app to keep in sync — it reads and writes the exact same contact graph TODD watches everywhere else.</p>
+      </div>
+      <div class="fl-features">
+        <article class="fl-feature" *ngFor="let h of highlights; let i = index" [class.fl-feature--alt]="i % 2 !== 0">
+          <div class="fl-feature__visual">
+            <div class="fl-phone fl-phone--sm">
+              <div class="fl-phone__notch"></div>
+              <div class="fl-phone__screen">
+                <div class="fl-phone__label">{{ h.screenLabel }}</div>
+                <div class="fl-phone__rows">
+                  <div class="fl-phone__row" *ngFor="let row of h.screenRows">
+                    <div class="fl-phone__avatar"></div>
+                    <div class="fl-phone__info">
+                      <div class="fl-phone__name">{{ row.name }}</div>
+                      <div class="fl-phone__meta">{{ row.meta }}</div>
+                    </div>
+                    <app-status-led [tone]="row.tone"></app-status-led>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="fl-feature__copy">
+            <h3>{{ h.heading }}</h3>
+            <p>{{ h.copy }}</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="fl-stats">
+    <div class="fl-stats__inner">
+      <div class="fl-stat" *ngFor="let s of stats">
+        <div class="fl-stat__value">{{ s.value }}</div>
+        <div class="fl-stat__label">{{ s.label }}</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="fl-cta">
+    <div class="fl-section__inner">
+      <div class="fl-cta__shell">
+        <div class="fl-cta__copy">
+          <div class="fl-eyebrow fl-eyebrow--light">Not ready yet</div>
+          <h2>Network for iOS is on the way</h2>
+          <p>Everything you add to Network today lands in the same relationship graph TODD reads from — so nothing you build now gets left behind once the iOS app ships.</p>
+        </div>
+        <div class="fl-cta__actions">
+          <a class="fl-btn fl-btn--primary fl-btn--lg" routerLink="/pricing">See Pricing</a>
+          <a class="fl-btn fl-btn--ghost" href="https://todd.taliferro.tech">Back to TODD</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

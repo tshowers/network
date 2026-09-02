@@ -7,12 +7,18 @@ export const routes: Routes = [
       import( './features/landing/landing.component' ).then( ( m ) => m.LandingComponent ),
   },
   {
-    // Placeholder until list/home/contact-home are ported - the real app
-    // experience will replace this route's component, not its path
-    // (landing.component.html and pricing.component.html already link here).
+    // The real signed-in app experience - contact-home.component.ts ported
+    // from TODD, confirmed as the actual live /network/app route there.
     path: 'app',
     loadComponent: () =>
-      import( './features/quick-actions/quick-actions.component' ).then( ( m ) => m.QuickActionsComponent ),
+      import( './features/contact-home/contact-home.component' ).then( ( m ) => m.ContactHomeComponent ),
+  },
+  {
+    // Relocated here so /app could go to the real ContactHomeComponent -
+    // this page showcases the Network iOS app, not the web experience.
+    path: 'ios',
+    loadComponent: () =>
+      import( './features/app-showcase/app-showcase.component' ).then( ( m ) => m.AppShowcaseComponent ),
   },
   {
     path: 'pricing',

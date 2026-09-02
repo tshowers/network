@@ -1,0 +1,650 @@
+:host {
+    display: block;
+}
+
+.cockpit-shell--embedded {
+    min-height: 100%;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.cockpit-shell--embedded app-back-to-top,
+.cockpit-shell--embedded app-cockpit-command-deck,
+.cockpit-shell--embedded app-cockpit-browse-mode-banner,
+.cockpit-shell--embedded .row,
+.cockpit-shell--embedded > .cockpit-panel:not(.diagnosis-health-panel):not(.diagnosis-board) {
+    display: none;
+}
+
+.cockpit-shell--embedded .diagnosis-health-panel,
+.cockpit-shell--embedded .diagnosis-board {
+    margin: 0;
+}
+
+.cockpit-shell--embedded .diagnosis-board__table {
+    overflow-x: auto;
+}
+
+.cockpit-shell {
+    --cockpit-text: #0f172a;
+    --cockpit-muted: rgba(15, 15, 15, 0.68);
+    --cockpit-panel-bg: rgba(255, 255, 255, 0.58);
+    --cockpit-panel-border: rgba(15, 15, 15, 0.08);
+    --cockpit-panel-shadow:
+        0 22px 48px rgba(15, 15, 15, 0.10),
+        inset 0 1px 0 rgba(255, 255, 255, 0.58);
+    --cockpit-track: rgba(15, 15, 15, 0.08);
+    --cockpit-grid-line: rgba(15, 15, 15, 0.08);
+    --cockpit-tile-bg: rgba(255, 255, 255, 0.45);
+    --signal-track-bg: rgba(15, 15, 15, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+    color: var(--cockpit-text);
+}
+
+.cockpit-header,
+.cockpit-panel {
+    position: relative;
+    overflow: hidden;
+    background: var(--cockpit-panel-bg);
+    border: 1px solid var(--cockpit-panel-border);
+    box-shadow: var(--cockpit-panel-shadow);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+
+.cockpit-header {
+    padding: 1.25rem 1.35rem;
+    border-radius: 28px;
+}
+
+.cockpit-header::before,
+.cockpit-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+        linear-gradient(to right, transparent 0%, transparent calc(100% - 1px), var(--cockpit-grid-line) calc(100% - 1px)),
+        linear-gradient(to bottom, transparent 0%, transparent calc(100% - 1px), var(--cockpit-grid-line) calc(100% - 1px));
+    background-size: 120px 120px;
+    opacity: 0.22;
+}
+
+.cockpit-header__eyebrow,
+.cockpit-panel__kicker {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.42rem 0.78rem;
+    border-radius: 999px;
+    border: 1px solid rgba(0, 149, 204, 0.16);
+    background: rgba(0, 149, 204, 0.08);
+    color: var(--tl-blue-mid, #0095cc);
+    font-size: 0.73rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.cockpit-header__row {
+    position: relative;
+    z-index: 1;
+    margin-top: 1rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.cockpit-header__title {
+    margin: 0;
+    font-size: clamp(1.8rem, 3vw, 2.7rem);
+    line-height: 1;
+    font-weight: 800;
+    letter-spacing: -0.05em;
+    color: var(--cockpit-text);
+}
+
+.cockpit-header__context {
+    margin-bottom: 0.45rem;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--cockpit-muted);
+}
+
+.cockpit-header__subtitle {
+    margin: 0.5rem 0 0;
+    max-width: 760px;
+    font-size: 0.98rem;
+    color: var(--cockpit-muted);
+}
+
+.cockpit-header__score {
+    position: relative;
+    z-index: 1;
+    min-width: 180px;
+    text-align: right;
+}
+
+.cockpit-header__score-label {
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--cockpit-muted);
+}
+
+.cockpit-header__score-value {
+    font-size: clamp(2.3rem, 4vw, 3.6rem);
+    line-height: 0.95;
+    font-weight: 800;
+    letter-spacing: -0.06em;
+    color: var(--cockpit-text);
+    text-shadow: 0 10px 22px rgba(15, 15, 15, 0.10);
+}
+
+.cockpit-quick-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.cockpit-quick-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.55rem 1.1rem;
+    border-radius: 999px;
+    border: 1px solid var(--cockpit-panel-border);
+    background: var(--cockpit-tile-bg);
+    color: var(--cockpit-text);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.cockpit-quick-link:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 24px rgba(15, 15, 15, 0.08);
+    color: var(--cockpit-text);
+}
+
+.cockpit-panel {
+    padding: 1.15rem 1.2rem;
+    border-radius: 24px;
+}
+
+.diagnosis-health-panel,
+.diagnosis-board {
+    padding: 1.3rem;
+}
+
+.diagnosis-health-grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.9rem;
+    margin-top: 1rem;
+}
+
+.diagnosis-health-card,
+.diagnosis-row,
+.cockpit-metric-tile,
+.cockpit-command-list__item {
+    position: relative;
+    z-index: 1;
+    background: var(--cockpit-tile-bg);
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    border-radius: 20px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.diagnosis-health-card {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 1rem;
+}
+
+.diagnosis-health-card__instrument {
+    flex: 0 0 72px;
+}
+
+.diagnosis-health-card__body {
+    min-width: 0;
+}
+
+.diagnosis-health-card__label,
+.diagnosis-cell__label,
+.cockpit-metric-tile__label,
+.cockpit-command-list__label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cockpit-muted);
+}
+
+.diagnosis-health-card__value,
+.cockpit-metric-tile__value,
+.diagnosis-proof__value {
+    margin-top: 0.35rem;
+    font-size: clamp(1.55rem, 2.2vw, 2.3rem);
+    line-height: 1;
+    font-weight: 800;
+    letter-spacing: -0.05em;
+    color: var(--cockpit-text);
+}
+
+.diagnosis-health-card__detail,
+.diagnosis-support,
+.cockpit-metric-tile__hint,
+.cockpit-command-list__value {
+    margin-top: 0.35rem;
+    font-size: 0.92rem;
+    line-height: 1.45;
+    color: var(--cockpit-muted);
+}
+
+.diagnosis-board__header {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.diagnosis-board__title {
+    margin: 0.7rem 0 0;
+    font-size: clamp(1.35rem, 2.2vw, 1.9rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+}
+
+.diagnosis-board__subtitle {
+    margin: 0.55rem 0 0;
+    max-width: 780px;
+    font-size: 0.96rem;
+    color: var(--cockpit-muted);
+}
+
+.diagnosis-board__status {
+    max-width: 340px;
+    padding: 0.95rem 1rem;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.diagnosis-board__status-label {
+    display: block;
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--cockpit-muted);
+}
+
+.diagnosis-board__status-copy {
+    display: block;
+    margin-top: 0.45rem;
+    font-size: 0.95rem;
+    line-height: 1.45;
+    color: var(--cockpit-text);
+}
+
+.diagnosis-board__table {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.diagnosis-board__column-headers {
+    display: grid;
+    grid-template-columns: 1.45fr 1fr 1fr 0.9fr;
+    gap: 0.8rem;
+    padding: 0 0.25rem;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--cockpit-muted);
+}
+
+.diagnosis-row {
+    display: grid;
+    grid-template-columns: 1.45fr 1fr 1fr 0.9fr;
+    gap: 0.8rem;
+    padding: 1rem;
+}
+
+.diagnosis-cell {
+    min-width: 0;
+}
+
+.diagnosis-cell--symptom,
+.diagnosis-cell--proof {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.diagnosis-indicator {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.diagnosis-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    line-height: 1.15;
+    color: var(--cockpit-text);
+}
+
+.diagnosis-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 0.45rem;
+}
+
+.diagnosis-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.32rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.73rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    background: rgba(255, 255, 255, 0.16);
+    color: var(--cockpit-text);
+}
+
+.diagnosis-badge--severity[data-severity="critical"],
+.diagnosis-badge--severity[data-severity="high"],
+.diagnosis-badge--status[data-status="needs-relief"],
+.diagnosis-badge--status[data-status="needs-user-decision"] {
+    background: rgba(239, 68, 68, 0.12);
+    border-color: rgba(239, 68, 68, 0.24);
+    color: #dc2626;
+}
+
+.diagnosis-badge--severity[data-severity="medium"],
+.diagnosis-badge--status[data-status="todd-working"] {
+    background: rgba(245, 158, 11, 0.12);
+    border-color: rgba(245, 158, 11, 0.24);
+    color: #d97706;
+}
+
+.diagnosis-badge--severity[data-severity="low"],
+.diagnosis-badge--status[data-status="improving"],
+.diagnosis-badge--status[data-status="relief-delivered"] {
+    background: rgba(34, 197, 94, 0.12);
+    border-color: rgba(34, 197, 94, 0.24);
+    color: #15803d;
+}
+
+.diagnosis-badge--status[data-status="watching"],
+.diagnosis-badge--status[data-status="insufficient-information"] {
+    background: rgba(96, 165, 250, 0.12);
+    border-color: rgba(96, 165, 250, 0.24);
+    color: #2563eb;
+}
+
+.diagnosis-copy {
+    margin: 0;
+    font-size: 0.97rem;
+    line-height: 1.5;
+    color: var(--cockpit-text);
+}
+
+.diagnosis-support {
+    margin-bottom: 0;
+}
+
+.diagnosis-proof {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.diagnosis-proof__body {
+    min-width: 0;
+}
+
+.cockpit-metric-grid,
+.cockpit-command-list {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 0.9rem;
+    margin-top: 1rem;
+}
+
+.cockpit-metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.cockpit-command-list {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.cockpit-metric-tile {
+    padding: 0.95rem 1rem;
+}
+
+.cockpit-metric-tile--cockpit {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.cockpit-metric-tile--cockpit .mc-instrument-slot {
+    flex: 0 0 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cockpit-metric-tile--cockpit .mc-instrument-text {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.cockpit-progress-stack {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.cockpit-progress-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.cockpit-progress-row__topline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 0.96rem;
+    color: var(--cockpit-text);
+}
+
+.network-progress-track {
+    width: 100%;
+    height: 10px;
+    border-radius: 999px;
+    background: var(--signal-track-bg);
+    overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(15, 15, 15, 0.06);
+}
+
+.network-progress-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #22c55e 0%, #14b8a6 55%, var(--tl-blue, #00bfff) 100%);
+    min-width: 0;
+}
+
+.network-progress-fill-mid {
+    background: linear-gradient(90deg, #10b981 0%, #00bfff 65%, var(--tl-blue, #00bfff) 100%);
+}
+
+.network-progress-fill-strong {
+    background: linear-gradient(90deg, #22c55e 0%, #0ea5e9 50%, var(--tl-blue, #00bfff) 100%);
+}
+
+.cockpit-command-list__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.95rem 1rem;
+}
+
+.cockpit-command-list__value {
+    margin-top: 0.2rem;
+}
+
+.cockpit-command-list__value--left {
+    text-align: left;
+    color: var(--cockpit-text);
+}
+
+@media (prefers-color-scheme: dark) {
+    .cockpit-shell {
+        --cockpit-text: #f8fafc;
+        --cockpit-muted: rgba(232, 232, 232, 0.74);
+        --cockpit-panel-bg: rgba(255, 255, 255, 0.05);
+        --cockpit-panel-border: rgba(255, 255, 255, 0.10);
+        --cockpit-panel-shadow:
+            0 18px 45px rgba(0, 0, 0, 0.22),
+            inset 0 1px 0 rgba(255, 255, 255, 0.03);
+        --cockpit-track: rgba(255, 255, 255, 0.12);
+        --cockpit-grid-line: rgba(255, 255, 255, 0.06);
+        --cockpit-tile-bg: rgba(255, 255, 255, 0.04);
+        --signal-track-bg: rgba(255, 255, 255, 0.12);
+    }
+
+    .cockpit-header__eyebrow,
+    .cockpit-panel__kicker {
+        background: rgba(148, 163, 184, 0.1);
+        border-color: rgba(148, 163, 184, 0.16);
+        color: #e2e8f0;
+    }
+
+    .diagnosis-health-card,
+    .diagnosis-row,
+    .cockpit-metric-tile,
+    .cockpit-command-list__item,
+    .diagnosis-board__status {
+        border-color: rgba(148, 163, 184, 0.14);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    }
+
+    .network-progress-track {
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.28);
+    }
+
+    .diagnosis-badge--severity[data-severity="critical"],
+    .diagnosis-badge--severity[data-severity="high"],
+    .diagnosis-badge--status[data-status="needs-relief"],
+    .diagnosis-badge--status[data-status="needs-user-decision"] {
+        color: #fca5a5;
+    }
+
+    .diagnosis-badge--severity[data-severity="medium"],
+    .diagnosis-badge--status[data-status="todd-working"] {
+        color: #fcd34d;
+    }
+
+    .diagnosis-badge--severity[data-severity="low"],
+    .diagnosis-badge--status[data-status="improving"],
+    .diagnosis-badge--status[data-status="relief-delivered"] {
+        color: #86efac;
+    }
+
+    .diagnosis-badge--status[data-status="watching"],
+    .diagnosis-badge--status[data-status="insufficient-information"] {
+        color: #93c5fd;
+    }
+}
+
+@media (max-width: 1399.98px) {
+    .cockpit-header__row,
+    .diagnosis-board__header,
+    .cockpit-command-list__item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .cockpit-header__score {
+        text-align: left;
+    }
+
+    .diagnosis-board__status {
+        max-width: none;
+        width: 100%;
+    }
+
+    .diagnosis-board__column-headers,
+    .diagnosis-row {
+        grid-template-columns: 1.2fr 1fr 1fr 0.9fr;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .diagnosis-health-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .diagnosis-board__column-headers {
+        display: none;
+    }
+
+    .diagnosis-row {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 767.98px) {
+    .cockpit-header,
+    .cockpit-panel {
+        border-radius: 20px;
+    }
+
+    .cockpit-metric-grid,
+    .diagnosis-health-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .diagnosis-health-card,
+    .diagnosis-proof {
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 600px) {
+    .cockpit-metric-tile--cockpit .mc-instrument-text .cockpit-metric-tile__hint {
+        display: none;
+    }
+}
