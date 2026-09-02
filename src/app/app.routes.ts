@@ -26,6 +26,11 @@ export const routes: Routes = [
       import( './features/pricing/pricing.component' ).then( ( m ) => m.PricingComponent ),
   },
   {
+    path: 'contact-list',
+    loadComponent: () =>
+      import( './features/list/list.component' ).then( ( m ) => m.ListComponent ),
+  },
+  {
     path: 'contact/:id',
     loadComponent: () =>
       import( './features/view/view.component' ).then( ( m ) => m.ViewComponent ),

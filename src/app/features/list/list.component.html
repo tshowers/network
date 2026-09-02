@@ -1,0 +1,64 @@
+<app-preloader [isLoading]="isLoading"></app-preloader>
+<app-back-to-top></app-back-to-top>
+
+<div class="contact-list-shell">
+  <div class="contact-list-header">
+    <div>
+      <h1 class="mb-1">Contacts</h1>
+      <p class="text-muted mb-0">{{ filteredContacts.length }} of {{ contacts.length }} contacts</p>
+    </div>
+    <button type="button" class="btn btn-dark" (click)="addContact()">
+      <i class="fa-solid fa-plus"></i>
+      Add Contact
+    </button>
+  </div>
+
+  <div class="contact-list-search">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Search by name, company, or email..."
+      [(ngModel)]="searchText"
+      (ngModelChange)="applyFilter()"
+    />
+  </div>
+
+  <div class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <div class="contact-list-empty" *ngIf="!isLoading && filteredContacts.length === 0 && !errorMessage">
+    <p class="text-muted">{{ contacts.length === 0 ? 'No contacts yet.' : 'No contacts match your search.' }}</p>
+  </div>
+
+  <div class="contact-list-table" *ngIf="filteredContacts.length > 0">
+    <div class="contact-list-row contact-list-row--head">
+      <div class="col-name">Name</div>
+      <div class="col-company">Company</div>
+      <div class="col-email">Email</div>
+      <div class="col-phone">Phone</div>
+      <div class="col-status">Status</div>
+      <div class="col-actions"></div>
+    </div>
+
+    <div
+      class="contact-list-row"
+      *ngFor="let contact of filteredContacts"
+      (click)="openContact(contact)"
+    >
+      <div class="col-name">
+        <span class="contact-list-name">{{ displayName(contact) }}</span>
+        <span class="contact-list-profession" *ngIf="contact.profession">{{ contact.profession }}</span>
+      </div>
+      <div class="col-company">{{ contact.company?.name || '—' }}</div>
+      <div class="col-email">{{ primaryEmail(contact) || '—' }}</div>
+      <div class="col-phone">{{ primaryPhone(contact) || '—' }}</div>
+      <div class="col-status">
+        <span class="badge bg-light text-dark text-capitalize" *ngIf="contact.status">{{ contact.status }}</span>
+      </div>
+      <div class="col-actions">
+        <button type="button" class="btn btn-sm btn-outline-danger" (click)="deleteContact($event, contact)">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

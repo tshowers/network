@@ -80,4 +80,16 @@ export class NetworkDataService {
   async deleteContact ( tenantId: string, contactId: string ): Promise<void> {
     await deleteDoc( doc( this.contactsRef( tenantId ), contactId ) );
   }
+
+  /**
+   * Mirrors DataService.getCollectionData('CONTACTS', ...) - the whole
+   * tenant's contact collection, no pagination. list.component.ts's real
+   * loadData() does the exact same full-collection fetch (its "pagination"
+   * is really just project-based access filtering, which this doesn't
+   * carry - see ListComponent's own scoping note).
+   */
+  async getAllContacts ( tenantId: string ): Promise<Contact[]> {
+    const snap = await getDocs( this.contactsRef( tenantId ) );
+    return snap.docs.map( ( d ) => ( { ...( d.data() as any ), id: d.id } ) as Contact );
+  }
 }
