@@ -1,0 +1,62 @@
+<!-- ViewMode: SINGLE (only show current status pill) -->
+<ng-container *ngIf="viewMode === 'single'">
+  <div class="status-flow d-flex flex-wrap gap-3 mb-2 mt-4">
+    <div class="status-pill active">
+      {{ getNomenclatureLabel(currentStatus) || 'No Status' }}
+    </div>
+  </div>
+</ng-container>
+
+<!-- ViewMode: FLOW (show the full pipeline and custom statuses) -->
+<ng-container *ngIf="viewMode === 'flow'">
+  <div class="status-flow justify-content-center d-flex align-items-center flex-wrap gap-3 mb-2 mt-4">
+    <ng-container *ngIf="isCustomStatusInView">
+      <div class="status-pill unknown">
+        {{ currentStatus }}
+      </div>
+    </ng-container>
+
+    <ng-container *ngFor="let stage of pipelineStages">
+      <ng-container [ngSwitch]="mode">
+        <div *ngSwitchCase="'view'" class="status-pill" [class.active]="stage === currentStatus">
+          {{ getNomenclatureLabel(stage) }}
+        </div>
+
+        <label *ngSwitchCase="'input'" class="form-check-label status-radio">
+          <input
+            type="radio"
+            name="pipelineStatus"
+            [value]="stage"
+            [checked]="stage === currentStatus"
+            (change)="statusChange.emit(stage)">
+            {{ getNomenclatureLabel(stage) }}
+        </label>
+      </ng-container>
+    </ng-container>
+  </div>
+
+  <div *ngIf="userDefinedStatuses.length"
+       class="user-statuses justify-content-center d-flex align-items-center flex-wrap gap-3 border-top pt-3">
+    <ng-container *ngFor="let customStatus of userDefinedStatuses">
+      <ng-container *ngIf="customStatus.trim()">
+        <ng-container [ngSwitch]="mode">
+          <div *ngSwitchCase="'view'" class="status-pill user" [class.active]="customStatus === currentStatus">
+            {{ customStatus }}
+          </div>
+
+          <label *ngSwitchCase="'input'" class="form-check-label status-radio">
+            <input
+              type="radio"
+              name="pipelineStatus"
+              [value]="customStatus"
+              [checked]="customStatus === currentStatus"
+              (change)="statusChange.emit(customStatus)">
+            {{ customStatus }}
+          </label>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+  </div>
+</ng-container>
+
+

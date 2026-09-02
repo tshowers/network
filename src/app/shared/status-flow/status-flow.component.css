@@ -1,0 +1,39 @@
+.status-pill {
+    padding: 0.4rem 0.8rem;
+    border-radius: 1rem;
+    background-color: #f0f0f0;
+    color: #333;
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+  
+  .status-pill.active {
+    background-color: #0095cc;
+    color: #fff !important;
+  }
+  
+  .status-pill.user {
+    background-color: #e0e0e0;
+    font-style: italic;
+  }
+  
+  .status-pill.unknown {
+    background-color: #dc3545;
+    color: #fff !important;
+    font-weight: bold;
+    font-style: normal;
+  }
+  
+  .status-radio {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+  
+  .badge {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.5rem;
+  }

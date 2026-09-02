@@ -20,9 +20,9 @@ export class AppShowcaseComponent {
     {
       screenLabel: 'Today',
       screenRows: [
-        { name: 'Sarah Chen', meta: 'Meridian Group · 14 days quiet', tone: 'attention' },
-        { name: 'James Okafor', meta: 'Oakfield Labs · deal stalling', tone: 'attention' },
-        { name: 'Priya Nair', meta: 'Kestrel Systems · new contact', tone: 'info' }
+        { name: 'Sarah Chen', meta: 'Meridian Group', tone: 'attention' },
+        { name: 'James Okafor', meta: 'Oakfield Labs', tone: 'attention' },
+        { name: 'Priya Nair', meta: 'Kestrel Systems', tone: 'info' }
       ],
       heading: 'Open the app to your signal, not your inbox',
       copy: 'TODD ranks who needs attention the moment you unlock your phone — no scrolling a contact list to figure out who to reach today.'
@@ -30,7 +30,7 @@ export class AppShowcaseComponent {
     {
       screenLabel: 'Quick Add',
       screenRows: [
-        { name: 'New contact', meta: 'Name · company · one tap save', tone: 'positive' }
+        { name: 'New contact', meta: 'One tap to save', tone: 'positive' }
       ],
       heading: 'Capture a contact the moment you meet them',
       copy: 'Walk out of a meeting and add someone in seconds, right from your pocket. It syncs into the same relationship graph TODD reads from everywhere else.'
@@ -38,7 +38,7 @@ export class AppShowcaseComponent {
     {
       screenLabel: 'Sarah Chen',
       screenRows: [
-        { name: 'VP Operations', meta: 'Meridian Group · Active deal', tone: 'positive' }
+        { name: 'VP Operations', meta: 'Meridian Group', tone: 'positive' }
       ],
       heading: 'Full context, wherever the conversation happens',
       copy: 'Company, role, deal stage, and every past interaction — on your phone before a call, not just at your desk.'

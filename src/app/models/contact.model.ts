@@ -17,24 +17,67 @@ export interface PhoneNumber {
   phoneNumberType?: string;
 }
 
+export interface Address {
+  addressType?: string;
+  streetAddress?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
+  county?: string;
+  country?: string;
+  latitude?: number;
+  longitude?: number;
+}
+
+export interface SocialMedia {
+  platform: string;
+  url?: string;
+  username?: string;
+}
+
+export interface Note {
+  subject?: string;
+  body?: string;
+  lastUpdated?: string;
+}
+
+export interface ContactImage {
+  src: string;
+  alt?: string;
+  _loadError?: boolean;
+}
+
 export interface Company {
   name?: string;
   url?: string;
   logoUrl?: string;
+  publicInfo?: string;
+  dba?: string;
+  numberOfEmployees?: string;
+  sicCode?: string;
+  capabilities?: string[];
+  addresses?: Address[];
   products?: import( './product.model' ).Product[];
 }
 
 export interface Contact {
   id: string;
   firstName: string;
+  middleName?: string;
   lastName: string;
+  profession?: string;
+  gender?: string;
+  category?: string | string[];
   company?: Company;
   emailAddresses?: EmailAddress[];
   phoneNumbers?: PhoneNumber[];
-  profileTypes?: any[];
-  addresses?: any[];
-  notes?: any[];
+  socialMedia?: SocialMedia[];
+  profileTypes?: string[];
+  addresses?: Address[];
+  notes?: Note[];
+  images?: ContactImage[];
   lastUpdated?: string;
   important?: boolean;
   status?: string;
+  emailStage?: string;
 }
