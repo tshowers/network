@@ -10,6 +10,7 @@ import {
   onSnapshot,
   orderBy,
   query,
+  setDoc,
   updateDoc,
   getFirestore,
 } from 'firebase/firestore';
@@ -74,6 +75,11 @@ export class NetworkDataService {
       );
       return unsubscribe;
     } );
+  }
+
+  /** Mirrors DataService.setDocument('CONTACTS', ...): merge, not overwrite. */
+  async updateContact ( tenantId: string, contactId: string, data: Partial<Contact> ): Promise<void> {
+    await setDoc( doc( this.contactsRef( tenantId ), contactId ), data, { merge: true } );
   }
 
   /** Mirrors DataService.deleteDocument('CONTACTS', ...). */

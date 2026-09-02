@@ -1,0 +1,124 @@
+<app-preloader [isLoading]="isLoading"></app-preloader>
+<app-back-to-top></app-back-to-top>
+
+<div class="contact-edit-shell" *ngIf="!isLoading">
+  <h1 class="mb-1">{{ contact.id ? 'Edit Contact' : 'Add Contact' }}</h1>
+  <p class="text-muted" *ngIf="limitMessage">{{ limitMessage }}</p>
+
+  <div class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <form (ngSubmit)="onSubmit()" #form="ngForm">
+    <div class="edit-section">
+      <h2>Identity</h2>
+      <div class="edit-grid three-up">
+        <div class="form-group">
+          <label>First Name</label>
+          <input type="text" class="form-control" name="firstName" [(ngModel)]="contact.firstName" />
+        </div>
+        <div class="form-group">
+          <label>Middle Name</label>
+          <input type="text" class="form-control" name="middleName" [(ngModel)]="contact.middleName" />
+        </div>
+        <div class="form-group">
+          <label>Last Name</label>
+          <input type="text" class="form-control" name="lastName" [(ngModel)]="contact.lastName" />
+        </div>
+      </div>
+      <div class="edit-grid two-up">
+        <div class="form-group">
+          <label>Title / Profession</label>
+          <input type="text" class="form-control" name="profession" [(ngModel)]="contact.profession" />
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <input type="text" class="form-control" name="category" [(ngModel)]="contact.category" placeholder="e.g. Prospect, Client, Friend" />
+        </div>
+      </div>
+      <div class="form-check">
+        <input type="checkbox" class="form-check-input" id="important" name="important" [(ngModel)]="contact.important" />
+        <label class="form-check-label" for="important">Important / VIP</label>
+      </div>
+    </div>
+
+    <div class="edit-section" *ngIf="contact.company">
+      <h2>Company</h2>
+      <div class="edit-grid two-up">
+        <div class="form-group">
+          <label>Company Name</label>
+          <input type="text" class="form-control" name="companyName" [(ngModel)]="contact.company!.name" />
+        </div>
+        <div class="form-group">
+          <label>Company Website</label>
+          <input type="text" class="form-control" name="companyUrl" [(ngModel)]="contact.company!.url" placeholder="https://" />
+        </div>
+      </div>
+    </div>
+
+    <div class="edit-section">
+      <h2>Status</h2>
+      <app-status-flow mode="input" viewMode="flow" [currentStatus]="contact.status || ''" (statusChange)="onStatusChange($event)"></app-status-flow>
+    </div>
+
+    <div class="edit-section">
+      <h2>Email Addresses</h2>
+      <div class="edit-row" *ngFor="let email of contact.emailAddresses; let i = index">
+        <input type="email" class="form-control" name="email{{i}}" [(ngModel)]="email.emailAddress" placeholder="name@company.com" />
+        <select class="form-select" name="emailType{{i}}" [(ngModel)]="email.emailAddressType">
+          <option value="Work">Work</option>
+          <option value="Personal">Personal</option>
+          <option value="Other">Other</option>
+        </select>
+        <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeEmail(i)">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+      </div>
+      <button type="button" class="btn btn-outline-secondary btn-sm" (click)="addEmail()">+ Add Email</button>
+    </div>
+
+    <div class="edit-section">
+      <h2>Phone Numbers</h2>
+      <div class="edit-row" *ngFor="let phone of contact.phoneNumbers; let i = index">
+        <input type="tel" class="form-control" name="phone{{i}}" [(ngModel)]="phone.phoneNumber" placeholder="(555) 555-5555" />
+        <select class="form-select" name="phoneType{{i}}" [(ngModel)]="phone.phoneNumberType">
+          <option value="Work">Work</option>
+          <option value="Mobile">Mobile</option>
+          <option value="Home">Home</option>
+          <option value="Other">Other</option>
+        </select>
+        <button type="button" class="btn btn-outline-danger btn-sm" (click)="removePhone(i)">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+      </div>
+      <button type="button" class="btn btn-outline-secondary btn-sm" (click)="addPhone()">+ Add Phone</button>
+    </div>
+
+    <div class="edit-section" *ngIf="contact.addresses?.length">
+      <h2>Address</h2>
+      <div class="edit-grid two-up">
+        <div class="form-group full-width">
+          <label>Street</label>
+          <input type="text" class="form-control" name="street" [(ngModel)]="contact.addresses![0].streetAddress" />
+        </div>
+        <div class="form-group">
+          <label>City</label>
+          <input type="text" class="form-control" name="city" [(ngModel)]="contact.addresses![0].city" />
+        </div>
+        <div class="form-group">
+          <label>State</label>
+          <input type="text" class="form-control" name="state" [(ngModel)]="contact.addresses![0].state" />
+        </div>
+        <div class="form-group">
+          <label>Zip</label>
+          <input type="text" class="form-control" name="zip" [(ngModel)]="contact.addresses![0].zip" />
+        </div>
+      </div>
+    </div>
+
+    <div class="edit-actions">
+      <button type="submit" class="btn btn-dark" [disabled]="isSaving">
+        {{ isSaving ? 'Saving...' : (contact.id ? 'Save Changes' : 'Add Contact') }}
+      </button>
+      <button type="button" class="btn btn-outline-secondary" (click)="onCancel()" [disabled]="isSaving">Cancel</button>
+    </div>
+  </form>
+</div>

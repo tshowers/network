@@ -1,0 +1,77 @@
+:host {
+  display: block;
+}
+
+.contact-edit-shell {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.edit-section {
+  background: #fff;
+  border: 1px solid rgba(15, 15, 15, 0.08);
+  border-radius: 0.9rem;
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.edit-section h2 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.edit-grid {
+  display: grid;
+  gap: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.edit-grid.two-up {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.edit-grid.three-up {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.form-check {
+  margin-top: 0.5rem;
+}
+
+.edit-row {
+  display: grid;
+  grid-template-columns: 1fr 140px 44px;
+  gap: 0.6rem;
+  align-items: center;
+  margin-bottom: 0.6rem;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .edit-grid.two-up,
+  .edit-grid.three-up {
+    grid-template-columns: 1fr;
+  }
+
+  .edit-row {
+    grid-template-columns: 1fr 100px 40px;
+  }
+}
