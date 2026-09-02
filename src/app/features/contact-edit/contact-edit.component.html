@@ -2,130 +2,263 @@
 <app-back-to-top></app-back-to-top>
 
 <div class="contact-edit-shell" *ngIf="!isLoading">
-  <h1 class="mb-1">{{ contact.id ? 'Edit Contact' : 'Add Contact' }}</h1>
-  <p class="text-muted" *ngIf="limitMessage">{{ limitMessage }}</p>
+  <div class="wizard-header">
+    <h1 class="mb-1">Network</h1>
+    <p class="text-muted mb-3">Add or edit contact details with a live preview on the right.</p>
+
+    <div class="stepper">
+      <button type="button" class="btn-step-nav" *ngIf="currentStep > 0" (click)="previousStep()">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+      <div class="step" *ngFor="let step of steps.slice(currentStep, currentStep + 4); let i = index" [class.active]="true">
+        <div class="circle">{{ currentStep + i + 1 }}</div>
+        <div class="label">{{ step.label }}</div>
+      </div>
+      <button type="button" class="btn-step-nav" *ngIf="!isLastStep" (click)="nextStep()">
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
 
   <app-cockpit-browse-mode-banner
     *ngIf="!isSignedIn"
     surfaceLabel="this form"
     customTitle="You can try this out, but you won't be able to save"
-    customCopy="You are not signed in, so feel free to explore this form. Sign in before you submit — guest sessions can't save new contacts."
+    customCopy="You are not signed in, so feel free to explore this form and see the live preview. Sign in before you submit — guest sessions can't save new contacts."
   ></app-cockpit-browse-mode-banner>
 
+  <div class="alert alert-info" *ngIf="isSignedIn && limitMessage">{{ limitMessage }}</div>
   <div class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</div>
+  <div class="alert alert-danger" *ngIf="missingMessage && isLastStep">
+    <h4 class="alert-heading">Missing Information</h4>
+    <hr />
+    {{ missingMessage }}
+  </div>
 
-  <form (ngSubmit)="onSubmit()" #form="ngForm">
-    <div class="edit-section">
-      <h2>Identity</h2>
-      <div class="edit-grid three-up">
-        <div class="form-group">
-          <label>First Name</label>
-          <input type="text" class="form-control" name="firstName" [(ngModel)]="contact.firstName" />
+  <ul class="nav nav-tabs mt-3">
+    <li class="nav-item">
+      <button type="button" class="nav-link" [class.active]="activeTab === 'read'" (click)="activeTab = 'read'">Regular View</button>
+    </li>
+    <li class="nav-item">
+      <button type="button" class="nav-link" [class.active]="activeTab === 'json'" (click)="activeTab = 'json'">Raw JSON</button>
+    </li>
+  </ul>
+
+  <div class="wizard-tab-content" *ngIf="activeTab === 'read'">
+    <div class="wizard-columns">
+      <form class="wizard-form" (keydown.enter)="$event.preventDefault()">
+
+        <div class="wizard-step-card" *ngIf="currentStepKey === 'firstName'">
+          <h5>{{ steps[0].heading }}</h5>
+          <div class="form-group full-width">
+            <label class="contact-field-label">First Name</label>
+            <input type="text" class="form-control" name="firstName" [(ngModel)]="contact.firstName" required />
+            <div class="alert alert-danger mt-2" *ngIf="!isFirstStepValid">First Name is required</div>
+          </div>
+          <div class="wizard-step-actions">
+            <button type="button" class="btn-todd" disabled><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
+            <button type="button" class="btn-todd" [disabled]="!isFirstStepValid" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Middle Name</label>
-          <input type="text" class="form-control" name="middleName" [(ngModel)]="contact.middleName" />
+
+        <div class="wizard-step-card" *ngIf="currentStepKey === 'middleName'">
+          <h5>{{ steps[1].heading }}</h5>
+          <div class="form-group full-width">
+            <label class="contact-field-label">Middle Name</label>
+            <input type="text" class="form-control" name="middleName" [(ngModel)]="contact.middleName" />
+          </div>
+          <div class="wizard-step-actions">
+            <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
+            <button type="button" class="btn-todd" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Last Name</label>
-          <input type="text" class="form-control" name="lastName" [(ngModel)]="contact.lastName" />
+
+        <div class="wizard-step-card" *ngIf="currentStepKey === 'lastName'">
+          <h5>{{ steps[2].heading }}</h5>
+          <div class="form-group full-width">
+            <label class="contact-field-label">Last Name</label>
+            <input type="text" class="form-control" name="lastName" [(ngModel)]="contact.lastName" required />
+            <div class="alert alert-danger mt-2" *ngIf="!isLastNameStepValid">Last Name is required</div>
+          </div>
+          <div class="wizard-step-actions">
+            <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
+            <button type="button" class="btn-todd" [disabled]="!isLastNameStepValid" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
+          </div>
         </div>
-      </div>
-      <div class="edit-grid two-up">
-        <div class="form-group">
-          <label>Title / Profession</label>
-          <input type="text" class="form-control" name="profession" [(ngModel)]="contact.profession" />
+
+        <div class="wizard-step-card" *ngIf="currentStepKey === 'company' && contact.company">
+          <h5>{{ steps[3].heading }}</h5>
+          <div class="wizard-step-grid">
+            <div class="form-group">
+              <label class="contact-field-label">Company Name</label>
+              <input type="text" class="form-control" name="companyName" [(ngModel)]="contact.company!.name" />
+            </div>
+            <div class="form-group">
+              <label class="contact-field-label">Company Website</label>
+              <input type="text" class="form-control" name="companyUrl" [(ngModel)]="contact.company!.url" placeholder="https://" />
+            </div>
+          </div>
+          <div class="wizard-step-actions">
+            <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
+            <button type="button" class="btn-todd" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Category</label>
-          <input type="text" class="form-control" name="category" [(ngModel)]="contact.category" placeholder="e.g. Prospect, Client, Friend" />
+
+        <div class="wizard-step-card" *ngIf="currentStepKey === 'category'">
+          <h5>{{ steps[4].heading }}</h5>
+          <div class="form-group full-width">
+            <label class="contact-field-label">Category</label>
+            <input type="text" class="form-control" name="category" [(ngModel)]="contact.category" placeholder="e.g. Prospect, Client, Friend" />
+          </div>
+          <div class="form-check mt-2">
+            <input type="checkbox" class="form-check-input" id="important" name="important" [(ngModel)]="contact.important" />
+            <label class="form-check-label" for="important">Important / VIP</label>
+          </div>
+          <div class="wizard-step-actions">
+            <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
+            <button type="button" class="btn-todd" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
+          </div>
         </div>
-      </div>
-      <div class="form-check">
-        <input type="checkbox" class="form-check-input" id="important" name="important" [(ngModel)]="contact.important" />
-        <label class="form-check-label" for="important">Important / VIP</label>
+
+        <div class="wizard-step-card" *ngIf="currentStepKey === 'status'">
+          <h5>{{ steps[5].heading }}</h5>
+          <app-status-flow mode="input" viewMode="flow" [currentStatus]="contact.status || ''" (statusChange)="onStatusChange($event)"></app-status-flow>
+          <div class="wizard-step-actions">
+            <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
+            <button type="button" class="btn-todd" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
+          </div>
+        </div>
+
+        <div class="wizard-step-card" *ngIf="currentStepKey === 'profession'">
+          <h5>{{ steps[6].heading }}</h5>
+          <div class="form-group full-width">
+            <label class="contact-field-label">Title or Profession</label>
+            <input type="text" class="form-control" name="profession" [(ngModel)]="contact.profession" />
+          </div>
+          <div class="wizard-step-actions">
+            <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
+            <button type="button" class="btn-todd" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
+          </div>
+        </div>
+
+        <div class="wizard-step-card" *ngIf="currentStepKey === 'email'">
+          <h5>{{ steps[7].heading }}</h5>
+          <div class="edit-row" *ngFor="let email of contact.emailAddresses; let i = index">
+            <input type="email" class="form-control" name="email{{i}}" [(ngModel)]="email.emailAddress" placeholder="name@company.com" />
+            <select class="form-select" name="emailType{{i}}" [(ngModel)]="email.emailAddressType">
+              <option value="Work">Work</option>
+              <option value="Personal">Personal</option>
+              <option value="Other">Other</option>
+            </select>
+            <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeEmail(i)"><i class="fa-solid fa-trash"></i></button>
+          </div>
+          <button type="button" class="btn btn-outline-secondary btn-sm mb-3" (click)="addEmail()">+ Add Email</button>
+          <div class="wizard-step-actions">
+            <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
+            <button type="button" class="btn-todd" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
+          </div>
+        </div>
+
+        <div class="wizard-step-card" *ngIf="currentStepKey === 'phone'">
+          <h5>{{ steps[8].heading }}</h5>
+          <div class="edit-row" *ngFor="let phone of contact.phoneNumbers; let i = index">
+            <input type="tel" class="form-control" name="phone{{i}}" [(ngModel)]="phone.phoneNumber" placeholder="(555) 555-5555" />
+            <select class="form-select" name="phoneType{{i}}" [(ngModel)]="phone.phoneNumberType">
+              <option value="Work">Work</option>
+              <option value="Mobile">Mobile</option>
+              <option value="Home">Home</option>
+              <option value="Other">Other</option>
+            </select>
+            <button type="button" class="btn btn-outline-danger btn-sm" (click)="removePhone(i)"><i class="fa-solid fa-trash"></i></button>
+          </div>
+          <button type="button" class="btn btn-outline-secondary btn-sm mb-3" (click)="addPhone()">+ Add Phone</button>
+          <div class="wizard-step-actions">
+            <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
+            <button type="button" class="btn-todd" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
+          </div>
+        </div>
+
+        <div class="wizard-step-card" *ngIf="currentStepKey === 'address' && contact.addresses?.length">
+          <h5>{{ steps[9].heading }}</h5>
+          <div class="wizard-step-grid">
+            <div class="form-group full-width">
+              <label class="contact-field-label">Street</label>
+              <input type="text" class="form-control" name="street" [(ngModel)]="contact.addresses![0].streetAddress" />
+            </div>
+            <div class="form-group">
+              <label class="contact-field-label">City</label>
+              <input type="text" class="form-control" name="city" [(ngModel)]="contact.addresses![0].city" />
+            </div>
+            <div class="form-group">
+              <label class="contact-field-label">State</label>
+              <input type="text" class="form-control" name="state" [(ngModel)]="contact.addresses![0].state" />
+            </div>
+            <div class="form-group">
+              <label class="contact-field-label">Zip</label>
+              <input type="text" class="form-control" name="zip" [(ngModel)]="contact.addresses![0].zip" />
+            </div>
+          </div>
+          <div class="wizard-step-actions">
+            <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
+            <button type="button" class="btn-todd" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
+          </div>
+        </div>
+
+        <div class="wizard-step-card" *ngIf="currentStepKey === 'nickname'">
+          <h5>{{ steps[10].heading }}</h5>
+          <div class="form-group full-width">
+            <label class="contact-field-label">Nickname</label>
+            <input type="text" class="form-control" name="nickname" [(ngModel)]="contact.nickname" />
+          </div>
+          <div class="wizard-step-actions">
+            <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
+            <button type="button" class="btn-todd" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
+          </div>
+        </div>
+
+        <div class="wizard-step-card" *ngIf="currentStepKey === 'birthday'">
+          <h5>{{ steps[11].heading }}</h5>
+          <div class="form-group full-width">
+            <label class="contact-field-label">Birthday</label>
+            <input type="date" class="form-control" name="birthday" [(ngModel)]="contact.birthday" />
+          </div>
+          <div class="wizard-step-actions">
+            <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
+            <button type="button" class="btn-todd" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
+          </div>
+        </div>
+
+        <div class="wizard-step-card" *ngIf="currentStepKey === 'gender'">
+          <h5>{{ steps[12].heading }}</h5>
+          <div class="form-group full-width">
+            <label class="contact-field-label">Gender</label>
+            <select class="form-select" name="gender" [(ngModel)]="contact.gender">
+              <option value="">Prefer not to say</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="wizard-step-actions">
+            <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
+            <button type="button" class="btn-todd" [disabled]="isSaving" (click)="onSubmit()">
+              {{ isSaving ? 'Saving...' : (contact.id ? 'Save Changes' : 'Add Contact') }}
+            </button>
+          </div>
+        </div>
+
+        <div class="wizard-cancel">
+          <button type="button" class="btn btn-link btn-sm text-muted" (click)="onCancel()">Cancel</button>
+        </div>
+      </form>
+
+      <div class="wizard-preview">
+        <app-read [contact]="contact" [isPublicProfile]="false" [showAdditionalInfo]="false" [userId]="userId"></app-read>
       </div>
     </div>
+  </div>
 
-    <div class="edit-section" *ngIf="contact.company">
-      <h2>Company</h2>
-      <div class="edit-grid two-up">
-        <div class="form-group">
-          <label>Company Name</label>
-          <input type="text" class="form-control" name="companyName" [(ngModel)]="contact.company!.name" />
-        </div>
-        <div class="form-group">
-          <label>Company Website</label>
-          <input type="text" class="form-control" name="companyUrl" [(ngModel)]="contact.company!.url" placeholder="https://" />
-        </div>
-      </div>
-    </div>
-
-    <div class="edit-section">
-      <h2>Status</h2>
-      <app-status-flow mode="input" viewMode="flow" [currentStatus]="contact.status || ''" (statusChange)="onStatusChange($event)"></app-status-flow>
-    </div>
-
-    <div class="edit-section">
-      <h2>Email Addresses</h2>
-      <div class="edit-row" *ngFor="let email of contact.emailAddresses; let i = index">
-        <input type="email" class="form-control" name="email{{i}}" [(ngModel)]="email.emailAddress" placeholder="name@company.com" />
-        <select class="form-select" name="emailType{{i}}" [(ngModel)]="email.emailAddressType">
-          <option value="Work">Work</option>
-          <option value="Personal">Personal</option>
-          <option value="Other">Other</option>
-        </select>
-        <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeEmail(i)">
-          <i class="fa-solid fa-trash"></i>
-        </button>
-      </div>
-      <button type="button" class="btn btn-outline-secondary btn-sm" (click)="addEmail()">+ Add Email</button>
-    </div>
-
-    <div class="edit-section">
-      <h2>Phone Numbers</h2>
-      <div class="edit-row" *ngFor="let phone of contact.phoneNumbers; let i = index">
-        <input type="tel" class="form-control" name="phone{{i}}" [(ngModel)]="phone.phoneNumber" placeholder="(555) 555-5555" />
-        <select class="form-select" name="phoneType{{i}}" [(ngModel)]="phone.phoneNumberType">
-          <option value="Work">Work</option>
-          <option value="Mobile">Mobile</option>
-          <option value="Home">Home</option>
-          <option value="Other">Other</option>
-        </select>
-        <button type="button" class="btn btn-outline-danger btn-sm" (click)="removePhone(i)">
-          <i class="fa-solid fa-trash"></i>
-        </button>
-      </div>
-      <button type="button" class="btn btn-outline-secondary btn-sm" (click)="addPhone()">+ Add Phone</button>
-    </div>
-
-    <div class="edit-section" *ngIf="contact.addresses?.length">
-      <h2>Address</h2>
-      <div class="edit-grid two-up">
-        <div class="form-group full-width">
-          <label>Street</label>
-          <input type="text" class="form-control" name="street" [(ngModel)]="contact.addresses![0].streetAddress" />
-        </div>
-        <div class="form-group">
-          <label>City</label>
-          <input type="text" class="form-control" name="city" [(ngModel)]="contact.addresses![0].city" />
-        </div>
-        <div class="form-group">
-          <label>State</label>
-          <input type="text" class="form-control" name="state" [(ngModel)]="contact.addresses![0].state" />
-        </div>
-        <div class="form-group">
-          <label>Zip</label>
-          <input type="text" class="form-control" name="zip" [(ngModel)]="contact.addresses![0].zip" />
-        </div>
-      </div>
-    </div>
-
-    <div class="edit-actions">
-      <button type="submit" class="btn btn-dark" [disabled]="isSaving">
-        {{ isSaving ? 'Saving...' : (contact.id ? 'Save Changes' : 'Add Contact') }}
-      </button>
-      <button type="button" class="btn btn-outline-secondary" (click)="onCancel()" [disabled]="isSaving">Cancel</button>
-    </div>
-  </form>
+  <div class="wizard-tab-content" *ngIf="activeTab === 'json'">
+    <pre><code>{{ contact | json }}</code></pre>
+  </div>
 </div>

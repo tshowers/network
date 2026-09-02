@@ -80,4 +80,6 @@ export interface Contact {
   important?: boolean;
   status?: string;
   emailStage?: string;
+  nickname?: string;
+  birthday?: string;
 }

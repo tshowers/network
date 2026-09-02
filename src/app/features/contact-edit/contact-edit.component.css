@@ -3,52 +3,133 @@
 }
 
 .contact-edit-shell {
-  max-width: 760px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 1.5rem;
 }
 
-.edit-section {
+/* Stepper */
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.btn-step-nav {
+  background: none;
+  border: none;
+  color: rgba(15, 15, 15, 0.5);
+  font-size: 1.1rem;
+  flex: 0 0 auto;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  flex: 0 0 auto;
+  min-width: 76px;
+}
+
+.step .circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  background: rgba(0, 149, 204, 0.1);
+  color: #0095cc;
+  border: 2px solid rgba(0, 149, 204, 0.25);
+}
+
+.step.active:first-child .circle {
+  background: #0095cc;
+  color: #fff;
+}
+
+.step .label {
+  font-size: 0.72rem;
+  color: rgba(15, 15, 15, 0.55);
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Tabs / content */
+
+.nav-tabs .nav-link {
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: rgba(15, 15, 15, 0.55);
+  font-weight: 600;
+}
+
+.nav-tabs .nav-link.active {
+  color: #0095cc;
+  border-bottom-color: #0095cc;
+  background: none;
+}
+
+.wizard-tab-content {
+  padding-top: 1.25rem;
+}
+
+.wizard-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.wizard-form {
+  min-width: 0;
+}
+
+.wizard-preview {
+  min-width: 0;
+  position: sticky;
+  top: 1rem;
+}
+
+/* Steps */
+
+.wizard-step-card {
   background: #fff;
   border: 1px solid rgba(15, 15, 15, 0.08);
   border-radius: 0.9rem;
   padding: 1.25rem;
-  margin-bottom: 1.25rem;
 }
 
-.edit-section h2 {
-  font-size: 1.05rem;
+.wizard-step-card h5 {
+  font-size: 0.95rem;
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: rgba(15, 15, 15, 0.5);
   margin-bottom: 1rem;
 }
 
-.edit-grid {
+.wizard-step-grid {
   display: grid;
-  gap: 0.9rem;
-  margin-bottom: 0.5rem;
-}
-
-.edit-grid.two-up {
   grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.edit-grid.three-up {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
 }
 
 .form-group.full-width {
   grid-column: 1 / -1;
 }
 
-.form-group label {
+.contact-field-label {
   display: block;
   font-size: 0.85rem;
   font-weight: 600;
   margin-bottom: 0.3rem;
-}
-
-.form-check {
-  margin-top: 0.5rem;
 }
 
 .edit-row {
@@ -59,15 +140,53 @@
   margin-bottom: 0.6rem;
 }
 
-.edit-actions {
+.wizard-step-actions {
   display: flex;
+  justify-content: space-between;
   gap: 0.75rem;
   margin-top: 1.5rem;
 }
 
+.wizard-cancel {
+  margin-top: 0.75rem;
+  text-align: center;
+}
+
+/* btn-todd stand-in: TODD's real one is a branded design system (see
+   ContactCardView/pricing.component.css notes elsewhere in this project)
+   not worth chasing for a couple of nav buttons - this is a plain pill
+   button in the same blue accent used throughout this app. */
+.btn-todd {
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 149, 204, 0.3);
+  background: #fff;
+  color: #0095cc;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.btn-todd:hover:not(:disabled) {
+  background: rgba(0, 149, 204, 0.08);
+}
+
+.btn-todd:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+@media (max-width: 900px) {
+  .wizard-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .wizard-preview {
+    position: static;
+  }
+}
+
 @media (max-width: 640px) {
-  .edit-grid.two-up,
-  .edit-grid.three-up {
+  .wizard-step-grid {
     grid-template-columns: 1fr;
   }
 

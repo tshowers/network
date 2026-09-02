@@ -16,50 +16,79 @@ import { StatusFlowComponent } from '../../shared/status-flow/status-flow.compon
 import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.component';
 import { PreloaderComponent } from '../../shared/preloader/preloader.component';
 import { CockpitBrowseModeBannerComponent } from '../../shared/cockpit-browse-mode-banner/cockpit-browse-mode-banner.component';
+import { ReadComponent } from '../read/read.component';
+
+interface WizardStep {
+  key: string;
+  label: string;
+  heading: string;
+}
 
 /**
- * A ground-up rewrite of the create/edit surface, not a trim of
+ * Rewritten as a real step wizard with a live preview pane, matching what
  * create.component.ts (1,336 lines) + ContactUpdateLongFormComponent
- * (382 lines). The long-form's complexity is almost entirely two
- * subsystems already dropped elsewhere in this port: per-field visibility
- * toggles read from tenant Settings (isContactFieldEnabled for 25+
- * fields), and admin-configurable dropdown option lists fetched from
- * Firestore (STATES/SECTORS/PHONE_TYPES/CATEGORIES/... via
- * DataService.getDropdownData). Neither trims to something smaller - the
- * form fields ARE that system's output. So this ships a fixed, curated
- * field set with plain inputs and hardcoded option lists instead, the
- * same call already made for list.component.ts.
+ * (382 lines) actually deliver - the flat single-page form this replaced
+ * undersold it. The wizard mechanic itself (numbered stepper, Previous/
+ * Next, a live-updating card preview via the same ReadComponent embedded
+ * in read-only mode, Regular View/Raw JSON tabs, a "Missing Information"
+ * banner) is kept faithfully; what's still simplified is the field set
+ * within each step and the browse-mode banner is displayed for it too.
  *
- * Kept for real: create vs. edit detection (query param ?id, or a contact
- * already sitting in NetworkContactStateService from the list/view page),
- * the free-tier contact-limit gate before allowing a new contact
- * (NetworkContactAccessService + NetworkContactPackService's upgrade
- * checkout prompt - this is a real paid-plan boundary, not decoration),
- * add/remove repeating email and phone rows, and save via
- * addContact/updateContact.
- *
- * Dropped: Google Places address autocomplete (ContactMapComponent's
- * Google Maps dependency was already avoided the same way), NAICS
- * industry-code lookup, social media rows, notes, images, draft
- * auto-persistence while typing.
+ * Dropped, same as before: per-field visibility toggles and
+ * admin-configurable dropdown option lists (two subsystems, not
+ * decoration - see the git history for the flat-form version this
+ * replaced), Google Places address autocomplete, NAICS lookup, social
+ * media rows, DBA/employee-count/projects company fields, timezone,
+ * business type, anniversary, contact value, subscriber flag, draft
+ * auto-persistence while typing. Kept: create-vs-edit detection, the
+ * free-tier contact-limit gate, add/remove repeating email and phone
+ * rows, per-step required-field validation for first/last name.
  */
 @Component( {
   selector: 'app-contact-edit',
   standalone: true,
-  imports: [CommonModule, FormsModule, StatusFlowComponent, BackToTopComponent, PreloaderComponent, CockpitBrowseModeBannerComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    StatusFlowComponent,
+    BackToTopComponent,
+    PreloaderComponent,
+    CockpitBrowseModeBannerComponent,
+    ReadComponent,
+  ],
   templateUrl: './contact-edit.component.html',
   styleUrl: './contact-edit.component.css',
 } )
 export class ContactEditComponent implements OnInit {
+  readonly steps: WizardStep[] = [
+    { key: 'firstName', label: 'First Name', heading: 'Name' },
+    { key: 'middleName', label: 'Middle Name', heading: 'Name' },
+    { key: 'lastName', label: 'Last Name', heading: 'Name' },
+    { key: 'company', label: 'Company', heading: 'Company' },
+    { key: 'category', label: 'Category', heading: 'Tags' },
+    { key: 'status', label: 'Status', heading: 'State' },
+    { key: 'profession', label: 'Profession', heading: 'Professional' },
+    { key: 'email', label: 'Email', heading: 'Email' },
+    { key: 'phone', label: 'Phone', heading: 'Phone' },
+    { key: 'address', label: 'Address', heading: 'Address' },
+    { key: 'nickname', label: 'Nickname', heading: 'Name' },
+    { key: 'birthday', label: 'Birthday', heading: 'Birthday' },
+    { key: 'gender', label: 'Gender', heading: 'Identification' },
+  ];
+
+  currentStep = 0;
+  activeTab: 'read' | 'json' = 'read';
+
   contact: Contact = this.buildEmptyContact();
   isLoading = true;
   isSaving = false;
   errorMessage = '';
   limitMessage = '';
+  missingMessage = '';
   isSignedIn = false;
 
   private tenantId = '';
-  private userId = '';
+  userId = '';
 
   constructor (
     private route: ActivatedRoute,
@@ -99,6 +128,7 @@ export class ContactEditComponent implements OnInit {
     this.ensureCompany();
     this.ensureAtLeastOneRow();
     if ( this.isSignedIn ) await this.refreshLimitMessage();
+    this.refreshMissingMessage();
     this.isLoading = false;
   }
 
@@ -143,6 +173,50 @@ export class ContactEditComponent implements OnInit {
     }
   }
 
+  /** Mirrors ContactService.getMissingInfo. */
+  private refreshMissingMessage (): void {
+    const missing: string[] = [];
+    if ( !this.contact.firstName ) missing.push( 'first name' );
+    if ( !this.contact.lastName ) missing.push( 'last name' );
+    if ( !this.contact.company?.name ) missing.push( 'company name' );
+    if ( !this.contact.phoneNumbers?.length ) missing.push( 'phone number' );
+    if ( !this.contact.emailAddresses?.length ) missing.push( 'email address' );
+
+    this.missingMessage = missing.length
+      ? `The contact is missing the following information: ${missing.join( ', ' )}.`
+      : '';
+  }
+
+  get currentStepKey (): string {
+    return this.steps[this.currentStep]?.key || '';
+  }
+
+  get isLastStep (): boolean {
+    return this.currentStep >= this.steps.length - 1;
+  }
+
+  get isFirstStepValid (): boolean {
+    return this.currentStepKey !== 'firstName' || !!this.contact.firstName?.trim();
+  }
+
+  get isLastNameStepValid (): boolean {
+    return this.currentStepKey !== 'lastName' || !!this.contact.lastName?.trim();
+  }
+
+  get canAdvance (): boolean {
+    return this.isFirstStepValid && this.isLastNameStepValid;
+  }
+
+  nextStep (): void {
+    this.refreshMissingMessage();
+    if ( !this.canAdvance ) return;
+    if ( this.currentStep < this.steps.length - 1 ) this.currentStep++;
+  }
+
+  previousStep (): void {
+    if ( this.currentStep > 0 ) this.currentStep--;
+  }
+
   addEmail (): void {
     this.contact.emailAddresses = this.contact.emailAddresses || [];
     this.contact.emailAddresses.push( { emailAddress: '', emailAddressType: 'Work' } );
@@ -150,6 +224,7 @@ export class ContactEditComponent implements OnInit {
 
   removeEmail ( index: number ): void {
     this.contact.emailAddresses?.splice( index, 1 );
+    this.refreshMissingMessage();
   }
 
   addPhone (): void {
@@ -159,6 +234,7 @@ export class ContactEditComponent implements OnInit {
 
   removePhone ( index: number ): void {
     this.contact.phoneNumbers?.splice( index, 1 );
+    this.refreshMissingMessage();
   }
 
   onStatusChange ( status: string ): void {
@@ -166,6 +242,8 @@ export class ContactEditComponent implements OnInit {
   }
 
   async onSubmit (): Promise<void> {
+    this.refreshMissingMessage();
+
     if ( !this.userId || !this.tenantId ) {
       this.notificationService.show( 'Sign In Required', 'Sign in to save contacts to your network.', 'info' );
       return;
