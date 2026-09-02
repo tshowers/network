@@ -1,0 +1,49 @@
+<app-preloader [isLoading]="isLoading"></app-preloader>
+<app-back-to-top></app-back-to-top>
+<div class="contact-view-shell" *ngIf="contact">
+  <section class="contact-view-header-card">
+    <div class="contact-view-header-main">
+      <div class="contact-view-header-copy">
+        <div class="contact-view-eyebrow">Network</div>
+        <div class="contact-view-title-row">
+          <h1 class="pv-title mb-0">Contact</h1>
+          <button type="button" class="btn btn-outline-dark" data-cy="contact-read-edit" (click)="navigateToEditContact()">
+            <i class="fa-regular fa-pen-to-square"></i>
+            <span>Edit</span>
+          </button>
+        </div>
+        <p class="contact-view-description"> This page shows the information available for this contact. </p>
+      </div>
+    </div>
+  </section>
+  <section class="contact-view-content-card">
+    <div class="contact-view-tabs-wrap">
+      <ul class="nav nav-tabs contact-view-tabs" id="devTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="read-tab" data-bs-toggle="tab" data-bs-target="#read" type="button" role="tab" aria-controls="read" aria-selected="true"> Regular View </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="json-tab" data-bs-toggle="tab" data-bs-target="#json" type="button" role="tab" aria-controls="json" aria-selected="false"> Raw JSON </button>
+        </li>
+      </ul>
+    </div>
+    <div class="tab-content contact-view-tab-content">
+      <div class="tab-pane fade show active" id="read" role="tabpanel" aria-labelledby="read-tab">
+        <div class="contact-view-panel-body">
+          <app-read [contact]="contact" [isPublicProfile]="false" [showAdditionalInfo]="true" [userId]="userId"></app-read>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="json" role="tabpanel" aria-labelledby="json-tab">
+        <div class="contact-view-json-panel">
+          <pre><code>{{ contact | json }}</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="contact-view-empty-state" *ngIf="!contact && !isLoading">
+  <div class="alert alert-warning" role="alert">
+    <h4 class="alert-heading">Nothing Found</h4>
+    <p>{{ errorMessage || 'No data found for requested contact.' }}</p>
+  </div>
+</div>

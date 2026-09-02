@@ -2,15 +2,18 @@ import { Injectable } from '@angular/core';
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
   limit,
+  onSnapshot,
   orderBy,
   query,
   updateDoc,
   getFirestore,
 } from 'firebase/firestore';
+import { Observable } from 'rxjs';
 
 import { Contact } from '../models/contact.model';
 
@@ -59,5 +62,22 @@ export class NetworkDataService {
     if ( !contactId ) return null;
     const snap = await getDoc( doc( this.contactsRef( tenantId ), contactId ) );
     return snap.exists() ? ( { id: snap.id, ...( snap.data() as any ) } as Contact ) : null;
+  }
+
+  /** Mirrors DataService.getDocument('CONTACTS', ...) / getDocumentRealtime - live updates, not a one-time fetch. */
+  getContactRealtime ( tenantId: string, contactId: string ): Observable<Contact | null> {
+    return new Observable( ( subscriber ) => {
+      const unsubscribe = onSnapshot(
+        doc( this.contactsRef( tenantId ), contactId ),
+        ( snap ) => subscriber.next( snap.exists() ? ( { id: snap.id, ...( snap.data() as any ) } as Contact ) : null ),
+        ( error ) => subscriber.error( error ),
+      );
+      return unsubscribe;
+    } );
+  }
+
+  /** Mirrors DataService.deleteDocument('CONTACTS', ...). */
+  async deleteContact ( tenantId: string, contactId: string ): Promise<void> {
+    await deleteDoc( doc( this.contactsRef( tenantId ), contactId ) );
   }
 }
