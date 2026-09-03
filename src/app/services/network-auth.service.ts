@@ -1,17 +1,9 @@
 import { Injectable } from '@angular/core';
 import {
-  ActionCodeSettings,
   Auth,
   getAuth,
-  getRedirectResult,
-  GoogleAuthProvider,
-  isSignInWithEmailLink,
-  OAuthProvider,
   onAuthStateChanged,
-  sendSignInLinkToEmail,
-  signInWithEmailLink,
-  signInWithPopup,
-  signInWithRedirect,
+  signInWithCustomToken,
   signOut,
   User,
 } from 'firebase/auth';
@@ -19,31 +11,24 @@ import { doc, getDoc, getFirestore } from 'firebase/firestore';
 import { Observable, shareReplay, switchMap, of } from 'rxjs';
 
 /**
- * Trimmed, purpose-built auth service for the standalone Network app -
- * mirrors sayit's AuthContextService in style (raw `firebase/auth`, not
- * `@angular/fire`'s wrapper - no reason to pull in a bigger dependency for
- * what's a handful of calls), but unlike SayIt (a single-tenant, public app
- * pinned to one master tenant) Network serves TODD's real multi-tenant
- * customers, so it needs real tenant resolution.
+ * Auth service for the standalone Network app. Sign-in itself no longer
+ * happens here - it redirects to TODD's hosted login
+ * (todd.taliferro.tech/login), the same page network-ios/pulse-ios open
+ * via TODDAuthKit's HostedLogin (ASWebAuthenticationSession), so every
+ * TODD client presents the identical sign-in screen instead of each
+ * maintaining its own copy of Google/Apple/email-link/phone code that can
+ * drift out of sync. This service only holds the two things every client
+ * still needs locally: completing the redirect back from that page, and
+ * tenant/session reads.
  *
  * Mirrors the exact same resolution TODD's own `AuthService` uses
  * (`resolveAssignedTenantId`) and that Network-iOS's `AuthService.swift`
- * already reimplements: `users/{uid}.companyId` if set, else the uid itself
- * is the tenant. Keeping this identical across TODD, Network-iOS, and this
- * app is deliberate - three independent reimplementations of the same rule
- * is fine; three different *rules* would silently fragment which tenant a
- * user lands in depending which client they signed in from.
- *
- * Sign-in providers match TODD's real web login.component.ts exactly -
- * Google, Apple (same `apple.com` provider id as the native iOS apps, so
- * accounts unify across platforms), and passwordless email link - not the
- * Google+password pairing this had before. Popup-vs-redirect and the
- * email-link send/complete mechanics are ported from AuthService's
- * signInWithGoogle/signInWithApple/sendLoginLink/completeSignInWithEmailLink,
- * trimmed of the multi-tenant invite branching those carry (Network has no
- * invite flow) but otherwise unchanged - this is the one piece of Network
- * that should NOT drift from TODD's behavior, since the whole point is a
- * user recognizing the same three buttons everywhere.
+ * already reimplements: `users/{uid}.companyId` if set, else the uid
+ * itself is the tenant. Keeping this identical across TODD, Network-iOS,
+ * and this app is deliberate - three independent reimplementations of the
+ * same rule is fine; three different *rules* would silently fragment
+ * which tenant a user lands in depending which client they signed in
+ * from.
  */
 @Injectable( { providedIn: 'root' } )
 export class NetworkAuthService {
@@ -53,6 +38,8 @@ export class NetworkAuthService {
 
   private userId$?: Observable<string>;
   private tenantId$?: Observable<string>;
+
+  private readonly pendingLoginStorageKey = 'network_hosted_login_pending';
 
   getUser (): Observable<User | null> {
     return new Observable( ( subscriber ) => {
@@ -99,81 +86,41 @@ export class NetworkAuthService {
   }
 
   /**
-   * Mobile browsers (particularly iOS Safari) frequently block or kill
-   * signInWithPopup's window.open regardless of gesture timing, so provider
-   * sign-in uses a full-page redirect there instead - same rule as TODD's
-   * AuthService.isMobileDevice().
+   * Leaves the app entirely for TODD's hosted login
+   * (todd.taliferro.tech/login?client=network-web&state=...), the same
+   * page every TODD client signs in through. `state` is a random value
+   * stashed alongside `returnUrl` in sessionStorage before leaving, and
+   * checked again in AuthCallbackComponent when the page sends the user
+   * back - a CSRF guard against a forged callback.
    */
-  isMobileDevice (): boolean {
-    return /Android|iPhone|iPad|iPod/i.test( navigator.userAgent );
+  signIn ( returnUrl?: string ): void {
+    const state = crypto.randomUUID();
+    sessionStorage.setItem( this.pendingLoginStorageKey, JSON.stringify( { state, returnUrl } ) );
+    window.location.href = `https://todd.taliferro.tech/login?client=network-web&state=${state}`;
   }
 
   /**
-   * On mobile this starts a full-page redirect and returns null; the
-   * redirect result is picked up by checkRedirectResult() after the page
-   * reloads back from the provider.
+   * Reads back what signIn() stashed before leaving, verifies the state
+   * value matches what the hosted login page is handing back, and clears
+   * it either way so a stale/reused entry can't validate a later attempt.
    */
-  async signInWithGoogle (): Promise<User | null> {
-    const provider = new GoogleAuthProvider();
-    if ( this.isMobileDevice() ) {
-      await signInWithRedirect( this.auth, provider );
+  consumePendingLogin ( state: string | null ): { returnUrl?: string } | null {
+    const raw = sessionStorage.getItem( this.pendingLoginStorageKey );
+    sessionStorage.removeItem( this.pendingLoginStorageKey );
+    if ( !raw ) return null;
+
+    try {
+      const pending = JSON.parse( raw ) as { state: string; returnUrl?: string };
+      if ( !state || pending.state !== state ) return null;
+      return { returnUrl: pending.returnUrl };
+    } catch {
       return null;
     }
-    const result = await signInWithPopup( this.auth, provider );
-    return result.user;
   }
 
-  /**
-   * Uses the same `apple.com` provider id the native iOS apps authenticate
-   * through, so a person who already has an account from one platform
-   * resolves to the same Firebase user on the other. Same popup/mobile-
-   * redirect split as signInWithGoogle.
-   */
-  async signInWithApple (): Promise<User | null> {
-    const provider = new OAuthProvider( 'apple.com' );
-    provider.addScope( 'email' );
-    provider.addScope( 'name' );
-
-    if ( this.isMobileDevice() ) {
-      await signInWithRedirect( this.auth, provider );
-      return null;
-    }
-    const result = await signInWithPopup( this.auth, provider );
-    return result.user;
-  }
-
-  /** Picks up the result of a mobile signInWithRedirect() call after the page reloads. */
-  async checkRedirectResult (): Promise<User | null> {
-    const result = await getRedirectResult( this.auth );
-    return result?.user ?? null;
-  }
-
-  private readonly emailForSignInStorageKey = 'network_emailForSignIn';
-
-  /** Sends a passwordless sign-in link, completed by FinishSignInComponent at /finish-sign-in. */
-  async sendSignInLink ( email: string, returnUrl?: string ): Promise<void> {
-    const actionCodeSettings: ActionCodeSettings = {
-      url: `${window.location.origin}/finish-sign-in${returnUrl ? `?returnUrl=${encodeURIComponent( returnUrl )}` : ''}`,
-      handleCodeInApp: true,
-    };
-    await sendSignInLinkToEmail( this.auth, email, actionCodeSettings );
-    localStorage.setItem( this.emailForSignInStorageKey, email );
-  }
-
-  getStoredEmailForSignIn (): string {
-    return localStorage.getItem( this.emailForSignInStorageKey ) || '';
-  }
-
-  clearStoredEmailForSignIn (): void {
-    localStorage.removeItem( this.emailForSignInStorageKey );
-  }
-
-  isSignInLinkUrl ( url: string ): boolean {
-    return isSignInWithEmailLink( this.auth, url );
-  }
-
-  async completeSignInWithEmailLink ( email: string, url: string ): Promise<User> {
-    const result = await signInWithEmailLink( this.auth, email, url );
+  /** Redeems the custom token AuthCallbackComponent received from the hosted login page. */
+  async signInWithCustomToken ( token: string ): Promise<User> {
+    const result = await signInWithCustomToken( this.auth, token );
     return result.user;
   }
 

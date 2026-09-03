@@ -31,9 +31,9 @@ export const routes: Routes = [
       import( './features/sign-in/sign-in.component' ).then( ( m ) => m.SignInComponent ),
   },
   {
-    path: 'finish-sign-in',
+    path: 'auth/callback',
     loadComponent: () =>
-      import( './features/finish-sign-in/finish-sign-in.component' ).then( ( m ) => m.FinishSignInComponent ),
+      import( './features/auth-callback/auth-callback.component' ).then( ( m ) => m.AuthCallbackComponent ),
   },
   {
     path: 'contact-edit',
@@ -49,6 +49,11 @@ export const routes: Routes = [
     path: 'contact-deal-flow',
     loadComponent: () =>
       import( './features/pipeline/pipeline.component' ).then( ( m ) => m.PipelineComponent ),
+  },
+  {
+    path: 'contact-deal-flow-dashboard',
+    loadComponent: () =>
+      import( './features/deal-flow-dashboard/deal-flow-dashboard.component' ).then( ( m ) => m.DealFlowDashboardComponent ),
   },
   {
     path: 'contact-list',

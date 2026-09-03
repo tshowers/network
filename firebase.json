@@ -1,0 +1,17 @@
+{
+  "hosting": {
+    "site": "todd-network",
+    "public": "dist/network/browser",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

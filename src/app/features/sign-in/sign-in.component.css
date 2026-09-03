@@ -23,6 +23,7 @@
   border-radius: 1rem;
   padding: 2rem;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.06);
+  text-align: center;
 }
 
 .sign-in-logo {
@@ -30,41 +31,4 @@
   width: 56px;
   height: 56px;
   margin: 0 auto 1.25rem;
-}
-
-.sign-in-divider {
-  display: flex;
-  align-items: center;
-  text-align: center;
-  color: rgba(15, 15, 15, 0.4);
-  font-size: 0.82rem;
-  margin: 1rem 0;
-}
-
-.sign-in-divider::before,
-.sign-in-divider::after {
-  content: '';
-  flex: 1;
-  border-bottom: 1px solid rgba(15, 15, 15, 0.1);
-}
-
-.sign-in-divider span {
-  padding: 0 0.75rem;
-}
-
-.form-group label {
-  display: block;
-  font-size: 0.85rem;
-  font-weight: 600;
-  margin-bottom: 0.3rem;
-}
-
-.sign-in-card--sent {
-  text-align: center;
-}
-
-.sign-in-sent-icon {
-  font-size: 2.25rem;
-  color: #0095cc;
-  margin-bottom: 0.75rem;
 }
