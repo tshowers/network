@@ -3,6 +3,15 @@
 }
 
 .contact-edit-shell {
+  /* This page's cards/text (.wizard-step-card, .form-control, etc.) are
+     designed against a light backdrop and don't carry their own dark-mode
+     variants - painting the shell explicitly light keeps it legible
+     regardless of the system color scheme, rather than leaving it
+     transparent and inheriting the global (theme-aware) body background,
+     which would leave its dark-gray text sitting on a dark page. */
+  background: #f6f8fa;
+  color: #0d1117;
+  min-height: 100%;
   max-width: 1100px;
   margin: 0 auto;
   padding: 1.5rem;

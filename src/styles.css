@@ -11,3 +11,31 @@
   --tl-blue: #00bfff;
   --tl-blue-mid: #0095cc;
 }
+
+/*
+ * No component here should have to paint its own page-level background -
+ * several (contact-home's cockpit shell chief among them) assume a dark
+ * canvas is already behind their semi-transparent dark-mode panels and
+ * just redefine text/border colors, not a background. Without this, that
+ * assumption was false: nothing anywhere set html/body's background, so
+ * in dark mode those panels' light text landed on the browser's default
+ * white canvas instead - unreadable, not just unstyled. This is the one
+ * place that needs to be right for every route at once.
+ */
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+  background: #f6f8fa;
+  color: #0d1117;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #141a1e;
+    color: #e8edf2;
+  }
+}

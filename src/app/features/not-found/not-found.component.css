@@ -3,6 +3,12 @@
 }
 
 .not-found-shell {
+  /* Explicitly light: the paragraph below has a hardcoded dark-gray
+     color with no dark-mode variant, so it needs a light backdrop to
+     stay legible regardless of the system color scheme. */
+  background: #f6f8fa;
+  color: #0d1117;
+  min-height: 100%;
   max-width: 480px;
   margin: 0 auto;
   padding: 5rem 1.5rem;

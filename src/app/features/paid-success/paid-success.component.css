@@ -19,7 +19,11 @@
     letter-spacing: 0.08em;
     text-transform: uppercase;
     margin-bottom: 0.75rem;
-    opacity: 0.75;
+    /* Explicit color, not just opacity: Bootstrap's .card class (also on
+       this element) sets its own fixed, non-theme-aware text color, which
+       otherwise wins the cascade over this component's dark-mode rule
+       below since nothing here overrides it in light mode either. */
+    color: #0095cc;
 }
 
 .network-success-card h1 {
@@ -63,6 +67,10 @@
 
     .network-success-error-card {
         border-color: rgba(255, 107, 107, 0.24);
+    }
+
+    .network-success-eyebrow {
+        color: #00bfff;
     }
 
     .network-success-card h1 {

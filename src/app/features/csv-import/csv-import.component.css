@@ -3,6 +3,12 @@
 }
 
 .csv-import-shell {
+  /* Explicitly light for the same reason as contact-edit-shell - this
+     page's cards and field-match rows are designed against a light
+     backdrop with no dark-mode variant of their own. */
+  background: #f6f8fa;
+  color: #0d1117;
+  min-height: 100%;
   max-width: 900px;
   margin: 0 auto;
   padding: 1.5rem;
