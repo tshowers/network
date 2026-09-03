@@ -77,6 +77,8 @@ h1 {
   margin: 0;
   font-size: clamp(2rem, 3.5vw, 3rem);
   line-height: 1.1;
+  font-weight: 900;
+  letter-spacing: -0.025em;
 }
 
 .fl-section__sub {
@@ -149,7 +151,7 @@ h1 {
   margin: 0 auto;
   padding: 80px 0 72px;
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 1.05fr);
   gap: 48px;
   align-items: center;
 }
@@ -186,76 +188,11 @@ h1 {
   justify-content: center;
 }
 
-.fl-mockup {
-  background: var(--fl-dark-soft);
-  border: 1px solid rgba(0, 191, 255, 0.14);
-  border-radius: var(--fl-radius);
-  padding: 24px;
-  box-shadow: 0 32px 72px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 191, 255, 0.06);
+.fl-hero__shot {
+  display: block;
   width: 100%;
-}
-
-.fl-mockup__label {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.38);
-  margin-bottom: 16px;
-}
-
-.fl-mockup__rows {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.fl-mockup__row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(0, 191, 255, 0.08);
-  border-radius: 10px;
-  padding: 10px 14px;
-}
-
-.fl-mockup__avatar {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--fl-blue-mid), var(--fl-blue));
-  flex-shrink: 0;
-}
-
-.fl-mockup__info {
-  flex: 1;
-}
-
-.fl-mockup__name {
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: #fff;
-}
-
-.fl-mockup__meta {
-  font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.4);
-  margin-top: 2px;
-}
-
-.fl-mockup__status {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex-shrink: 0;
-}
-
-.fl-mockup__status span {
-  font-size: 0.68rem;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.72);
-  white-space: nowrap;
+  height: auto;
+  filter: drop-shadow(0 32px 72px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 40px rgba(0, 191, 255, 0.10));
 }
 
 /* Pain */
@@ -398,9 +335,20 @@ h1 {
   color: var(--fl-blue);
   line-height: 1;
   margin-bottom: 10px;
+  white-space: nowrap;
 }
 
 .fl-stat__label {
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.35;
+  max-width: 22ch;
+  margin: 0 auto 6px;
+}
+
+.fl-stat__copy {
   font-size: 0.95rem;
   color: rgba(255, 255, 255, 0.6);
   line-height: 1.5;
@@ -483,6 +431,56 @@ h1 {
   .fl-link {
     color: var(--fl-blue);
   }
+}
+
+/* FAQ */
+.fl-faq {
+  background: var(--fl-white);
+}
+
+.fl-faq__list {
+  max-width: 820px;
+  border-top: 1px solid var(--fl-border);
+}
+
+.fl-faq__item {
+  border-bottom: 1px solid var(--fl-border);
+}
+
+.fl-faq__item summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 22px 42px 22px 0;
+  position: relative;
+  color: var(--fl-text);
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.fl-faq__item summary::-webkit-details-marker {
+  display: none;
+}
+
+.fl-faq__item summary::after {
+  content: '+';
+  position: absolute;
+  right: 4px;
+  top: 18px;
+  color: var(--fl-blue-mid);
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+
+.fl-faq__item[open] summary::after {
+  content: '−';
+}
+
+.fl-faq__item p {
+  max-width: 68ch;
+  margin: -4px 42px 22px 0;
+  color: var(--fl-subtext);
+  font-size: 1rem;
+  line-height: 1.7;
 }
 
 /* CTA */

@@ -40,6 +40,8 @@
 }
 
 .contact-hero-card {
+    container-type: inline-size;
+    container-name: contact-hero;
     padding: clamp(1rem, 2vw, 1.4rem);
 }
 
@@ -102,6 +104,21 @@ app-communication-frequency-line-chart {
     max-height: none;
 }
 
+.contact-hero-avatar-initials {
+    width: 100%;
+    height: 100%;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0095cc, #00bfff);
+    color: #fff;
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    user-select: none;
+}
+
 .contact-hero-copy {
     min-width: 0;
 }
@@ -112,8 +129,7 @@ app-communication-frequency-line-chart {
     line-height: 1.35;
     color: var(--muted-text);
     max-width: 100%;
-    overflow-wrap: anywhere;
-    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .contact-hero-company a,
@@ -128,13 +144,12 @@ app-communication-frequency-line-chart {
 
 .contact-hero-name {
     margin: 0;
-    font-size: clamp(1.6rem, 3vw, 2.35rem);
-    line-height: 1.02;
+    font-size: clamp(1.15rem, 6cqi, 2.35rem);
+    line-height: 1.08;
     letter-spacing: -0.03em;
     color: var(--page-text);
     max-width: 100%;
-    overflow-wrap: anywhere;
-    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .contact-hero-badges {
@@ -512,14 +527,13 @@ app-communication-frequency-line-chart {
     }
 }
 
-@media (max-width: 1100px) {
+@container contact-hero (max-width: 640px) {
     .contact-hero-main {
         grid-template-columns: 1fr;
     }
 
     .contact-hero-identity {
-        flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
     }
 
     .contact-hero-copy {
@@ -546,27 +560,7 @@ app-communication-frequency-line-chart {
     }
 }
 
-@media (max-width: 768px) {
-
-    .contact-hero-main,
-    .contact-note-head,
-    .contact-section-header,
-    .contact-alert-card {
-        grid-template-columns: 1fr;
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .contact-hero-identity {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.75rem;
-    }
-
-    .contact-hero-copy {
-        width: 100%;
-    }
-
+@container contact-hero (max-width: 420px) {
     .contact-hero-avatar-wrap {
         width: 64px;
         height: 64px;
@@ -577,16 +571,32 @@ app-communication-frequency-line-chart {
         border-radius: 12px;
     }
 
+    .contact-hero-avatar-initials {
+        border-radius: 12px;
+        font-size: 1.3rem;
+    }
+
     .contact-hero-company {
-        font-size: 0.92rem;
-        line-height: 1.35;
+        font-size: 0.85rem;
+        line-height: 1.3;
         max-width: 100%;
     }
 
     .contact-hero-name {
-        font-size: clamp(1.15rem, 8vw, 1.9rem);
-        line-height: 1.05;
+        font-size: clamp(1.05rem, 7cqi, 1.9rem);
+        line-height: 1.1;
         max-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .contact-note-head,
+    .contact-section-header,
+    .contact-alert-card {
+        grid-template-columns: 1fr;
+        flex-direction: column;
+        align-items: flex-start;
     }
 
     .contact-list-item,

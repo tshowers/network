@@ -12,6 +12,7 @@ import {
   query,
   setDoc,
   updateDoc,
+  writeBatch,
   getFirestore,
 } from 'firebase/firestore';
 import { Observable } from 'rxjs';
@@ -56,6 +57,38 @@ export class NetworkDataService {
     const docRef = await addDoc( ref, data );
     await updateDoc( doc( ref, docRef.id ), { id: docRef.id } );
     return docRef.id;
+  }
+
+  /**
+   * Bulk counterpart to addContact, for csv-import. Unlike TODD's original
+   * DataService.uploadData, this doesn't dedupe/merge against existing
+   * contacts by matching fields - every row becomes a new document. Writes
+   * are chunked to stay under Firestore's 500-operation batch limit.
+   */
+  async uploadContacts ( tenantId: string, contacts: Partial<Contact>[] ): Promise<{ successCount: number; failureCount: number; skippedCount: number }> {
+    const ref = this.contactsRef( tenantId );
+    const chunkSize = 450;
+    let successCount = 0;
+    let failureCount = 0;
+
+    for ( let i = 0; i < contacts.length; i += chunkSize ) {
+      const chunk = contacts.slice( i, i + chunkSize );
+      const batch = writeBatch( this.firestore );
+
+      chunk.forEach( ( contact ) => {
+        const docRef = doc( ref );
+        batch.set( docRef, { ...contact, id: docRef.id } );
+      } );
+
+      try {
+        await batch.commit();
+        successCount += chunk.length;
+      } catch {
+        failureCount += chunk.length;
+      }
+    }
+
+    return { successCount, failureCount, skippedCount: 0 };
   }
 
   /** Mirrors DataService.getContactFullByIdOnce(contactId, user). */

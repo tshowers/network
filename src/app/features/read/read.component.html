@@ -6,7 +6,7 @@
             <div class="contact-hero-identity">
                 <div class="contact-hero-avatar-wrap">
                     <img *ngIf="previewData && previewData.image" [src]="previewData.image" class="logo img-fluid business-card-image" alt="Company Image">
-                    <img *ngIf="!(previewData && previewData.image)" src="assets/nophoto.svg" alt="{{ contact.firstName }} {{ contact.lastName }}" class="rounded-circle business-card-image">
+                    <div *ngIf="!(previewData && previewData.image)" class="contact-hero-avatar-initials" aria-hidden="true">{{ contactInitials }}</div>
                 </div>
                 <div class="contact-hero-copy">
                     <div class="contact-hero-company" *ngIf="contact.company?.name">
@@ -30,10 +30,10 @@
                     <p class="contact-hero-location" *ngIf="contact.addresses && contact.addresses.length > 0">
                         <ng-container *ngIf="!isPublicProfile && contact.addresses[0].streetAddress as street; else publicCityState">
                             {{ street }}<br>
-                            {{ contact.addresses[0].city }} {{ contact.addresses[0].state }}
+                            {{ contact.addresses[0].city }} {{ contact.addresses[0].state }} {{ contact.addresses[0].zip }}
                         </ng-container>
                         <ng-template #publicCityState>
-                            {{ contact.addresses[0].city }} {{ contact.addresses[0].state }}
+                            {{ contact.addresses[0].city }} {{ contact.addresses[0].state }} {{ contact.addresses[0].zip }}
                         </ng-template>
                     </p>
                 </div>

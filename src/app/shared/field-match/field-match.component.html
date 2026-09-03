@@ -1,0 +1,83 @@
+<div class="field-mapping-container">
+  <div class="field-mapping-hero">
+    <div>
+      <div class="field-mapping-hero__eyebrow">Field Match</div>
+      <h2>Field Mapping</h2>
+      <p>Network matched what it could. Review the items that still need attention, then pick the source column directly from each row. <b>If using sample data, just click Next.</b></p>
+    </div>
+    <button type="button" class="btn btn-outline-secondary btn-sm" (click)="toggleExpectedFields()">Show/Hide Accepted Fields</button>
+  </div>
+
+  <div class="field-mapping-summary" *ngIf="expectedFields.length > 0">
+    <div class="field-mapping-summary__card">
+      <div class="field-mapping-summary__label">Matched automatically</div>
+      <div class="field-mapping-summary__value">{{ getMatchedFieldCount() }}</div>
+    </div>
+    <div class="field-mapping-summary__card field-mapping-summary__card--attention">
+      <div class="field-mapping-summary__label">Needs review</div>
+      <div class="field-mapping-summary__value">{{ getUnmappedExpectedFieldCount() }}</div>
+    </div>
+    <div class="field-mapping-summary__card" *ngIf="unmatchedHeaders.length > 0">
+      <div class="field-mapping-summary__label">Unrecognized file columns</div>
+      <div class="field-mapping-summary__value">{{ unmatchedHeaders.length }}</div>
+    </div>
+  </div>
+
+  <div class="field-mapping-callout" *ngIf="unmatchedHeaders.length > 0">
+    <h3>A few columns need your review</h3>
+    <p>Network could not confidently match these file columns. Click one, then click "Use" on the field it belongs to below.</p>
+    <div class="field-mapping-callout__chips">
+      <button type="button" class="field-header-chip" *ngFor="let header of unmatchedHeaders" (click)="setActiveHeader(header)" [class.is-active]="activeHeader === header">
+        {{ header }}
+      </button>
+    </div>
+  </div>
+
+  <div class="field-mapping-toolbar">
+    <label class="field-mapping-toggle">
+      <input type="checkbox" [(ngModel)]="showOnlyUnmapped">
+      <span>Show only fields that still need review</span>
+    </label>
+    <div class="field-mapping-toolbar__actions">
+      <button type="button" class="btn-todd" (click)="onCancel()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Cancel</button>
+      <button type="button" class="btn-todd" (click)="submitMapping()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
+    </div>
+  </div>
+
+  <div class="field-mapping-accepted" *ngIf="showExpectedFields">
+    <strong>Field names accepted</strong>
+    <div class="field-mapping-accepted__chips">
+      <span class="field-mapping-accepted__chip" *ngFor="let expected of expectedFields">{{ expected.name }}</span>
+    </div>
+  </div>
+
+  <div class="field-mapping-table">
+    <div class="field-mapping-table__header">
+      <div>Network field</div>
+      <div>Matched from your file</div>
+      <div>Pick a file column</div>
+    </div>
+    <div class="field-mapping-row" *ngFor="let field of expectedFields" [class.d-none]="showOnlyUnmapped && isFieldResolved(field)">
+      <div class="field-mapping-row__field">
+        <div class="field-mapping-row__title">{{ field.description }}</div>
+        <div class="field-mapping-row__name">{{ field.name }}</div>
+      </div>
+      <div class="field-mapping-row__status" [class.is-resolved]="isFieldResolved(field)" [class.is-pending]="!isFieldResolved(field)">
+        <span class="field-mapping-row__status-dot"></span>
+        <span>{{ userFieldMapping[field.name] || 'Needs selection' }}</span>
+      </div>
+      <div class="field-mapping-row__controls">
+        <select class="form-select form-select-sm" [(ngModel)]="userFieldMapping[field.name]" (ngModelChange)="onManualFieldSelected(field, $event)">
+          <option [ngValue]="''">Select a file column</option>
+          <option *ngFor="let header of getAvailableHeaders(field)" [ngValue]="header">{{ header }}</option>
+        </select>
+        <button type="button" class="field-mapping-row__quick-assign" *ngIf="activeHeader" (click)="assignActiveHeader(field)">Use "{{ activeHeader }}"</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="field-mapping-toolbar field-mapping-toolbar--bottom">
+    <button type="button" class="btn-todd" (click)="onCancel()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Cancel</button>
+    <button type="button" class="btn-todd" (click)="submitMapping()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
+  </div>
+</div>

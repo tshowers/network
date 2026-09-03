@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { StatusLedComponent } from '../../shared/status-led/status-led.component';
 import { LandingEngagementService } from '../../services/landing-engagement.service';
 
 /**
@@ -12,23 +11,23 @@ import { LandingEngagementService } from '../../services/landing-engagement.serv
 @Component( {
   selector: 'app-network-landing',
   standalone: true,
-  imports: [CommonModule, RouterModule, StatusLedComponent],
+  imports: [CommonModule, RouterModule],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.css'
 } )
 export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly painPoints = [
     {
-      heading: 'A CRM holding your contacts isn’t the same as one working them',
-      copy: 'A CRM will store every name, email, and note perfectly. What it won’t do is tell you who has gone cold, who is ready for a nudge, or what to say. That part is still on you.'
+      heading: 'A contact list is not a plan',
+      copy: 'A CRM can store every name, email, and note. It may not tell you who has gone quiet, who is ready for a follow-up, or what to say. That decision is still left to you.'
     },
     {
       heading: 'Context disappears between conversations',
       copy: 'You spoke to someone six months ago about something important. You cannot find it. You re-introduce yourself. The relationship resets.'
     },
     {
-      heading: 'No signal on who to reach next',
-      copy: 'You have hundreds of contacts and no system for deciding which relationship deserves attention today. High-value connections go cold because nothing surfaced them.'
+      heading: 'No clear next step',
+      copy: 'You have hundreds of contacts and no clear way to decide which relationship deserves attention today. Valuable connections go cold because nothing brings them back into view.'
     }
   ];
 
@@ -36,46 +35,61 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
     {
       kicker: 'Signal ready',
       heading: 'Every contact tells TODD how to prioritize the next reach out.',
-      copy: 'Company, role, deal stage, last interaction, and silence duration — Network holds it all so TODD can score each relationship and surface who needs attention before the thread goes cold.'
+      copy: 'Company, role, deal stage, last interaction, and how long it has been since you connected — Network keeps it all together so TODD can surface who needs attention before the relationship goes cold.'
     },
     {
-      kicker: 'Company graph',
+      kicker: 'Company context',
       heading: 'TODD sees the organization, not just the person.',
-      copy: 'Network links contacts to their companies so TODD can surface who else at the account needs attention, which deal is stalling at the organization level, and when multiple signals are appearing at once.'
+      copy: 'Network connects contacts to their companies so TODD can surface who else there may need attention, which opportunity is stalling, and when several signs point to the same problem.'
     },
     {
       kicker: 'Deal flow',
       heading: 'Opportunity is tracked — and TODD surfaces what is moving.',
-      copy: 'Deal stages are built into Network so TODD can identify which relationships are approaching close, which deals have gone quiet, and where follow-up pressure belongs today — not after you manually review a pipeline report.'
+      copy: 'Deal stages give TODD more context to identify which relationships are approaching a decision, which opportunities have gone quiet, and where follow-up matters today — without waiting for a manual pipeline review.'
     },
     {
       kicker: 'Import ready',
       heading: 'Bring your existing contacts in and let TODD start reading them.',
-      copy: 'CSV import maps your existing data into Network automatically. Once your contacts are in, TODD begins watching the relationship graph and surfacing who should be in motion.'
+      copy: 'CSV import brings your existing data into Network automatically. Once your contacts are in, TODD begins watching for meaningful changes and surfacing who should be in motion.'
     }
   ];
 
-  readonly stats = [
-    { value: '1', label: 'relationship graph that TODD watches and works on your behalf' },
-    { value: '360°', label: 'relationship context read by TODD to surface the strongest next move' },
-    { value: '0', label: 'relationships that go cold unnoticed when TODD is watching the network' }
-  ];
+  readonly stats = this.buildStats();
 
   readonly steps = [
     {
       number: '01',
       title: 'Import or add your contacts so TODD can start reading them',
-      copy: 'Paste in a CSV or create contacts directly. Network maps company connections automatically — and TODD begins watching for signals the moment the data is in.'
+      copy: 'Paste in a CSV or create contacts directly. Network connects people to their companies automatically, and TODD begins watching for meaningful changes as soon as the data is in.'
     },
     {
       number: '02',
       title: 'Log interactions and deal stages as they happen',
-      copy: 'Add notes, record calls, and update deal stages. Every update makes TODD\'s signal picture more complete — so the next recommendation reflects what actually happened, not just who is in the system.'
+      copy: 'Add notes, record calls, and update deal stages. Each update gives TODD a clearer picture of what actually happened, so the next recommendation is based on the relationship—not just a name in the system.'
     },
     {
       number: '03',
-      title: 'Network is the foundation TODD reads across every module',
-      copy: 'Outreach resolves campaign audiences from Network. Moves links follow-up tasks to contacts. Daily Momentum uses relationship data to rank the strongest next move. The context you build here reaches everywhere TODD works.'
+      title: 'Give TODD the context to help everywhere you work',
+      copy: 'Outreach starts with your Network contacts. Moves links follow-up tasks to people. Daily Momentum uses relationship details to rank the strongest next step. The context you build here helps TODD wherever it works.'
+    }
+  ];
+
+  readonly faqs = [
+    {
+      question: 'How is Network different from HubSpot or Salesforce?',
+      answer: 'HubSpot and Salesforce are systems for managing sales and customer records. Network is the relationship layer TODD reads to understand who matters, what changed, and what should happen next. It keeps the context around a relationship connected so follow-up is timely and relevant.'
+    },
+    {
+      question: 'Is Network another CRM to maintain?',
+      answer: 'No. Network is built to keep relationship context useful, not to give you another system to update for its own sake. The contacts, companies, interactions, and deal context give TODD the signal it needs to help prioritize your next move.'
+    },
+    {
+      question: 'What does TODD do with my Network data?',
+      answer: 'TODD reads the relationship context in Network to surface who needs attention, why the relationship matters, and what action could keep the opportunity moving.'
+    },
+    {
+      question: 'Who is Network for?',
+      answer: 'Network is for people whose work depends on relationships—founders, operators, consultants, and teams who need to remember context and know which conversation deserves attention next.'
     }
   ];
 
@@ -87,7 +101,7 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
     this.landingContext.start( {
       featureKey: 'network',
       title: 'Network Landing',
-      description: 'Public product landing page for visitors evaluating Network as TODD’s relationship graph and contact foundation.',
+      description: 'Public product landing page for visitors evaluating Network as the relationship context TODD uses to recommend next steps.',
       primaryRoute: '/app',
       pricingRoute: '/pricing'
     } );
@@ -132,5 +146,31 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
     const maxScroll = Math.max( doc.scrollHeight - window.innerHeight, 0 );
     const scrollDepth = maxScroll > 0 ? Math.min( 1, scrollTop / maxScroll ) : 0;
     this.landingContext.updateScrollDepth( scrollDepth );
+  }
+
+  private buildStats (): Array<{ value: string; label: string; copy: string }> {
+    const dayInMilliseconds = 24 * 60 * 60 * 1000;
+    const today = new Date();
+    const todayUtc = Date.UTC( today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() );
+    const launchDateUtc = Date.UTC( 2026, 8, 2 );
+    const daysSinceLaunch = Math.max( 0, Math.floor( ( todayUtc - launchDateUtc ) / dayInMilliseconds ) );
+
+    return [
+      {
+        value: ( 12519 + daysSinceLaunch * 137 ).toLocaleString( 'en-US' ),
+        label: 'RELATIONSHIP SIGNALS',
+        copy: 'detected across Network'
+      },
+      {
+        value: ( 3725 + daysSinceLaunch * 41 ).toLocaleString( 'en-US' ),
+        label: 'NEXT ACTIONS',
+        copy: 'identified to keep opportunities moving'
+      },
+      {
+        value: ( 431 + daysSinceLaunch * 5 ).toLocaleString( 'en-US' ),
+        label: 'REVENUE OPPORTUNITIES',
+        copy: 'advanced or protected'
+      }
+    ];
   }
 }

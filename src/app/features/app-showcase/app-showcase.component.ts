@@ -1,47 +1,27 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { StatusLedComponent, StatusLedTone } from '../../shared/status-led/status-led.component';
 
 @Component( {
   selector: 'app-network-app-showcase',
   standalone: true,
-  imports: [CommonModule, RouterModule, StatusLedComponent],
+  imports: [CommonModule, RouterModule],
   templateUrl: './app-showcase.component.html',
   styleUrl: './app-showcase.component.css'
 } )
 export class AppShowcaseComponent {
-  readonly highlights: {
-    screenLabel: string;
-    screenRows: { name: string; meta: string; tone: StatusLedTone }[];
-    heading: string;
-    copy: string;
-  }[] = [
+  readonly highlights = [
     {
-      screenLabel: 'Today',
-      screenRows: [
-        { name: 'Sarah Chen', meta: 'Meridian Group', tone: 'attention' },
-        { name: 'James Okafor', meta: 'Oakfield Labs', tone: 'attention' },
-        { name: 'Priya Nair', meta: 'Kestrel Systems', tone: 'info' }
-      ],
       heading: 'Open the app to your signal, not your inbox',
-      copy: 'TODD ranks who needs attention the moment you unlock your phone — no scrolling a contact list to figure out who to reach today.'
+      copy: 'TODD shows you who needs attention and why — so you know where to focus before an opportunity goes quiet.'
     },
     {
-      screenLabel: 'Quick Add',
-      screenRows: [
-        { name: 'New contact', meta: 'One tap to save', tone: 'positive' }
-      ],
-      heading: 'Capture a contact the moment you meet them',
-      copy: 'Walk out of a meeting and add someone in seconds, right from your pocket. It syncs into the same relationship graph TODD reads from everywhere else.'
+      heading: 'Capture the relationship while it’s happening',
+      copy: 'Meet someone. Add them in seconds. Network carries the new relationship into the same graph TODD is already watching.'
     },
     {
-      screenLabel: 'Sarah Chen',
-      screenRows: [
-        { name: 'VP Operations', meta: 'Meridian Group', tone: 'positive' }
-      ],
-      heading: 'Full context, wherever the conversation happens',
-      copy: 'Company, role, deal stage, and every past interaction — on your phone before a call, not just at your desk.'
+      heading: 'Walk into every conversation with context',
+      copy: 'Know the company, role, deal stage, history, and TODD insight before the call, meeting, or follow-up begins.'
     }
   ];
 

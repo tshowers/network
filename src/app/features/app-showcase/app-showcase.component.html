@@ -2,30 +2,15 @@
   <section class="fl-hero">
     <div class="fl-hero__inner">
       <div class="fl-hero__copy">
-        <div class="fl-eyebrow"><a href="https://todd.taliferro.tech">Home</a> · Network · iOS</div>
+        <div class="fl-eyebrow"><a href="https://todd.taliferro.tech">Home</a> · <a routerLink="/">Network</a> · iOS</div>
         <h1 class="fl-hero__headline">TODD in your pocket</h1>
-        <p class="fl-hero__lead">The same relationship graph, wherever the relationship actually happens. Network for iOS puts your contacts, your signal, and a quick way to capture someone new right where you're standing — not back at your desk.</p>
+        <p class="fl-hero__lead">Your relationships don’t wait until you’re back at your desk.<br>Network for iOS puts your contacts, TODD signals, and relationship context in your pocket — so you can capture what happened and know what should happen next.</p>
         <div class="fl-hero__actions">
           <span class="fl-badge">Coming soon on the App Store</span>
         </div>
       </div>
       <div class="fl-hero__visual">
-        <div class="fl-phone">
-          <div class="fl-phone__notch"></div>
-          <div class="fl-phone__screen">
-            <div class="fl-phone__label">{{ highlights[0].screenLabel }}</div>
-            <div class="fl-phone__rows">
-              <div class="fl-phone__row" *ngFor="let row of highlights[0].screenRows">
-                <div class="fl-phone__avatar"></div>
-                <div class="fl-phone__info">
-                  <div class="fl-phone__name">{{ row.name }}</div>
-                  <div class="fl-phone__meta">{{ row.meta }}</div>
-                </div>
-                <app-status-led [tone]="row.tone"></app-status-led>
-              </div>
-            </div>
-          </div>
-        </div>
+        <img class="fl-ios__shot" src="assets/todd-network.png" alt="Network relationship graph on iOS">
       </div>
     </div>
   </section>
@@ -34,29 +19,12 @@
     <div class="fl-section__inner">
       <div class="fl-section__heading">
         <div class="fl-eyebrow">Built for the moment relationships happen</div>
-        <h2>Everything Network does on the web, ready wherever you are</h2>
+        <h2>What happens when the graph travels with you?</h2>
         <p class="fl-section__sub">Network for iOS isn't a separate app to keep in sync — it reads and writes the exact same contact graph TODD watches everywhere else.</p>
       </div>
+      <img class="fl-ios-composite" src="assets/network-ios1.png" alt="The complete Network for iOS relationship experience">
       <div class="fl-features">
-        <article class="fl-feature" *ngFor="let h of highlights; let i = index" [class.fl-feature--alt]="i % 2 !== 0">
-          <div class="fl-feature__visual">
-            <div class="fl-phone fl-phone--sm">
-              <div class="fl-phone__notch"></div>
-              <div class="fl-phone__screen">
-                <div class="fl-phone__label">{{ h.screenLabel }}</div>
-                <div class="fl-phone__rows">
-                  <div class="fl-phone__row" *ngFor="let row of h.screenRows">
-                    <div class="fl-phone__avatar"></div>
-                    <div class="fl-phone__info">
-                      <div class="fl-phone__name">{{ row.name }}</div>
-                      <div class="fl-phone__meta">{{ row.meta }}</div>
-                    </div>
-                    <app-status-led [tone]="row.tone"></app-status-led>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+        <article class="fl-feature" *ngFor="let h of highlights">
           <div class="fl-feature__copy">
             <h3>{{ h.heading }}</h3>
             <p>{{ h.copy }}</p>
@@ -79,9 +47,9 @@
     <div class="fl-section__inner">
       <div class="fl-cta__shell">
         <div class="fl-cta__copy">
-          <div class="fl-eyebrow fl-eyebrow--light">Not ready yet</div>
-          <h2>Network for iOS is on the way</h2>
-          <p>Everything you add to Network today lands in the same relationship graph TODD reads from — so nothing you build now gets left behind once the iOS app ships.</p>
+          <div class="fl-eyebrow fl-eyebrow--light">Coming soon</div>
+          <h2>Network for iOS is coming soon.</h2>
+          <p>Your contacts, relationship history, and TODD's recommendations will be available on your iPhone — so you can prepare for conversations, capture new contacts, and know who to follow up with wherever you are.</p>
         </div>
         <div class="fl-cta__actions">
           <a class="fl-btn fl-btn--primary fl-btn--lg" routerLink="/pricing">See Pricing</a>

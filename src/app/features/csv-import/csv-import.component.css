@@ -1,0 +1,244 @@
+:host {
+  display: block;
+}
+
+.csv-import-shell {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* Stepper */
+
+.stepper {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.step .circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  background: rgba(0, 149, 204, 0.1);
+  color: #0095cc;
+  border: 2px solid rgba(0, 149, 204, 0.25);
+}
+
+.step.is-current .circle {
+  background: #0095cc;
+  color: #fff;
+  border-color: #0095cc;
+}
+
+.step.is-done .circle {
+  background: rgba(0, 149, 204, 0.55);
+  color: #fff;
+  border-color: transparent;
+}
+
+.step .label {
+  font-size: 0.72rem;
+  color: rgba(15, 15, 15, 0.55);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.step.is-current .label {
+  color: #0095cc;
+  font-weight: 700;
+}
+
+/* Step cards */
+
+.import-step-card {
+  background: #fff;
+  border: 1px solid rgba(15, 15, 15, 0.08);
+  border-radius: 0.9rem;
+  padding: 1.5rem;
+  margin-top: 1.25rem;
+}
+
+.import-step-card h5 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: rgba(15, 15, 15, 0.5);
+  margin-bottom: 0.75rem;
+}
+
+.import-step-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.import-step-actions--center {
+  justify-content: center;
+}
+
+/* btn-todd stand-in - see contact-edit.component.css notes on why this
+   isn't TODD's real design-system button. */
+.btn-todd {
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 149, 204, 0.3);
+  background: #fff;
+  color: #0095cc;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.btn-todd:hover:not(:disabled) {
+  background: rgba(0, 149, 204, 0.08);
+}
+
+.btn-todd:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-todd--primary {
+  background: #0095cc;
+  color: #fff;
+  border-color: #0095cc;
+}
+
+.btn-todd--primary:hover:not(:disabled) {
+  background: #0080b3;
+}
+
+/* Upload */
+
+.upload-dropzone {
+  border: 2px dashed rgba(0, 149, 204, 0.3);
+  border-radius: 1rem;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  background: rgba(0, 149, 204, 0.03);
+}
+
+.upload-dropzone.is-busy {
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+.upload-dropzone__icon {
+  font-size: 2rem;
+  color: #0095cc;
+  margin-bottom: 0.75rem;
+}
+
+.upload-dropzone__title {
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+
+.upload-dropzone__hint {
+  font-size: 0.85rem;
+  color: rgba(15, 15, 15, 0.55);
+  margin-bottom: 1.1rem;
+}
+
+.upload-dropzone__browse {
+  cursor: pointer;
+  display: inline-flex;
+  margin-bottom: 0.6rem;
+}
+
+/* Preview table */
+
+.preview-table-wrap {
+  overflow-x: auto;
+  border: 1px solid rgba(15, 15, 15, 0.08);
+  border-radius: 0.6rem;
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.preview-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.preview-table th,
+.preview-table td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid rgba(15, 15, 15, 0.06);
+  text-align: left;
+}
+
+.preview-table th {
+  background: rgba(15, 15, 15, 0.03);
+  position: sticky;
+  top: 0;
+  font-weight: 700;
+}
+
+/* Confirm */
+
+.confirm-count {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+/* Result */
+
+.import-step-card--result {
+  text-align: center;
+  padding: 3rem 1.5rem;
+}
+
+.result-processing i {
+  font-size: 2rem;
+  color: #0095cc;
+  margin-bottom: 1rem;
+}
+
+.result-summary__icon {
+  font-size: 2.5rem;
+  color: #16a34a;
+  margin-bottom: 0.75rem;
+}
+
+.result-summary__icon--error {
+  color: #dc2626;
+}
+
+.result-summary h5 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-transform: none;
+  color: rgba(15, 15, 15, 0.85);
+  margin-bottom: 0.4rem;
+}
+
+.result-summary p {
+  color: rgba(15, 15, 15, 0.6);
+  margin-bottom: 0;
+}
+
+@media (max-width: 640px) {
+  .step .label {
+    display: none;
+  }
+}

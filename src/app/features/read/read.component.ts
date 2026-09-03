@@ -98,6 +98,18 @@ export class ReadComponent implements OnInit, OnChanges {
     return textFields.some( value => String( value || '' ).trim().length > 0 );
   }
 
+  get contactInitials (): string {
+    const first = ( this.contact?.firstName || '' ).trim();
+    const last = ( this.contact?.lastName || '' ).trim();
+    const initials = `${first.charAt( 0 )}${last.charAt( 0 )}`.toUpperCase();
+    if ( initials ) {
+      return initials;
+    }
+
+    const company = ( this.contact?.company?.name || '' ).trim();
+    return company ? company.charAt( 0 ).toUpperCase() : '?';
+  }
+
   get visibleImages () {
     const images = Array.isArray( this.contact?.images ) ? this.contact.images : [];
     return images.filter( img => this.isDisplayableImage( img ) );

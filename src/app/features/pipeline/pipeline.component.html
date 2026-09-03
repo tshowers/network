@@ -1,0 +1,54 @@
+<app-preloader [isLoading]="isLoading"></app-preloader>
+<app-back-to-top></app-back-to-top>
+
+<div class="pipeline-shell">
+  <div class="pipeline-header">
+    <div>
+      <h1 class="mb-1">Pipeline</h1>
+      <p class="text-muted mb-0" *ngIf="isSignedIn">{{ pipelineContactCount }} contact{{ pipelineContactCount === 1 ? '' : 's' }} in the pipeline</p>
+    </div>
+    <a class="btn btn-dark" routerLink="/contact-edit" *ngIf="isSignedIn">
+      <i class="fa-solid fa-plus"></i>
+      Add Contact
+    </a>
+  </div>
+
+  <app-cockpit-browse-mode-banner
+    *ngIf="isSignedIn === false"
+    surfaceLabel="your Pipeline"
+    customTitle="Sign in to view your Pipeline"
+    customCopy="Once you sign in, TODD will group your contacts here by stage - lead, qualification, engagement, and on through closed won."
+  ></app-cockpit-browse-mode-banner>
+
+  <ng-container *ngIf="isSignedIn">
+    <div class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+    <div class="pipeline-empty" *ngIf="!isLoading && pipelineContactCount === 0 && !errorMessage">
+      <p class="text-muted">No contacts have a pipeline status yet. Set a contact's status from its edit page to see it here.</p>
+    </div>
+
+    <div class="pipeline-board" *ngIf="pipelineContactCount > 0">
+      <div class="pipeline-column" *ngFor="let stage of stages">
+        <div class="pipeline-column__header">
+          <div class="pipeline-column__title">{{ stage.name }}</div>
+          <div class="pipeline-column__count">{{ stage.contacts.length }}</div>
+        </div>
+        <div class="pipeline-column__cards">
+          <button
+            type="button"
+            class="pipeline-card"
+            *ngFor="let contact of stage.contacts"
+            (click)="openContact(contact)"
+          >
+            <div class="pipeline-card__avatar">{{ initials(contact) }}</div>
+            <div class="pipeline-card__body">
+              <div class="pipeline-card__name">{{ displayName(contact) }}</div>
+              <div class="pipeline-card__meta" *ngIf="contact.company?.name">{{ contact.company?.name }}</div>
+            </div>
+          </button>
+          <div class="pipeline-column__empty" *ngIf="stage.contacts.length === 0">No contacts</div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

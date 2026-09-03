@@ -1,0 +1,25 @@
+<div class="finish-sign-in-shell">
+  <div class="finish-sign-in-card">
+    <div *ngIf="status === 'working'" class="finish-sign-in-state">
+      <i class="fa-solid fa-spinner fa-spin finish-sign-in-icon"></i>
+      <p class="mb-0">Finishing sign-in...</p>
+    </div>
+
+    <div *ngIf="status === 'needs-email'" class="finish-sign-in-state">
+      <h1 class="mb-1">Confirm your email</h1>
+      <p class="text-muted mb-3">This link opened in a different browser than the one you requested it from. Enter your email to finish signing in.</p>
+      <div class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</div>
+      <form (ngSubmit)="completeSignIn()">
+        <input type="email" class="form-control mb-3" name="emailAddress" [(ngModel)]="emailAddress" placeholder="you@company.com" required />
+        <button type="submit" class="btn btn-dark w-100">Finish sign-in</button>
+      </form>
+    </div>
+
+    <div *ngIf="status === 'error'" class="finish-sign-in-state">
+      <i class="fa-solid fa-circle-exclamation finish-sign-in-icon finish-sign-in-icon--error"></i>
+      <h1 class="mb-1">Sign-in didn't finish</h1>
+      <p class="text-muted mb-3">{{ errorMessage }}</p>
+      <button type="button" class="btn btn-dark w-100" (click)="goToSignIn()">Back to sign in</button>
+    </div>
+  </div>
+</div>

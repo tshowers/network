@@ -1,0 +1,36 @@
+:host {
+  display: block;
+}
+
+.finish-sign-in-shell {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.finish-sign-in-card {
+  width: 100%;
+  max-width: 380px;
+  background: #fff;
+  border: 1px solid rgba(15, 15, 15, 0.08);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.06);
+  text-align: center;
+}
+
+.finish-sign-in-state form {
+  text-align: left;
+}
+
+.finish-sign-in-icon {
+  font-size: 2.25rem;
+  color: #0095cc;
+  margin-bottom: 0.75rem;
+}
+
+.finish-sign-in-icon--error {
+  color: #dc2626;
+}

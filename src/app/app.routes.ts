@@ -31,9 +31,24 @@ export const routes: Routes = [
       import( './features/sign-in/sign-in.component' ).then( ( m ) => m.SignInComponent ),
   },
   {
+    path: 'finish-sign-in',
+    loadComponent: () =>
+      import( './features/finish-sign-in/finish-sign-in.component' ).then( ( m ) => m.FinishSignInComponent ),
+  },
+  {
     path: 'contact-edit',
     loadComponent: () =>
       import( './features/contact-edit/contact-edit.component' ).then( ( m ) => m.ContactEditComponent ),
+  },
+  {
+    path: 'contact-import',
+    loadComponent: () =>
+      import( './features/csv-import/csv-import.component' ).then( ( m ) => m.CsvImportComponent ),
+  },
+  {
+    path: 'contact-deal-flow',
+    loadComponent: () =>
+      import( './features/pipeline/pipeline.component' ).then( ( m ) => m.PipelineComponent ),
   },
   {
     path: 'contact-list',
@@ -49,5 +64,18 @@ export const routes: Routes = [
     path: 'success',
     loadComponent: () =>
       import( './features/paid-success/paid-success.component' ).then( ( m ) => m.PaidSuccessComponent ),
+  },
+  {
+    path: 'not-found',
+    loadComponent: () =>
+      import( './features/not-found/not-found.component' ).then( ( m ) => m.NotFoundComponent ),
+  },
+  {
+    // Catches any unmatched URL (typos, stale links, deep links to routes
+    // that never existed here) - without this, the router just silently
+    // fails to navigate instead of showing anything.
+    path: '**',
+    loadComponent: () =>
+      import( './features/not-found/not-found.component' ).then( ( m ) => m.NotFoundComponent ),
   },
 ];

@@ -1,11 +1,17 @@
 import { Injectable } from '@angular/core';
 import {
+  ActionCodeSettings,
   Auth,
   getAuth,
+  getRedirectResult,
   GoogleAuthProvider,
+  isSignInWithEmailLink,
+  OAuthProvider,
   onAuthStateChanged,
-  signInWithEmailAndPassword,
+  sendSignInLinkToEmail,
+  signInWithEmailLink,
   signInWithPopup,
+  signInWithRedirect,
   signOut,
   User,
 } from 'firebase/auth';
@@ -27,6 +33,17 @@ import { Observable, shareReplay, switchMap, of } from 'rxjs';
  * app is deliberate - three independent reimplementations of the same rule
  * is fine; three different *rules* would silently fragment which tenant a
  * user lands in depending which client they signed in from.
+ *
+ * Sign-in providers match TODD's real web login.component.ts exactly -
+ * Google, Apple (same `apple.com` provider id as the native iOS apps, so
+ * accounts unify across platforms), and passwordless email link - not the
+ * Google+password pairing this had before. Popup-vs-redirect and the
+ * email-link send/complete mechanics are ported from AuthService's
+ * signInWithGoogle/signInWithApple/sendLoginLink/completeSignInWithEmailLink,
+ * trimmed of the multi-tenant invite branching those carry (Network has no
+ * invite flow) but otherwise unchanged - this is the one piece of Network
+ * that should NOT drift from TODD's behavior, since the whole point is a
+ * user recognizing the same three buttons everywhere.
  */
 @Injectable( { providedIn: 'root' } )
 export class NetworkAuthService {
@@ -81,14 +98,82 @@ export class NetworkAuthService {
     return this.auth.currentUser?.uid || '';
   }
 
-  async signInWithGoogle (): Promise<User> {
+  /**
+   * Mobile browsers (particularly iOS Safari) frequently block or kill
+   * signInWithPopup's window.open regardless of gesture timing, so provider
+   * sign-in uses a full-page redirect there instead - same rule as TODD's
+   * AuthService.isMobileDevice().
+   */
+  isMobileDevice (): boolean {
+    return /Android|iPhone|iPad|iPod/i.test( navigator.userAgent );
+  }
+
+  /**
+   * On mobile this starts a full-page redirect and returns null; the
+   * redirect result is picked up by checkRedirectResult() after the page
+   * reloads back from the provider.
+   */
+  async signInWithGoogle (): Promise<User | null> {
     const provider = new GoogleAuthProvider();
+    if ( this.isMobileDevice() ) {
+      await signInWithRedirect( this.auth, provider );
+      return null;
+    }
     const result = await signInWithPopup( this.auth, provider );
     return result.user;
   }
 
-  async signInWithEmail ( email: string, password: string ): Promise<User> {
-    const result = await signInWithEmailAndPassword( this.auth, email, password );
+  /**
+   * Uses the same `apple.com` provider id the native iOS apps authenticate
+   * through, so a person who already has an account from one platform
+   * resolves to the same Firebase user on the other. Same popup/mobile-
+   * redirect split as signInWithGoogle.
+   */
+  async signInWithApple (): Promise<User | null> {
+    const provider = new OAuthProvider( 'apple.com' );
+    provider.addScope( 'email' );
+    provider.addScope( 'name' );
+
+    if ( this.isMobileDevice() ) {
+      await signInWithRedirect( this.auth, provider );
+      return null;
+    }
+    const result = await signInWithPopup( this.auth, provider );
+    return result.user;
+  }
+
+  /** Picks up the result of a mobile signInWithRedirect() call after the page reloads. */
+  async checkRedirectResult (): Promise<User | null> {
+    const result = await getRedirectResult( this.auth );
+    return result?.user ?? null;
+  }
+
+  private readonly emailForSignInStorageKey = 'network_emailForSignIn';
+
+  /** Sends a passwordless sign-in link, completed by FinishSignInComponent at /finish-sign-in. */
+  async sendSignInLink ( email: string, returnUrl?: string ): Promise<void> {
+    const actionCodeSettings: ActionCodeSettings = {
+      url: `${window.location.origin}/finish-sign-in${returnUrl ? `?returnUrl=${encodeURIComponent( returnUrl )}` : ''}`,
+      handleCodeInApp: true,
+    };
+    await sendSignInLinkToEmail( this.auth, email, actionCodeSettings );
+    localStorage.setItem( this.emailForSignInStorageKey, email );
+  }
+
+  getStoredEmailForSignIn (): string {
+    return localStorage.getItem( this.emailForSignInStorageKey ) || '';
+  }
+
+  clearStoredEmailForSignIn (): void {
+    localStorage.removeItem( this.emailForSignInStorageKey );
+  }
+
+  isSignInLinkUrl ( url: string ): boolean {
+    return isSignInWithEmailLink( this.auth, url );
+  }
+
+  async completeSignInWithEmailLink ( email: string, url: string ): Promise<User> {
+    const result = await signInWithEmailLink( this.auth, email, url );
     return result.user;
   }
 

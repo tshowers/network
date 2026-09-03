@@ -5,42 +5,14 @@
         <div class="fl-eyebrow"><a href="https://todd.taliferro.tech">Home</a> · Network · TODD</div>
         <h1 class="fl-hero__headline">Every relationship sends a signal</h1>
         <p>TODD tells you what to do with it.</p>
-        <p class="fl-hero__lead"> Network holds every contact, company, deal, and interaction — and TODD reads that graph to surface who needs attention, which relationships are gaining momentum, and what opportunity is at risk before it goes cold. </p>
+        <p class="fl-hero__lead">Network keeps your contacts, companies, deals, and conversations connected. TODD uses that context to identify which relationships need attention, which opportunities are gaining momentum, and where potential revenue may be slipping away.</p>
         <div class="fl-hero__actions">
           <a class="fl-btn fl-btn--primary" routerLink="/app" (click)="onPrimaryCtaClick()">Open Network</a>
-          <a class="fl-btn fl-btn--ghost" routerLink="/pricing" (click)="onPricingCtaClick()">See Pricing</a>
+          <a class="fl-btn fl-btn--ghost" routerLink="/ios">See Network for iOS</a>
         </div>
       </div>
       <div class="fl-hero__visual">
-        <div class="fl-mockup">
-          <div class="fl-mockup__label">Contact graph</div>
-          <div class="fl-mockup__rows">
-            <div class="fl-mockup__row">
-              <div class="fl-mockup__avatar" style="background:#0095cc;"></div>
-              <div class="fl-mockup__info">
-                <div class="fl-mockup__name">Sarah Chen</div>
-                <div class="fl-mockup__meta">VP Operations · Meridian Group</div>
-              </div>
-              <div class="fl-mockup__status"><span>Active deal</span><app-status-led tone="positive"></app-status-led></div>
-            </div>
-            <div class="fl-mockup__row">
-              <div class="fl-mockup__avatar" style="background:#0095cc;"></div>
-              <div class="fl-mockup__info">
-                <div class="fl-mockup__name">James Okafor</div>
-                <div class="fl-mockup__meta">Founder · Oakfield Labs</div>
-              </div>
-              <div class="fl-mockup__status"><span>Follow up</span><app-status-led tone="attention"></app-status-led></div>
-            </div>
-            <div class="fl-mockup__row">
-              <div class="fl-mockup__avatar" style="background:#0095cc;"></div>
-              <div class="fl-mockup__info">
-                <div class="fl-mockup__name">Priya Nair</div>
-                <div class="fl-mockup__meta">CTO · Kestrel Systems</div>
-              </div>
-              <div class="fl-mockup__status"><span>New contact</span><app-status-led tone="info"></app-status-led></div>
-            </div>
-          </div>
-        </div>
+        <img class="fl-hero__shot" src="assets/todd-network-analysis-transparnt.png" alt="TODD Network Analysis">
       </div>
     </div>
   </section>
@@ -48,7 +20,7 @@
     <div class="fl-section__inner">
       <div class="fl-section__heading">
         <div class="fl-eyebrow fl-eyebrow--light">The problem</div>
-        <h2>The problem isn't that your contacts aren't stored somewhere. It's that nothing acts on them.</h2>
+        <h2>Your CRM has the names. Which relationships can become revenue?</h2>
       </div>
       <div class="fl-pain__grid">
         <article class="fl-pain__card" *ngFor="let p of painPoints">
@@ -63,8 +35,8 @@
     <div class="fl-section__inner">
       <div class="fl-section__heading">
         <div class="fl-eyebrow">What Network gives you</div>
-        <h2>Network is where TODD learns who your contacts are so it can tell you what to do next</h2>
-        <p class="fl-section__sub">Network is not a CRM you have to maintain — it is a contact graph that stays useful because every other TODD module writes back to it.</p>
+        <h2>What if every contact came with the next move toward revenue?</h2>
+        <p class="fl-section__sub">Network is not another CRM to maintain. It keeps the people, companies, conversations, and opportunities around each relationship connected, so every TODD tool has the context it needs to help you decide what to do next.</p>
       </div>
       <div class="fl-outcomes__grid">
         <article class="fl-outcome" *ngFor="let o of outcomes; let i = index" [class.fl-outcome--alt]="i % 2 !== 0">
@@ -80,6 +52,7 @@
       <div class="fl-stat" *ngFor="let s of stats">
         <div class="fl-stat__value">{{ s.value }}</div>
         <div class="fl-stat__label">{{ s.label }}</div>
+        <div class="fl-stat__copy">{{ s.copy }}</div>
       </div>
     </div>
   </section>
@@ -87,7 +60,7 @@
     <div class="fl-section__inner">
       <div class="fl-section__heading">
         <div class="fl-eyebrow">How Network works</div>
-        <h2>From first contact to active relationship in three steps</h2>
+        <h2>A contact is not a relationship. A relationship is not revenue until something moves.</h2>
       </div>
       <div class="fl-steps">
         <div class="fl-step" *ngFor="let step of steps; let last = last">
@@ -107,10 +80,24 @@
     <div class="fl-section__inner">
       <div class="fl-section__heading">
         <div class="fl-eyebrow fl-eyebrow--light">What usually comes next</div>
-        <h2>Once your contacts are in, staying in touch becomes the next problem</h2>
+        <h2>Getting introduced is easy. Staying relevant is the work.</h2>
         <p class="fl-section__sub">Adding people to Network is easy. Remembering to follow up with all of them, on time, every time — that is what Outreach is for.</p>
       </div>
       <a class="fl-link" href="https://todd.taliferro.tech/outreach/app" data-track-cta="story-next-outreach">See how Outreach keeps the thread moving →</a>
+    </div>
+  </section>
+  <section class="fl-faq">
+    <div class="fl-section__inner">
+      <div class="fl-section__heading">
+        <div class="fl-eyebrow">Questions worth asking</div>
+        <h2>Not another system. A better next move.</h2>
+      </div>
+      <div class="fl-faq__list">
+        <details class="fl-faq__item" *ngFor="let faq of faqs">
+          <summary>{{ faq.question }}</summary>
+          <p>{{ faq.answer }}</p>
+        </details>
+      </div>
     </div>
   </section>
   <section class="fl-cta">
@@ -118,8 +105,8 @@
       <div class="fl-cta__shell">
         <div class="fl-cta__copy">
           <div class="fl-eyebrow fl-eyebrow--light">Let TODD start watching</div>
-          <h2>Your next opportunity is already in your contact graph. TODD just needs to see it.</h2>
-          <p>Import your contacts, log your interactions, and let TODD begin watching for who needs attention — before the relationship goes cold and the opportunity disappears.</p>
+          <h2>The next opportunity may already be in your contacts.</h2>
+          <p>Import your contacts, log your interactions, and let TODD begin watching for who needs attention — before a missed follow-up turns into lost potential revenue.</p>
         </div>
         <div class="fl-cta__actions">
           <a class="fl-btn fl-btn--primary fl-btn--lg" routerLink="/app" (click)="onPrimaryCtaClick()">Open Network</a>
