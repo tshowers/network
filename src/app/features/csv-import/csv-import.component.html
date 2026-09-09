@@ -2,6 +2,8 @@
 <app-back-to-top></app-back-to-top>
 
 <div class="csv-import-shell" *ngIf="!isLoading">
+  <app-primary-nav></app-primary-nav>
+
   <div class="wizard-header">
     <h1 class="mb-1">Import Contacts</h1>
     <p class="text-muted mb-3">Upload a CSV, map its columns, and bring your contacts into Network.</p>
@@ -84,10 +86,7 @@
 
   <!-- Step 5: Result -->
   <div class="import-step-card import-step-card--result" *ngIf="currentStepKey === 'result'">
-    <div *ngIf="processing" class="result-processing">
-      <i class="fa-solid fa-spinner fa-spin"></i>
-      <p>{{ message }}</p>
-    </div>
+    <app-preloader [isLoading]="processing" [message]="message"></app-preloader>
     <div *ngIf="!processing && importCompleted" class="result-summary">
       <i class="fa-solid fa-circle-check result-summary__icon"></i>
       <h5>Import complete</h5>

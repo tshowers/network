@@ -1,6 +1,33 @@
 :host {
   display: block;
   max-width: 100%;
+  /* Self-contained theme, not borrowed from an ancestor: this component
+     gets reused on plain pages (contact-edit, pipeline, list, ...) that
+     don't define TODD's cockpit --todd-* tokens, which in fact are never
+     defined anywhere in this app - see the git history note on this file
+     for how that went unnoticed (an undefined var() on an inherited
+     property like `color` silently falls back to inherit, so this looked
+     fine by accident inside contact-home's cockpit-shell but rendered no
+     background/border at all). */
+  --todd-surface-1: rgba(15, 23, 42, 0.05);
+  --todd-surface-2: #f1f5f9;
+  --todd-border: rgba(15, 23, 42, 0.10);
+  --todd-text: #0d1117;
+  --todd-subtext: #68727d;
+  --tl-blue-deep: #006a99;
+  --tl-blue-glow: rgba(0, 149, 204, 0.35);
+}
+
+@media (prefers-color-scheme: dark) {
+  :host {
+    --todd-surface-1: rgba(255, 255, 255, 0.06);
+    --todd-surface-2: rgba(255, 255, 255, 0.05);
+    --todd-border: rgba(151, 198, 220, 0.16);
+    --todd-text: #edf6fb;
+    --todd-subtext: #9aafbc;
+    --tl-blue-deep: #0095cc;
+    --tl-blue-glow: rgba(0, 191, 255, 0.30);
+  }
 }
 
 .tab-bar {

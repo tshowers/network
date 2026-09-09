@@ -1,20 +1,42 @@
 :host {
   display: block;
+  --edit-bg: #f6f8fa;
+  --edit-surface: #ffffff;
+  --edit-surface-soft: #f8fafc;
+  --edit-text: #0d1117;
+  --edit-muted: #68727d;
+  --edit-border: rgba(15, 23, 42, 0.10);
+  --edit-accent: #0095cc;
+}
+
+@media (prefers-color-scheme: dark) {
+  :host {
+    --edit-bg: #111820;
+    --edit-surface: #19232c;
+    --edit-surface-soft: #202d37;
+    --edit-text: #edf6fb;
+    --edit-muted: #9aafbc;
+    --edit-border: rgba(151, 198, 220, 0.16);
+    --edit-accent: #00bfff;
+  }
 }
 
 .contact-edit-shell {
-  /* This page's cards/text (.wizard-step-card, .form-control, etc.) are
-     designed against a light backdrop and don't carry their own dark-mode
-     variants - painting the shell explicitly light keeps it legible
-     regardless of the system color scheme, rather than leaving it
-     transparent and inheriting the global (theme-aware) body background,
-     which would leave its dark-gray text sitting on a dark page. */
-  background: #f6f8fa;
-  color: #0d1117;
+  background: transparent;
+  color: var(--edit-text);
   min-height: 100%;
   max-width: 1100px;
   margin: 0 auto;
   padding: 1.5rem;
+}
+
+.wizard-header h1 {
+  color: var(--edit-text);
+  letter-spacing: -0.03em;
+}
+
+.wizard-header .text-muted {
+  color: var(--edit-muted) !important;
 }
 
 /* Stepper */
@@ -30,7 +52,7 @@
 .btn-step-nav {
   background: none;
   border: none;
-  color: rgba(15, 15, 15, 0.5);
+  color: var(--edit-muted);
   font-size: 1.1rem;
   flex: 0 0 auto;
 }
@@ -53,40 +75,52 @@
   justify-content: center;
   font-weight: 700;
   font-size: 0.85rem;
-  background: rgba(0, 149, 204, 0.1);
-  color: #0095cc;
-  border: 2px solid rgba(0, 149, 204, 0.25);
+  background: color-mix(in srgb, var(--edit-accent) 10%, transparent);
+  color: var(--edit-accent);
+  border: 2px solid color-mix(in srgb, var(--edit-accent) 25%, transparent);
 }
 
 .step.active:first-child .circle {
-  background: #0095cc;
-  color: #fff;
+  background: var(--edit-accent);
+  color: #06131a;
 }
 
 .step .label {
   font-size: 0.72rem;
-  color: rgba(15, 15, 15, 0.55);
+  color: var(--edit-muted);
   text-align: center;
   white-space: nowrap;
 }
 
 /* Tabs / content */
 
+.nav-tabs {
+  border-bottom-color: var(--edit-border);
+}
+
 .nav-tabs .nav-link {
   border: none;
   border-bottom: 2px solid transparent;
-  color: rgba(15, 15, 15, 0.55);
+  color: var(--edit-muted);
   font-weight: 600;
 }
 
 .nav-tabs .nav-link.active {
-  color: #0095cc;
-  border-bottom-color: #0095cc;
+  color: var(--edit-accent);
+  border-bottom-color: var(--edit-accent);
   background: none;
 }
 
 .wizard-tab-content {
   padding-top: 1.25rem;
+}
+
+.wizard-tab-content pre {
+  background: var(--edit-surface);
+  color: var(--edit-text);
+  border: 1px solid var(--edit-border);
+  border-radius: 0.75rem;
+  padding: 1rem;
 }
 
 .wizard-columns {
@@ -104,13 +138,49 @@
   min-width: 0;
   position: sticky;
   top: 1rem;
+  overflow: hidden;
+}
+
+/* The read component also powers this narrow live preview. Keep its profile
+   header in one column so names and company details never collapse into a
+   character-wide strip beside the form. */
+.wizard-preview ::ng-deep .contact-read-shell {
+  gap: .85rem;
+  min-width: 0;
+}
+
+.wizard-preview ::ng-deep .contact-hero-card {
+  padding: 0 0 .85rem;
+}
+
+.wizard-preview ::ng-deep .contact-hero-main {
+  display: block;
+  min-width: 0;
+}
+
+.wizard-preview ::ng-deep .contact-hero-identity {
+  min-width: 0;
+}
+
+.wizard-preview ::ng-deep .contact-hero-copy {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.wizard-preview ::ng-deep .contact-hero-name,
+.wizard-preview ::ng-deep .contact-hero-company {
+  overflow-wrap: anywhere;
+}
+
+.wizard-preview ::ng-deep .contact-section-card {
+  padding: 0 0 .85rem;
 }
 
 /* Steps */
 
 .wizard-step-card {
-  background: #fff;
-  border: 1px solid rgba(15, 15, 15, 0.08);
+  background: var(--edit-surface);
+  border: 1px solid var(--edit-border);
   border-radius: 0.9rem;
   padding: 1.25rem;
 }
@@ -120,7 +190,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  color: rgba(15, 15, 15, 0.5);
+  color: var(--edit-muted);
   margin-bottom: 1rem;
 }
 
@@ -138,7 +208,23 @@
   display: block;
   font-size: 0.85rem;
   font-weight: 600;
+  color: var(--edit-text);
   margin-bottom: 0.3rem;
+}
+
+.wizard-step-card .form-control,
+.wizard-step-card .form-select {
+  background: var(--edit-surface-soft);
+  border-color: var(--edit-border);
+  color: var(--edit-text);
+}
+
+.wizard-step-card .form-control::placeholder {
+  color: var(--edit-muted);
+}
+
+.wizard-step-card .form-check-label {
+  color: var(--edit-text);
 }
 
 .edit-row {
@@ -161,6 +247,41 @@
   text-align: center;
 }
 
+.wizard-save-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  margin-top: .85rem;
+  padding: .65rem .75rem;
+  border: 1px solid color-mix(in srgb, var(--edit-accent) 28%, var(--edit-border));
+  border-radius: .7rem;
+  color: var(--edit-muted);
+  background: color-mix(in srgb, var(--edit-accent) 7%, var(--edit-bg));
+  font-size: .82rem;
+  font-weight: 600;
+}
+
+.btn-todd--save {
+  background: var(--edit-accent);
+  color: #06131a;
+  border-color: var(--edit-accent);
+}
+
+.wizard-cancel-button {
+  border: 0;
+  padding: .35rem .55rem;
+  color: var(--edit-muted);
+  background: transparent;
+  font-size: .82rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.wizard-cancel-button:hover {
+  color: var(--edit-text);
+}
+
 /* btn-todd stand-in: TODD's real one is a branded design system (see
    ContactCardView/pricing.component.css notes elsewhere in this project)
    not worth chasing for a couple of nav buttons - this is a plain pill
@@ -168,15 +289,15 @@
 .btn-todd {
   padding: 0.5rem 1.1rem;
   border-radius: 999px;
-  border: 1px solid rgba(0, 149, 204, 0.3);
-  background: #fff;
-  color: #0095cc;
+  border: 1px solid color-mix(in srgb, var(--edit-accent) 30%, transparent);
+  background: var(--edit-surface);
+  color: var(--edit-accent);
   font-weight: 600;
   font-size: 0.9rem;
 }
 
 .btn-todd:hover:not(:disabled) {
-  background: rgba(0, 149, 204, 0.08);
+  background: color-mix(in srgb, var(--edit-accent) 8%, var(--edit-surface));
 }
 
 .btn-todd:disabled {

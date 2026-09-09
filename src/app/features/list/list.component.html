@@ -1,7 +1,9 @@
-<app-preloader [isLoading]="isSignedIn === null"></app-preloader>
+<app-preloader [isLoading]="isSignedIn === null" message="Loading your contacts…"></app-preloader>
 <app-back-to-top></app-back-to-top>
 
 <div class="contact-list-shell">
+  <app-primary-nav></app-primary-nav>
+
   <div class="contact-list-header">
     <div>
       <h1 class="mb-1">Contacts</h1>
@@ -33,7 +35,7 @@
 
     <div class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</div>
 
-    <app-preloader [isLoading]="isLoading"></app-preloader>
+    <app-preloader [isLoading]="isLoading" message="Loading your contacts…"></app-preloader>
 
     <div class="contact-list-empty" *ngIf="!isLoading && filteredContacts.length === 0 && !errorMessage">
       <p class="text-muted">{{ contacts.length === 0 ? 'No contacts yet.' : 'No contacts match your search.' }}</p>
@@ -41,11 +43,11 @@
 
     <div class="contact-list-table" *ngIf="filteredContacts.length > 0">
       <div class="contact-list-row contact-list-row--head">
-        <div class="col-name">Name</div>
-        <div class="col-company">Company</div>
-        <div class="col-email">Email</div>
-        <div class="col-phone">Phone</div>
-        <div class="col-status">Status</div>
+        <div class="col-name"><button type="button" class="contact-list-sort" (click)="sortBy('name')">Name <span>{{ sortIndicator('name') }}</span></button></div>
+        <div class="col-company"><button type="button" class="contact-list-sort" (click)="sortBy('company')">Company <span>{{ sortIndicator('company') }}</span></button></div>
+        <div class="col-email"><button type="button" class="contact-list-sort" (click)="sortBy('email')">Email <span>{{ sortIndicator('email') }}</span></button></div>
+        <div class="col-phone"><button type="button" class="contact-list-sort" (click)="sortBy('phone')">Phone <span>{{ sortIndicator('phone') }}</span></button></div>
+        <div class="col-status"><button type="button" class="contact-list-sort" (click)="sortBy('status')">Status <span>{{ sortIndicator('status') }}</span></button></div>
         <div class="col-actions"></div>
       </div>
 
@@ -53,8 +55,11 @@
         class="contact-list-row"
         *ngFor="let contact of filteredContacts"
         (click)="openContact(contact)"
+        (keydown.enter)="openContact(contact)"
+        tabindex="0"
       >
         <div class="col-name">
+          <div class="contact-list-avatar contact-list-avatar--initials" aria-hidden="true">{{ displayName(contact).slice(0, 1) }}</div>
           <span class="contact-list-name">{{ displayName(contact) }}</span>
           <span class="contact-list-profession" *ngIf="contact.profession">{{ contact.profession }}</span>
         </div>
@@ -69,6 +74,39 @@
             <i class="fa-solid fa-trash"></i>
           </button>
         </div>
+        <aside class="contact-list-hover-card" aria-label="Contact preview">
+          <div class="contact-list-hover-card__topline">
+            <div class="contact-list-hover-card__avatar">
+              <span aria-hidden="true">{{ displayName(contact).slice(0, 1) }}</span>
+            </div>
+            <div>
+              <strong>{{ displayName(contact) }}</strong>
+              <span *ngIf="contact.profession">{{ contact.profession }}</span>
+            </div>
+          </div>
+          <div class="contact-list-hover-card__company" *ngIf="contact.company?.name">
+            <i class="fa-solid fa-building" aria-hidden="true"></i>
+            <span>{{ contact.company?.name }}</span>
+          </div>
+          <div class="contact-list-hover-card__details">
+            <a *ngIf="primaryEmail(contact)" [href]="'mailto:' + primaryEmail(contact)" (click)="$event.stopPropagation()">
+              <i class="fa-solid fa-envelope" aria-hidden="true"></i>{{ primaryEmail(contact) }}
+            </a>
+            <a *ngIf="primaryPhone(contact)" [href]="'tel:' + primaryPhone(contact)" (click)="$event.stopPropagation()">
+              <i class="fa-solid fa-phone" aria-hidden="true"></i>{{ primaryPhone(contact) }}
+            </a>
+            <a *ngIf="contact.company?.url" [href]="contact.company?.url" target="_blank" rel="noopener" (click)="$event.stopPropagation()">
+              <i class="fa-solid fa-link" aria-hidden="true"></i>Company website
+            </a>
+          </div>
+          <p class="contact-list-hover-card__note" *ngIf="contact.notes?.[0]?.body">
+            {{ contact.notes?.[0]?.body }}
+          </p>
+          <div class="contact-list-hover-card__footer">
+            <span *ngIf="contact.status" class="contact-list-status">{{ contact.status }}</span>
+            <span>Open contact <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+          </div>
+        </aside>
       </div>
     </div>
   </ng-container>

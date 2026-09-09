@@ -1,17 +1,42 @@
 :host {
   display: block;
+  --import-bg: #f6f8fa;
+  --import-surface: #ffffff;
+  --import-surface-soft: #f8fafc;
+  --import-text: #0d1117;
+  --import-muted: #68727d;
+  --import-border: rgba(15, 23, 42, 0.10);
+  --import-accent: #0095cc;
+}
+
+@media (prefers-color-scheme: dark) {
+  :host {
+    --import-bg: #111820;
+    --import-surface: #19232c;
+    --import-surface-soft: #202d37;
+    --import-text: #edf6fb;
+    --import-muted: #9aafbc;
+    --import-border: rgba(151, 198, 220, 0.16);
+    --import-accent: #00bfff;
+  }
 }
 
 .csv-import-shell {
-  /* Explicitly light for the same reason as contact-edit-shell - this
-     page's cards and field-match rows are designed against a light
-     backdrop with no dark-mode variant of their own. */
-  background: #f6f8fa;
-  color: #0d1117;
+  background: var(--import-bg);
+  color: var(--import-text);
   min-height: 100%;
-  max-width: 900px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 1.5rem;
+}
+
+.wizard-header h1 {
+  color: var(--import-text);
+  letter-spacing: -0.03em;
+}
+
+.wizard-header .text-muted {
+  color: var(--import-muted) !important;
 }
 
 /* Stepper */
@@ -40,40 +65,40 @@
   justify-content: center;
   font-weight: 700;
   font-size: 0.85rem;
-  background: rgba(0, 149, 204, 0.1);
-  color: #0095cc;
-  border: 2px solid rgba(0, 149, 204, 0.25);
+  background: color-mix(in srgb, var(--import-accent) 10%, transparent);
+  color: var(--import-accent);
+  border: 2px solid color-mix(in srgb, var(--import-accent) 25%, transparent);
 }
 
 .step.is-current .circle {
-  background: #0095cc;
-  color: #fff;
-  border-color: #0095cc;
+  background: var(--import-accent);
+  color: #06131a;
+  border-color: var(--import-accent);
 }
 
 .step.is-done .circle {
-  background: rgba(0, 149, 204, 0.55);
-  color: #fff;
+  background: color-mix(in srgb, var(--import-accent) 55%, transparent);
+  color: #06131a;
   border-color: transparent;
 }
 
 .step .label {
   font-size: 0.72rem;
-  color: rgba(15, 15, 15, 0.55);
+  color: var(--import-muted);
   text-align: center;
   white-space: nowrap;
 }
 
 .step.is-current .label {
-  color: #0095cc;
+  color: var(--import-accent);
   font-weight: 700;
 }
 
 /* Step cards */
 
 .import-step-card {
-  background: #fff;
-  border: 1px solid rgba(15, 15, 15, 0.08);
+  background: var(--import-surface);
+  border: 1px solid var(--import-border);
   border-radius: 0.9rem;
   padding: 1.5rem;
   margin-top: 1.25rem;
@@ -84,7 +109,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  color: rgba(15, 15, 15, 0.5);
+  color: var(--import-muted);
   margin-bottom: 0.75rem;
 }
 
@@ -104,15 +129,15 @@
 .btn-todd {
   padding: 0.5rem 1.1rem;
   border-radius: 999px;
-  border: 1px solid rgba(0, 149, 204, 0.3);
-  background: #fff;
-  color: #0095cc;
+  border: 1px solid color-mix(in srgb, var(--import-accent) 30%, transparent);
+  background: var(--import-surface);
+  color: var(--import-accent);
   font-weight: 600;
   font-size: 0.9rem;
 }
 
 .btn-todd:hover:not(:disabled) {
-  background: rgba(0, 149, 204, 0.08);
+  background: color-mix(in srgb, var(--import-accent) 8%, var(--import-surface));
 }
 
 .btn-todd:disabled {
@@ -121,23 +146,23 @@
 }
 
 .btn-todd--primary {
-  background: #0095cc;
-  color: #fff;
-  border-color: #0095cc;
+  background: var(--import-accent);
+  color: #06131a;
+  border-color: var(--import-accent);
 }
 
 .btn-todd--primary:hover:not(:disabled) {
-  background: #0080b3;
+  opacity: 0.88;
 }
 
 /* Upload */
 
 .upload-dropzone {
-  border: 2px dashed rgba(0, 149, 204, 0.3);
+  border: 2px dashed color-mix(in srgb, var(--import-accent) 30%, transparent);
   border-radius: 1rem;
   padding: 2.5rem 1.5rem;
   text-align: center;
-  background: rgba(0, 149, 204, 0.03);
+  background: color-mix(in srgb, var(--import-accent) 3%, transparent);
 }
 
 .upload-dropzone.is-busy {
@@ -147,18 +172,19 @@
 
 .upload-dropzone__icon {
   font-size: 2rem;
-  color: #0095cc;
+  color: var(--import-accent);
   margin-bottom: 0.75rem;
 }
 
 .upload-dropzone__title {
   font-weight: 700;
+  color: var(--import-text);
   margin-bottom: 0.3rem;
 }
 
 .upload-dropzone__hint {
   font-size: 0.85rem;
-  color: rgba(15, 15, 15, 0.55);
+  color: var(--import-muted);
   margin-bottom: 1.1rem;
 }
 
@@ -172,7 +198,7 @@
 
 .preview-table-wrap {
   overflow-x: auto;
-  border: 1px solid rgba(15, 15, 15, 0.08);
+  border: 1px solid var(--import-border);
   border-radius: 0.6rem;
   max-height: 420px;
   overflow-y: auto;
@@ -183,17 +209,18 @@
   border-collapse: collapse;
   font-size: 0.82rem;
   white-space: nowrap;
+  color: var(--import-text);
 }
 
 .preview-table th,
 .preview-table td {
   padding: 0.5rem 0.75rem;
-  border-bottom: 1px solid rgba(15, 15, 15, 0.06);
+  border-bottom: 1px solid var(--import-border);
   text-align: left;
 }
 
 .preview-table th {
-  background: rgba(15, 15, 15, 0.03);
+  background: var(--import-surface-soft);
   position: sticky;
   top: 0;
   font-weight: 700;
@@ -216,7 +243,7 @@
 
 .result-processing i {
   font-size: 2rem;
-  color: #0095cc;
+  color: var(--import-accent);
   margin-bottom: 1rem;
 }
 
@@ -234,12 +261,12 @@
   font-size: 1.1rem;
   font-weight: 700;
   text-transform: none;
-  color: rgba(15, 15, 15, 0.85);
+  color: var(--import-text);
   margin-bottom: 0.4rem;
 }
 
 .result-summary p {
-  color: rgba(15, 15, 15, 0.6);
+  color: var(--import-muted);
   margin-bottom: 0;
 }
 

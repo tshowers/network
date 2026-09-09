@@ -1,5 +1,28 @@
 :host {
   display: block;
+  --match-surface: #ffffff;
+  --match-surface-soft: #f8fafc;
+  --match-text: #0d1117;
+  --match-muted: #68727d;
+  --match-border: rgba(15, 23, 42, 0.10);
+  --match-accent: #0095cc;
+  --match-attention-bg: rgba(254, 243, 199, 0.35);
+  --match-attention-border: rgba(217, 119, 6, 0.25);
+  --match-attention-text: #d97706;
+}
+
+@media (prefers-color-scheme: dark) {
+  :host {
+    --match-surface: #19232c;
+    --match-surface-soft: #202d37;
+    --match-text: #edf6fb;
+    --match-muted: #9aafbc;
+    --match-border: rgba(151, 198, 220, 0.16);
+    --match-accent: #00bfff;
+    --match-attention-bg: rgba(217, 119, 6, 0.14);
+    --match-attention-border: rgba(217, 119, 6, 0.32);
+    --match-attention-text: #fbbf24;
+  }
 }
 
 .field-mapping-hero {
@@ -15,7 +38,7 @@
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #0095cc;
+  color: var(--match-accent);
   margin-bottom: 0.3rem;
 }
 
@@ -23,11 +46,12 @@
   margin: 0 0 0.4rem;
   font-size: 1.4rem;
   font-weight: 800;
+  color: var(--match-text);
 }
 
 .field-mapping-hero p {
   margin: 0;
-  color: rgba(15, 15, 15, 0.6);
+  color: var(--match-muted);
   max-width: 60ch;
 }
 
@@ -39,31 +63,32 @@
 }
 
 .field-mapping-summary__card {
-  border: 1px solid rgba(15, 15, 15, 0.08);
+  border: 1px solid var(--match-border);
   border-radius: 0.75rem;
   padding: 0.85rem 1rem;
-  background: #fff;
+  background: var(--match-surface);
 }
 
 .field-mapping-summary__card--attention {
-  border-color: rgba(217, 119, 6, 0.25);
-  background: rgba(254, 243, 199, 0.35);
+  border-color: var(--match-attention-border);
+  background: var(--match-attention-bg);
 }
 
 .field-mapping-summary__label {
   font-size: 0.75rem;
-  color: rgba(15, 15, 15, 0.55);
+  color: var(--match-muted);
   margin-bottom: 0.2rem;
 }
 
 .field-mapping-summary__value {
   font-size: 1.5rem;
   font-weight: 800;
+  color: var(--match-text);
 }
 
 .field-mapping-callout {
-  border: 1px solid rgba(217, 119, 6, 0.25);
-  background: rgba(254, 243, 199, 0.35);
+  border: 1px solid var(--match-attention-border);
+  background: var(--match-attention-bg);
   border-radius: 0.9rem;
   padding: 1rem 1.1rem;
   margin-bottom: 1rem;
@@ -73,11 +98,12 @@
   margin: 0 0 0.3rem;
   font-size: 1rem;
   font-weight: 700;
+  color: var(--match-text);
 }
 
 .field-mapping-callout p {
   margin: 0 0 0.75rem;
-  color: rgba(15, 15, 15, 0.6);
+  color: var(--match-muted);
   font-size: 0.9rem;
 }
 
@@ -88,8 +114,9 @@
 }
 
 .field-header-chip {
-  border: 1px solid rgba(15, 15, 15, 0.15);
-  background: #fff;
+  border: 1px solid var(--match-border);
+  background: var(--match-surface);
+  color: var(--match-text);
   border-radius: 999px;
   padding: 0.35rem 0.8rem;
   font-size: 0.82rem;
@@ -97,9 +124,9 @@
 }
 
 .field-header-chip.is-active {
-  background: #0095cc;
-  border-color: #0095cc;
-  color: #fff;
+  background: var(--match-accent);
+  border-color: var(--match-accent);
+  color: #06131a;
 }
 
 .field-mapping-toolbar {
@@ -123,7 +150,7 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.88rem;
-  color: rgba(15, 15, 15, 0.65);
+  color: var(--match-muted);
 }
 
 .field-mapping-toolbar__actions {
@@ -132,11 +159,15 @@
 }
 
 .field-mapping-accepted {
-  border: 1px solid rgba(15, 15, 15, 0.08);
+  border: 1px solid var(--match-border);
   border-radius: 0.9rem;
   padding: 1rem;
   margin-bottom: 1.25rem;
-  background: #fff;
+  background: var(--match-surface);
+}
+
+.field-mapping-accepted strong {
+  color: var(--match-text);
 }
 
 .field-mapping-accepted__chips {
@@ -147,11 +178,11 @@
 }
 
 .field-mapping-accepted__chip {
-  border: 1px solid rgba(15, 15, 15, 0.1);
+  border: 1px solid var(--match-border);
   border-radius: 999px;
   padding: 0.25rem 0.65rem;
   font-size: 0.78rem;
-  color: rgba(15, 15, 15, 0.65);
+  color: var(--match-muted);
 }
 
 .field-mapping-table__header {
@@ -161,7 +192,7 @@
   padding: 0 0.25rem 0.5rem;
   font-size: 0.78rem;
   font-weight: 700;
-  color: rgba(15, 15, 15, 0.5);
+  color: var(--match-muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -172,17 +203,18 @@
   gap: 1rem;
   align-items: center;
   padding: 0.7rem 0.25rem;
-  border-top: 1px solid rgba(15, 15, 15, 0.06);
+  border-top: 1px solid var(--match-border);
 }
 
 .field-mapping-row__title {
   font-weight: 600;
   font-size: 0.92rem;
+  color: var(--match-text);
 }
 
 .field-mapping-row__name {
   font-size: 0.76rem;
-  color: rgba(15, 15, 15, 0.45);
+  color: var(--match-muted);
   font-family: ui-monospace, monospace;
 }
 
@@ -205,15 +237,15 @@
 }
 
 .field-mapping-row__status.is-resolved span {
-  color: rgba(15, 15, 15, 0.75);
+  color: var(--match-text);
 }
 
 .field-mapping-row__status.is-pending .field-mapping-row__status-dot {
-  background: rgba(217, 119, 6, 0.7);
+  background: var(--match-attention-text);
 }
 
 .field-mapping-row__status.is-pending span {
-  color: rgba(217, 119, 6, 0.9);
+  color: var(--match-attention-text);
 }
 
 .field-mapping-row__controls {
@@ -222,10 +254,16 @@
   gap: 0.5rem;
 }
 
+.field-mapping-row__controls select {
+  background: var(--match-surface-soft);
+  border-color: var(--match-border);
+  color: var(--match-text);
+}
+
 .field-mapping-row__quick-assign {
-  border: 1px solid rgba(0, 149, 204, 0.35);
-  background: rgba(0, 149, 204, 0.08);
-  color: #0095cc;
+  border: 1px solid color-mix(in srgb, var(--match-accent) 35%, transparent);
+  background: color-mix(in srgb, var(--match-accent) 8%, transparent);
+  color: var(--match-accent);
   border-radius: 999px;
   padding: 0.3rem 0.65rem;
   font-size: 0.76rem;
@@ -236,15 +274,15 @@
 .btn-todd {
   padding: 0.5rem 1.1rem;
   border-radius: 999px;
-  border: 1px solid rgba(0, 149, 204, 0.3);
-  background: #fff;
-  color: #0095cc;
+  border: 1px solid color-mix(in srgb, var(--match-accent) 30%, transparent);
+  background: var(--match-surface);
+  color: var(--match-accent);
   font-weight: 600;
   font-size: 0.9rem;
 }
 
 .btn-todd:hover {
-  background: rgba(0, 149, 204, 0.08);
+  background: color-mix(in srgb, var(--match-accent) 8%, var(--match-surface));
 }
 
 @media (max-width: 720px) {

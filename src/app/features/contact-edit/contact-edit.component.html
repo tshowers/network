@@ -2,6 +2,8 @@
 <app-back-to-top></app-back-to-top>
 
 <div class="contact-edit-shell" *ngIf="!isLoading">
+  <app-primary-nav></app-primary-nav>
+
   <div class="wizard-header">
     <h1 class="mb-1">Network</h1>
     <p class="text-muted mb-3">Add or edit contact details with a live preview on the right.</p>
@@ -245,10 +247,17 @@
               {{ isSaving ? 'Saving...' : (contact.id ? 'Save Changes' : 'Add Contact') }}
             </button>
           </div>
+      </div>
+
+        <div class="wizard-save-bar" *ngIf="contact.id && isDirty">
+          <span>Unsaved changes</span>
+          <button type="button" class="btn-todd btn-todd--save" [disabled]="isSaving" (click)="onSubmit()">
+            {{ isSaving ? 'Updating…' : 'Update contact' }}
+          </button>
         </div>
 
         <div class="wizard-cancel">
-          <button type="button" class="btn btn-link btn-sm text-muted" (click)="onCancel()">Cancel</button>
+          <button type="button" class="wizard-cancel-button" (click)="onCancel()">Discard changes</button>
         </div>
       </form>
 

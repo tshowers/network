@@ -1,8 +1,11 @@
 import { Routes } from '@angular/router';
+import { landingRedirectGuard } from './services/landing-redirect.guard';
 
 export const routes: Routes = [
   {
     path: '',
+    pathMatch: 'full',
+    canActivate: [landingRedirectGuard],
     loadComponent: () =>
       import( './features/landing/landing.component' ).then( ( m ) => m.LandingComponent ),
   },

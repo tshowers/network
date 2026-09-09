@@ -18,6 +18,7 @@ import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.compone
 import { PreloaderComponent } from '../../shared/preloader/preloader.component';
 import { CockpitBrowseModeBannerComponent } from '../../shared/cockpit-browse-mode-banner/cockpit-browse-mode-banner.component';
 import { FieldMatchComponent } from '../../shared/field-match/field-match.component';
+import { PrimaryNavComponent } from '../../shared/primary-nav/primary-nav.component';
 
 interface ImportStep {
   key: 'upload' | 'map' | 'review' | 'confirm' | 'result';
@@ -50,6 +51,7 @@ interface ImportStep {
     PreloaderComponent,
     CockpitBrowseModeBannerComponent,
     FieldMatchComponent,
+    PrimaryNavComponent,
   ],
   templateUrl: './csv-import.component.html',
   styleUrl: './csv-import.component.css',

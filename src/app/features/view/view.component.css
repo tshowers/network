@@ -543,6 +543,106 @@
 
 }
 
+/* Let the contact read view own the hierarchy instead of nesting full panels. */
+.contact-view-shell {
+    gap: .75rem;
+    padding: clamp(.65rem, 1.5vw, 1rem);
+}
+
+.contact-view-header-card,
+.contact-view-content-card {
+    border-radius: 14px;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+.contact-view-header-card {
+    padding: 1rem 1.15rem;
+}
+
+.contact-view-header-card::after {
+    display: none;
+}
+
+.contact-view-title-row .pv-title {
+    font-size: clamp(1.75rem, 3vw, 2.35rem);
+}
+
+.contact-view-description {
+    margin-top: .45rem;
+    font-size: .9rem;
+    line-height: 1.45;
+}
+
+.contact-view-content-card {
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+
+.contact-view-tabs-wrap {
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.contact-view-edit-action {
+    order: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    padding: .55rem .75rem;
+    border: 1px solid var(--tab-border);
+    border-radius: 8px;
+    color: var(--tab-text);
+    background: transparent;
+    font-size: .82rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.contact-view-edit-action:hover {
+    color: var(--tab-active-text);
+    border-color: var(--tl-blue-mid, #0095cc);
+}
+
+.contact-view-tabs {
+    gap: 0;
+    border-bottom: 1px solid var(--tab-border);
+}
+
+.contact-view-tabs .nav-link,
+.contact-view-tabs .nav-link.active {
+    border-width: 0 0 2px;
+    border-radius: 0;
+    padding: .65rem .85rem;
+    background: transparent;
+    box-shadow: none;
+}
+
+.contact-view-tabs .nav-link.active {
+    border-color: var(--tl-blue-mid, #0095cc);
+}
+
+.contact-view-tab-content {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    overflow: visible;
+}
+
+.contact-view-panel-body,
+.contact-view-json-panel {
+    padding: 0;
+}
+
+.contact-view-panel-body {
+    min-height: 0;
+}
+
 @media (max-width: 540px) {
   .contact-view-header-card {
     padding: 1rem;
@@ -563,5 +663,13 @@
 
   .contact-view-description {
     font-size: 0.96rem;
+  }
+
+  .contact-view-edit-action {
+    padding: .5rem;
+  }
+
+  .contact-view-edit-action span {
+    display: none;
   }
 }

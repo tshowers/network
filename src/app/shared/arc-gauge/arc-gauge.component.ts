@@ -33,7 +33,7 @@ export class ArcGaugeComponent implements OnChanges {
 
   trackDasharray = '';
   fillDasharray = '';
-  displayValue = 0;
+  displayValue = '0';
 
   get gaugeTextColor (): string | null {
     const color = this.textColor?.trim();
@@ -48,6 +48,8 @@ export class ArcGaugeComponent implements OnChanges {
 
     this.trackDasharray = `${this.ARC_LENGTH} ${this.GAP_LENGTH}`;
     this.fillDasharray = `${filled} ${this.CIRCUMFERENCE - filled}`;
-    this.displayValue = Math.round( safeValue );
+    this.displayValue = safeValue > 0 && safeValue < 1
+      ? safeValue.toFixed( 2 )
+      : String( Math.round( safeValue ) );
   }
 }

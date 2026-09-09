@@ -1,0 +1,31 @@
+:host {
+  display: block;
+  margin-top: auto;
+}
+
+.site-footer {
+  width: 100%;
+  padding: 1.25rem 1rem 1.5rem;
+  color: #68727d;
+  font-size: 0.68rem;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.site-footer a {
+  color: inherit;
+  text-underline-offset: 0.15em;
+}
+
+.site-footer__design,
+.site-footer__links {
+  margin-left: 0.3rem;
+}
+
+@media (max-width: 640px) {
+  .site-footer__design,
+  .site-footer__links {
+    display: block;
+    margin-left: 0;
+  }
+}

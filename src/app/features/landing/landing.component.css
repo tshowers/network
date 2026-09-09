@@ -37,9 +37,39 @@ h1 {
 }
 
 .fl-page {
+  position: relative;
   min-height: 100%;
   background: var(--fl-cream);
   color: var(--fl-text);
+}
+
+.fl-utility-nav {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.fl-utility-nav a,
+.fl-utility-nav button {
+  padding: 0;
+  border: 0;
+  color: rgba(255, 255, 255, 0.58);
+  background: transparent;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.fl-utility-nav a:hover,
+.fl-utility-nav button:hover { color: var(--fl-blue); }
+
+@media (max-width: 640px) {
+  .fl-utility-nav { top: 16px; right: 16px; gap: 12px; font-size: 0.66rem; }
 }
 
 .fl-eyebrow {

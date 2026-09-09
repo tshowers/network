@@ -13,6 +13,10 @@ import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.compone
 import { PreloaderComponent } from '../../shared/preloader/preloader.component';
 import { CockpitBrowseModeBannerComponent } from '../../shared/cockpit-browse-mode-banner/cockpit-browse-mode-banner.component';
 
+type ContactSortKey = 'name' | 'company' | 'email' | 'phone' | 'status';
+type SortDirection = 'asc' | 'desc';
+import { PrimaryNavComponent } from '../../shared/primary-nav/primary-nav.component';
+
 /**
  * A ground-up rewrite, not a trim of features/contact/list/list.component.ts
  * (2,465 lines). That original isn't "a table with some extras" - its own
@@ -33,7 +37,7 @@ import { CockpitBrowseModeBannerComponent } from '../../shared/cockpit-browse-mo
 @Component( {
   selector: 'app-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, BackToTopComponent, PreloaderComponent, CockpitBrowseModeBannerComponent],
+  imports: [CommonModule, FormsModule, RouterModule, BackToTopComponent, PreloaderComponent, CockpitBrowseModeBannerComponent, PrimaryNavComponent],
   templateUrl: './list.component.html',
   styleUrl: './list.component.css',
 } )
@@ -43,6 +47,8 @@ export class ListComponent implements OnInit, OnDestroy {
   searchText = '';
   isLoading = true;
   errorMessage = '';
+  sortKey: ContactSortKey = 'name';
+  sortDirection: SortDirection = 'asc';
   /** null = auth state not resolved yet (still show the preloader); false = resolved and signed out. */
   isSignedIn: boolean | null = null;
 
@@ -99,12 +105,7 @@ export class ListComponent implements OnInit, OnDestroy {
   applyFilter (): void {
     const term = this.searchText.trim().toLowerCase();
 
-    if ( !term ) {
-      this.filteredContacts = this.contacts;
-      return;
-    }
-
-    this.filteredContacts = this.contacts.filter( ( contact ) => {
+    const matches = !term ? this.contacts : this.contacts.filter( ( contact ) => {
       const haystack = [
         contact.firstName,
         contact.lastName,
@@ -118,6 +119,42 @@ export class ListComponent implements OnInit, OnDestroy {
 
       return haystack.includes( term );
     } );
+
+    this.filteredContacts = [...matches].sort( ( a, b ) => this.compareContacts( a, b ) );
+  }
+
+  sortBy ( key: ContactSortKey ): void {
+    if ( this.sortKey === key ) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortKey = key;
+      this.sortDirection = 'asc';
+    }
+
+    this.filteredContacts = [...this.filteredContacts].sort( ( a, b ) => this.compareContacts( a, b ) );
+  }
+
+  sortIndicator ( key: ContactSortKey ): string {
+    if ( this.sortKey !== key ) return '';
+    return this.sortDirection === 'asc' ? '↑' : '↓';
+  }
+
+  private compareContacts ( first: Contact, second: Contact ): number {
+    const firstValue = this.sortValue( first, this.sortKey );
+    const secondValue = this.sortValue( second, this.sortKey );
+    const comparison = firstValue.localeCompare( secondValue, undefined, { sensitivity: 'base', numeric: true } );
+    return this.sortDirection === 'asc' ? comparison : -comparison;
+  }
+
+  private sortValue ( contact: Contact, key: ContactSortKey ): string {
+    switch ( key ) {
+      case 'company': return contact.company?.name || '';
+      case 'email': return this.primaryEmail( contact );
+      case 'phone': return this.primaryPhone( contact );
+      case 'status': return contact.status || '';
+      case 'name':
+      default: return this.displayName( contact );
+    }
   }
 
   displayName ( contact: Contact ): string {

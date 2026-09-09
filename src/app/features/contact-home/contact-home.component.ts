@@ -122,13 +122,19 @@ export class ContactHomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private authContextSubscription: Subscription | null = null;
   private loggedInSubscription: Subscription | null = null;
   private lastAuthContextKey = '';
-  readonly relationshipsCommandDeckLinks: CockpitCommandDeckLink[] = [
+  private readonly baseRelationshipsCommandDeckLinks: CockpitCommandDeckLink[] = [
     { label: 'Home', icon: 'house', routerLink: '/' },
     { label: 'Contact List', icon: 'address-book', routerLink: '/contact-list' },
     { label: 'Import Contacts', icon: 'file-import', routerLink: '/contact-import' },
-    { label: 'Pipeline', icon: 'diagram-project', routerLink: '/contact-deal-flow' },
+    { label: 'Pipeline', icon: 'diagram-project', routerLink: '/contact-deal-flow-dashboard' },
     { label: 'Add Contact', icon: 'user-plus', action: () => this.openAddContact() }
   ];
+
+  get relationshipsCommandDeckLinks (): CockpitCommandDeckLink[] {
+    return this.isLoggedIn
+      ? [...this.baseRelationshipsCommandDeckLinks, { label: 'Log out', icon: 'right-from-bracket', action: () => void this.logOut() }]
+      : this.baseRelationshipsCommandDeckLinks;
+  }
 
   constructor (
     private authService: NetworkAuthService,
@@ -172,6 +178,11 @@ export class ContactHomeComponent implements OnInit, AfterViewInit, OnDestroy {
   openAddContact (): void {
     this.contactState.resetContact();
     void this.router.navigate( ['/contact-edit'] );
+  }
+
+  async logOut (): Promise<void> {
+    await this.authService.signOut();
+    await this.router.navigate( ['/'] );
   }
 
   private publishPageActions (): void {

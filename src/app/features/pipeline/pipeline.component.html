@@ -2,16 +2,20 @@
 <app-back-to-top></app-back-to-top>
 
 <div class="pipeline-shell">
-  <div class="pipeline-header">
-    <div>
-      <h1 class="mb-1">Pipeline</h1>
-      <p class="text-muted mb-0" *ngIf="isSignedIn">{{ pipelineContactCount }} contact{{ pipelineContactCount === 1 ? '' : 's' }} in the pipeline</p>
-    </div>
-    <a class="btn btn-dark" routerLink="/contact-edit" *ngIf="isSignedIn">
-      <i class="fa-solid fa-plus"></i>
-      Add Contact
-    </a>
-  </div>
+  <app-primary-nav></app-primary-nav>
+
+  <app-cockpit-command-deck
+    eyebrow="TODD Command Deck"
+    context="Pipeline · Network"
+    title="Pipeline"
+    iconSrc="assets/network/network.png"
+    iconAlt="Network"
+    [subtitle]="isSignedIn
+      ? 'Track every stage from first contact to closed won, and see where deals are gaining or losing momentum.'
+      : 'Preview how TODD groups your contacts by stage and tracks momentum toward closed won.'"
+    [scoreLabel]="isSignedIn ? 'Late-Stage Momentum' : 'Preview Momentum'"
+    [scoreValue]="isSignedIn ? (momentumScore | number: '1.0-2') + '%' : '0%'"
+  ></app-cockpit-command-deck>
 
   <app-cockpit-browse-mode-banner
     *ngIf="isSignedIn === false"
@@ -23,32 +27,51 @@
   <ng-container *ngIf="isSignedIn">
     <div class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</div>
 
+    <section class="pipeline-panel pipeline-health-panel" *ngIf="pipelineContactCount > 0">
+      <div class="pipeline-panel__kicker">Pipeline Health</div>
+      <div class="pipeline-health-grid">
+        <article class="pipeline-health-card" *ngFor="let meter of healthMeters">
+          <div class="pipeline-health-card__instrument">
+            <app-arc-gauge [value]="meter.value" [max]="100" [tone]="meter.tone"></app-arc-gauge>
+          </div>
+          <div class="pipeline-health-card__body">
+            <div class="pipeline-health-card__label">{{ meter.label }}</div>
+            <div class="pipeline-health-card__value">{{ meter.value < 1 && meter.value > 0 ? (meter.value | number: '1.2-2') : (meter.value | number: '1.0-0') }}%</div>
+            <div class="pipeline-health-card__detail">{{ meter.detail }}</div>
+          </div>
+        </article>
+      </div>
+    </section>
+
     <div class="pipeline-empty" *ngIf="!isLoading && pipelineContactCount === 0 && !errorMessage">
       <p class="text-muted">No contacts have a pipeline status yet. Set a contact's status from its edit page to see it here.</p>
     </div>
 
-    <div class="pipeline-board" *ngIf="pipelineContactCount > 0">
-      <div class="pipeline-column" *ngFor="let stage of stages">
-        <div class="pipeline-column__header">
-          <div class="pipeline-column__title">{{ stage.name }}</div>
-          <div class="pipeline-column__count">{{ stage.contacts.length }}</div>
-        </div>
-        <div class="pipeline-column__cards">
-          <button
-            type="button"
-            class="pipeline-card"
-            *ngFor="let contact of stage.contacts"
-            (click)="openContact(contact)"
-          >
-            <div class="pipeline-card__avatar">{{ initials(contact) }}</div>
-            <div class="pipeline-card__body">
-              <div class="pipeline-card__name">{{ displayName(contact) }}</div>
-              <div class="pipeline-card__meta" *ngIf="contact.company?.name">{{ contact.company?.name }}</div>
-            </div>
-          </button>
-          <div class="pipeline-column__empty" *ngIf="stage.contacts.length === 0">No contacts</div>
+    <section class="pipeline-panel pipeline-board-panel" *ngIf="pipelineContactCount > 0">
+      <div class="pipeline-panel__kicker">Lane View</div>
+      <div class="pipeline-board">
+        <div class="pipeline-column" *ngFor="let stage of stages">
+          <div class="pipeline-column__header">
+            <div class="pipeline-column__title">{{ stage.name }}</div>
+            <div class="pipeline-column__count">{{ stage.contacts.length }}</div>
+          </div>
+          <div class="pipeline-column__cards">
+            <button
+              type="button"
+              class="pipeline-card"
+              *ngFor="let contact of stage.contacts"
+              (click)="openContact(contact)"
+            >
+              <div class="pipeline-card__avatar">{{ initials(contact) }}</div>
+              <div class="pipeline-card__body">
+                <div class="pipeline-card__name">{{ displayName(contact) }}</div>
+                <div class="pipeline-card__meta" *ngIf="contact.company?.name">{{ contact.company?.name }}</div>
+              </div>
+            </button>
+            <div class="pipeline-column__empty" *ngIf="stage.contacts.length === 0">No contacts</div>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   </ng-container>
 </div>

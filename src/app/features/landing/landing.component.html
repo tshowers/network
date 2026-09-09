@@ -1,4 +1,9 @@
 <div class="fl-page">
+  <nav class="fl-utility-nav" aria-label="Product links">
+    <a *ngIf="!(isLoggedIn$ | async); else utilitySignOut" routerLink="/login">Sign in</a>
+    <ng-template #utilitySignOut><button type="button" (click)="onSignOutClick()">Sign out</button></ng-template>
+    <a routerLink="/ios">See Network for iOS</a>
+  </nav>
   <section class="fl-hero">
     <div class="fl-hero__inner">
       <div class="fl-hero__copy">
@@ -8,7 +13,6 @@
         <p class="fl-hero__lead">Network keeps your contacts, companies, deals, and conversations connected. TODD uses that context to identify which relationships need attention, which opportunities are gaining momentum, and where potential revenue may be slipping away.</p>
         <div class="fl-hero__actions">
           <a class="fl-btn fl-btn--primary" routerLink="/app" (click)="onPrimaryCtaClick()">Open Network</a>
-          <a class="fl-btn fl-btn--ghost" routerLink="/ios">See Network for iOS</a>
         </div>
       </div>
       <div class="fl-hero__visual">
@@ -71,9 +75,6 @@
           </div>
         </div>
       </div>
-      <div class="fl-how__cta">
-        <a class="fl-link" routerLink="/pricing" (click)="onPricingCtaClick()">See what is included in Network →</a>
-      </div>
     </div>
   </section>
   <section class="fl-next" data-track-section="story-next">
@@ -110,6 +111,10 @@
         </div>
         <div class="fl-cta__actions">
           <a class="fl-btn fl-btn--primary fl-btn--lg" routerLink="/app" (click)="onPrimaryCtaClick()">Open Network</a>
+          <a *ngIf="!(isLoggedIn$ | async); else ctaSignOut" class="fl-btn fl-btn--outline fl-btn--lg" routerLink="/login">Sign in</a>
+          <ng-template #ctaSignOut>
+            <button type="button" class="fl-btn fl-btn--outline fl-btn--lg" (click)="onSignOutClick()">Sign out</button>
+          </ng-template>
           <a class="fl-btn fl-btn--outline fl-btn--lg" routerLink="/pricing" (click)="onPricingCtaClick()">See Pricing</a>
         </div>
       </div>

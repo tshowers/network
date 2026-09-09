@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { LandingEngagementService } from '../../services/landing-engagement.service';
+import { NetworkAuthService } from '../../services/network-auth.service';
 
 /**
  * Ported from features/contact/network-landing/network-landing.component.ts.
@@ -16,6 +17,8 @@ import { LandingEngagementService } from '../../services/landing-engagement.serv
   styleUrl: './landing.component.css'
 } )
 export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
+  readonly isLoggedIn$: ReturnType<NetworkAuthService['isLoggedIn']>;
+
   readonly painPoints = [
     {
       heading: 'A contact list is not a plan',
@@ -94,8 +97,11 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   ];
 
   constructor (
-    private readonly landingContext: LandingEngagementService
-  ) { }
+    private readonly landingContext: LandingEngagementService,
+    private readonly authService: NetworkAuthService
+  ) {
+    this.isLoggedIn$ = this.authService.isLoggedIn();
+  }
 
   ngOnInit (): void {
     this.landingContext.start( {
@@ -122,6 +128,10 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onPricingCtaClick (): void {
     this.landingContext.markPricingCtaClick();
+  }
+
+  async onSignOutClick (): Promise<void> {
+    await this.authService.signOut();
   }
 
   @HostListener( 'window:scroll' )

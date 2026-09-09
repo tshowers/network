@@ -11,11 +11,24 @@ import { Contact } from '../../models/contact.model';
 import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.component';
 import { PreloaderComponent } from '../../shared/preloader/preloader.component';
 import { CockpitBrowseModeBannerComponent } from '../../shared/cockpit-browse-mode-banner/cockpit-browse-mode-banner.component';
+import { CockpitCommandDeckComponent } from '../../shared/cockpit-command-deck/cockpit-command-deck.component';
+import { ArcGaugeComponent, ArcGaugeTone } from '../../shared/arc-gauge/arc-gauge.component';
+import { PrimaryNavComponent } from '../../shared/primary-nav/primary-nav.component';
 
 interface PipelineStage {
   name: string;
   contacts: Contact[];
 }
+
+interface PipelineHealthMeter {
+  label: string;
+  value: number;
+  tone: ArcGaugeTone;
+  detail: string;
+}
+
+const EARLY_STAGES = ['Lead Generation', 'Qualification'];
+const LATE_STAGES = ['Negotiation', 'Closing', 'Post-Sale', 'Closed Won'];
 
 /**
  * Ground-up rewrite, not a trim, of features/contact/deal-flow-dashboard
@@ -30,6 +43,15 @@ interface PipelineStage {
  * has a home in this standalone app - it's TODD's own AI/automation
  * surface, not "view your contacts by stage."
  *
+ * The header/health-tile chrome below is real TODD "Command Deck" styling
+ * (CockpitCommandDeckComponent + ArcGaugeComponent, the exact pieces
+ * contact-home already uses) - reused here so this page visually matches
+ * the rest of the app's dashboard language instead of being a plain white
+ * Kanban board. The three health tiles are computed from this tenant's
+ * actual stage counts (early/late-stage volume, close rate) - not the
+ * fabricated email/social "Today's Momentum" numbers TODD's real page
+ * shows, since Network has no equivalent data source for those.
+ *
  * What this delivers instead: the actual deal-flow-board.component.ts
  * Kanban view (the one genuinely reusable piece of the original) -
  * contacts grouped into the same 8 pipeline stages StatusFlowComponent
@@ -40,7 +62,16 @@ interface PipelineStage {
 @Component( {
   selector: 'app-pipeline',
   standalone: true,
-  imports: [CommonModule, RouterModule, BackToTopComponent, PreloaderComponent, CockpitBrowseModeBannerComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    BackToTopComponent,
+    PreloaderComponent,
+    CockpitBrowseModeBannerComponent,
+    CockpitCommandDeckComponent,
+    ArcGaugeComponent,
+    PrimaryNavComponent,
+  ],
   templateUrl: './pipeline.component.html',
   styleUrl: './pipeline.component.css',
 } )
@@ -62,6 +93,8 @@ export class PipelineComponent implements OnInit {
   errorMessage = '';
   stages: PipelineStage[] = [];
   pipelineContactCount = 0;
+  healthMeters: PipelineHealthMeter[] = [];
+  momentumScore = 0;
 
   private tenantId = '';
 
@@ -88,6 +121,7 @@ export class PipelineComponent implements OnInit {
     try {
       const contacts = await this.dataService.getAllContacts( this.tenantId );
       this.buildStages( contacts );
+      this.buildHealthMeters();
     } catch {
       this.errorMessage = 'Unable to load your pipeline right now.';
     } finally {
@@ -103,6 +137,50 @@ export class PipelineComponent implements OnInit {
       name,
       contacts: validContacts.filter( ( contact ) => contact.status === name ),
     } ) );
+  }
+
+  private countInStages ( stageNames: string[] ): number {
+    return this.stages
+      .filter( ( stage ) => stageNames.includes( stage.name ) )
+      .reduce( ( total, stage ) => total + stage.contacts.length, 0 );
+  }
+
+  private percentOfPipeline ( count: number ): number {
+    if ( this.pipelineContactCount === 0 ) return 0;
+    return Number( ( ( count / this.pipelineContactCount ) * 100 ).toFixed( 2 ) );
+  }
+
+  private buildHealthMeters (): void {
+    const lateStageCount = this.countInStages( LATE_STAGES );
+    const earlyStageCount = this.countInStages( EARLY_STAGES );
+    const closedWonCount = this.stages.find( ( s ) => s.name === 'Closed Won' )?.contacts.length || 0;
+
+    const lateStagePct = this.percentOfPipeline( lateStageCount );
+    const earlyStagePct = this.percentOfPipeline( earlyStageCount );
+    const closedWonPct = this.percentOfPipeline( closedWonCount );
+
+    this.momentumScore = lateStagePct;
+
+    this.healthMeters = [
+      {
+        label: 'Late-Stage Momentum',
+        value: lateStagePct,
+        tone: lateStagePct >= 40 ? 'positive' : lateStagePct >= 15 ? 'info' : 'attention',
+        detail: `${lateStageCount} contact${lateStageCount === 1 ? '' : 's'} in Negotiation or later`,
+      },
+      {
+        label: 'Closed Won',
+        value: closedWonPct,
+        tone: 'positive',
+        detail: `${closedWonCount} contact${closedWonCount === 1 ? '' : 's'} closed won`,
+      },
+      {
+        label: 'Early-Stage Volume',
+        value: earlyStagePct,
+        tone: 'info',
+        detail: `${earlyStageCount} contact${earlyStageCount === 1 ? '' : 's'} in Lead Generation or Qualification`,
+      },
+    ];
   }
 
   displayName ( contact: Contact ): string {

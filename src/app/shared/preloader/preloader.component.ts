@@ -1,11 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-/**
- * Trimmed replacement for TODD's PreloaderComponent (1975 lines of CSS for
- * a branded orbit-animation loading screen, in the original) - Network
- * just needs a plain spinner, not a full port of that.
- */
+/** Shared Taliferro Tech loading treatment, branded for Network. */
 @Component( {
   selector: 'app-preloader',
   standalone: true,
@@ -13,7 +9,16 @@ import { CommonModule } from '@angular/common';
   templateUrl: './preloader.component.html',
   styleUrl: './preloader.component.css',
 } )
-export class PreloaderComponent {
+export class PreloaderComponent implements OnInit {
   @Input() isLoading = false;
   @Input() message = '';
+  @Input() autoHideAfterMs: number | null = 15000;
+  @Input() brandName = '';
+  @Input() brandSubtext = '';
+  @Input() inline = false;
+
+  ngOnInit(): void {
+    this.brandName = this.brandName || 'Network';
+    this.brandSubtext = this.brandSubtext || 'Momentum Engine';
+  }
 }

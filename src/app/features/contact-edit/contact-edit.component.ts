@@ -16,6 +16,7 @@ import { StatusFlowComponent } from '../../shared/status-flow/status-flow.compon
 import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.component';
 import { PreloaderComponent } from '../../shared/preloader/preloader.component';
 import { CockpitBrowseModeBannerComponent } from '../../shared/cockpit-browse-mode-banner/cockpit-browse-mode-banner.component';
+import { PrimaryNavComponent } from '../../shared/primary-nav/primary-nav.component';
 import { ReadComponent } from '../read/read.component';
 
 interface WizardStep {
@@ -55,6 +56,7 @@ interface WizardStep {
     PreloaderComponent,
     CockpitBrowseModeBannerComponent,
     ReadComponent,
+    PrimaryNavComponent,
   ],
   templateUrl: './contact-edit.component.html',
   styleUrl: './contact-edit.component.css',
@@ -89,6 +91,7 @@ export class ContactEditComponent implements OnInit {
 
   private tenantId = '';
   userId = '';
+  private originalContactSnapshot = '';
 
   constructor (
     private route: ActivatedRoute,
@@ -127,6 +130,7 @@ export class ContactEditComponent implements OnInit {
 
     this.ensureCompany();
     this.ensureAtLeastOneRow();
+    this.originalContactSnapshot = this.contactSnapshot();
     if ( this.isSignedIn ) await this.refreshLimitMessage();
     this.refreshMissingMessage();
     this.isLoading = false;
@@ -207,6 +211,14 @@ export class ContactEditComponent implements OnInit {
     return this.isFirstStepValid && this.isLastNameStepValid;
   }
 
+  get isDirty (): boolean {
+    return !!this.originalContactSnapshot && this.contactSnapshot() !== this.originalContactSnapshot;
+  }
+
+  private contactSnapshot (): string {
+    return JSON.stringify( this.contact );
+  }
+
   nextStep (): void {
     this.refreshMissingMessage();
     if ( !this.canAdvance ) return;
@@ -283,6 +295,7 @@ export class ContactEditComponent implements OnInit {
         this.router.navigate( ['/contact', id] );
       } else {
         await this.dataService.updateContact( this.tenantId, this.contact.id, cleaned );
+        this.originalContactSnapshot = this.contactSnapshot();
         this.notificationService.show( 'Updated', `${this.contact.firstName} ${this.contact.lastName}`.trim() + ' was updated.', 'success' );
         this.router.navigate( ['/contact', this.contact.id] );
       }
@@ -294,6 +307,7 @@ export class ContactEditComponent implements OnInit {
   }
 
   onCancel (): void {
+    if ( this.isDirty && !confirm( 'Discard your unsaved changes?' ) ) return;
     this.router.navigate( this.contact.id ? ['/contact', this.contact.id] : ['/contact-list'] );
   }
 
