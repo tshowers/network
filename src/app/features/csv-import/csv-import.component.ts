@@ -18,7 +18,6 @@ import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.compone
 import { PreloaderComponent } from '../../shared/preloader/preloader.component';
 import { CockpitBrowseModeBannerComponent } from '../../shared/cockpit-browse-mode-banner/cockpit-browse-mode-banner.component';
 import { FieldMatchComponent } from '../../shared/field-match/field-match.component';
-import { PrimaryNavComponent } from '../../shared/primary-nav/primary-nav.component';
 
 interface ImportStep {
   key: 'upload' | 'map' | 'review' | 'confirm' | 'result';
@@ -51,7 +50,6 @@ interface ImportStep {
     PreloaderComponent,
     CockpitBrowseModeBannerComponent,
     FieldMatchComponent,
-    PrimaryNavComponent,
   ],
   templateUrl: './csv-import.component.html',
   styleUrl: './csv-import.component.css',
@@ -98,7 +96,7 @@ export class CsvImportComponent implements OnInit {
   ) { }
 
   async ngOnInit (): Promise<void> {
-    this.titleService.setTitle( `${environment.COMPANY_NAME} - Import Contacts` );
+    this.titleService.setTitle( `${environment.COMPANY_NAME} - Import` );
 
     const userId = await this.firstUserId();
     this.isSignedIn = !!userId;
@@ -301,7 +299,7 @@ export class CsvImportComponent implements OnInit {
   getImportButtonLabel (): string {
     if ( !this.isSignedIn ) return 'Sign In to Import';
     if ( !this.canStartImport() ) return 'Upgrade to Import';
-    return 'Import Contacts';
+    return 'Import';
   }
 
   getImportAccessNote (): string {

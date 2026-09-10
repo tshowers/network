@@ -2,8 +2,6 @@
 <app-back-to-top></app-back-to-top>
 
 <div class="contact-edit-shell" *ngIf="!isLoading">
-  <app-primary-nav></app-primary-nav>
-
   <div class="wizard-header">
     <h1 class="mb-1">Network</h1>
     <p class="text-muted mb-3">Add or edit contact details with a live preview on the right.</p>
@@ -244,7 +242,7 @@
           <div class="wizard-step-actions">
             <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
             <button type="button" class="btn-todd" [disabled]="isSaving" (click)="onSubmit()">
-              {{ isSaving ? 'Saving...' : (contact.id ? 'Save Changes' : 'Add Contact') }}
+              {{ isSaving ? 'Saving...' : (contact.id ? 'Save Changes' : 'Add') }}
             </button>
           </div>
       </div>

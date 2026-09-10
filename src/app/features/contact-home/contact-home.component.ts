@@ -125,9 +125,9 @@ export class ContactHomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly baseRelationshipsCommandDeckLinks: CockpitCommandDeckLink[] = [
     { label: 'Home', icon: 'house', routerLink: '/' },
     { label: 'Contact List', icon: 'address-book', routerLink: '/contact-list' },
-    { label: 'Import Contacts', icon: 'file-import', routerLink: '/contact-import' },
+    { label: 'Import', icon: 'file-import', routerLink: '/contact-import' },
     { label: 'Pipeline', icon: 'diagram-project', routerLink: '/contact-deal-flow-dashboard' },
-    { label: 'Add Contact', icon: 'user-plus', action: () => this.openAddContact() }
+    { label: 'Add', icon: 'user-plus', action: () => this.openAddContact() }
   ];
 
   get relationshipsCommandDeckLinks (): CockpitCommandDeckLink[] {
@@ -202,7 +202,7 @@ export class ContactHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     return [
       {
         id: 'contact-cockpit-add-contact',
-        label: 'Add Contact',
+        label: 'Add',
         icon: 'fa-solid fa-user-plus',
         kind: 'callback',
         order: 10,
@@ -220,7 +220,7 @@ export class ContactHomeComponent implements OnInit, AfterViewInit, OnDestroy {
       },
       {
         id: 'contact-cockpit-import',
-        label: 'Import Contacts',
+        label: 'Import',
         icon: 'fa-solid fa-file-import',
         kind: 'route',
         route: '/contact-import',

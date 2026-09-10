@@ -15,7 +15,6 @@ import { CockpitBrowseModeBannerComponent } from '../../shared/cockpit-browse-mo
 
 type ContactSortKey = 'name' | 'company' | 'email' | 'phone' | 'status';
 type SortDirection = 'asc' | 'desc';
-import { PrimaryNavComponent } from '../../shared/primary-nav/primary-nav.component';
 
 /**
  * A ground-up rewrite, not a trim of features/contact/list/list.component.ts
@@ -37,7 +36,7 @@ import { PrimaryNavComponent } from '../../shared/primary-nav/primary-nav.compon
 @Component( {
   selector: 'app-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, BackToTopComponent, PreloaderComponent, CockpitBrowseModeBannerComponent, PrimaryNavComponent],
+  imports: [CommonModule, FormsModule, RouterModule, BackToTopComponent, PreloaderComponent, CockpitBrowseModeBannerComponent],
   templateUrl: './list.component.html',
   styleUrl: './list.component.css',
 } )

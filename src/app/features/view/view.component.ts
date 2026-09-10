@@ -14,7 +14,6 @@ import { Contact } from '../../models/contact.model';
 import { ReadComponent } from '../read/read.component';
 import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.component';
 import { PreloaderComponent } from '../../shared/preloader/preloader.component';
-import { PrimaryNavComponent } from '../../shared/primary-nav/primary-nav.component';
 
 /**
  * Ported from features/contact/view/view.component.ts (1,260 lines),
@@ -46,7 +45,6 @@ import { PrimaryNavComponent } from '../../shared/primary-nav/primary-nav.compon
     ReadComponent,
     BackToTopComponent,
     PreloaderComponent,
-    PrimaryNavComponent,
   ],
   templateUrl: './view.component.html',
   styleUrl: './view.component.css',

@@ -1,8 +1,6 @@
 <app-preloader [isLoading]="isLoading"></app-preloader>
 <app-back-to-top></app-back-to-top>
 <div class="contact-view-shell" *ngIf="contact">
-  <app-primary-nav></app-primary-nav>
-
   <section class="contact-view-content-card">
     <div class="contact-view-tabs-wrap">
       <button type="button" class="contact-view-edit-action" data-cy="contact-read-edit" (click)="navigateToEditContact()">

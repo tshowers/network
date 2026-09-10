@@ -11,7 +11,6 @@ import { NetworkAuthService } from '../../services/network-auth.service';
 import { NetworkDataService } from '../../services/network-data.service';
 import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.component';
 import { PreloaderComponent } from '../../shared/preloader/preloader.component';
-import { PrimaryNavComponent } from '../../shared/primary-nav/primary-nav.component';
 import { CockpitBrowseModeBannerComponent } from '../../shared/cockpit-browse-mode-banner/cockpit-browse-mode-banner.component';
 import { CockpitCommandDeckComponent } from '../../shared/cockpit-command-deck/cockpit-command-deck.component';
 
@@ -45,7 +44,7 @@ interface PipelineStatusStep {
 @Component( {
   selector: 'app-deal-flow-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, BackToTopComponent, PreloaderComponent, PrimaryNavComponent, CockpitBrowseModeBannerComponent, CockpitCommandDeckComponent],
+  imports: [CommonModule, RouterModule, BackToTopComponent, PreloaderComponent, CockpitBrowseModeBannerComponent, CockpitCommandDeckComponent],
   templateUrl: './deal-flow-dashboard.component.html',
   styleUrl: './deal-flow-dashboard.component.css',
 } )

@@ -16,7 +16,6 @@ import { StatusFlowComponent } from '../../shared/status-flow/status-flow.compon
 import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.component';
 import { PreloaderComponent } from '../../shared/preloader/preloader.component';
 import { CockpitBrowseModeBannerComponent } from '../../shared/cockpit-browse-mode-banner/cockpit-browse-mode-banner.component';
-import { PrimaryNavComponent } from '../../shared/primary-nav/primary-nav.component';
 import { ReadComponent } from '../read/read.component';
 
 interface WizardStep {
@@ -56,7 +55,6 @@ interface WizardStep {
     PreloaderComponent,
     CockpitBrowseModeBannerComponent,
     ReadComponent,
-    PrimaryNavComponent,
   ],
   templateUrl: './contact-edit.component.html',
   styleUrl: './contact-edit.component.css',

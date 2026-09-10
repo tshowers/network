@@ -1,9 +1,4 @@
 <div class="fl-page">
-  <nav class="fl-utility-nav" aria-label="Product links">
-    <a *ngIf="!(isLoggedIn$ | async); else utilitySignOut" routerLink="/login">Sign in</a>
-    <ng-template #utilitySignOut><button type="button" (click)="onSignOutClick()">Sign out</button></ng-template>
-    <a routerLink="/ios">See Network for iOS</a>
-  </nav>
   <section class="fl-hero">
     <div class="fl-hero__inner">
       <div class="fl-hero__copy">

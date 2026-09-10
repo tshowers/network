@@ -13,7 +13,6 @@ import { PreloaderComponent } from '../../shared/preloader/preloader.component';
 import { CockpitBrowseModeBannerComponent } from '../../shared/cockpit-browse-mode-banner/cockpit-browse-mode-banner.component';
 import { CockpitCommandDeckComponent } from '../../shared/cockpit-command-deck/cockpit-command-deck.component';
 import { ArcGaugeComponent, ArcGaugeTone } from '../../shared/arc-gauge/arc-gauge.component';
-import { PrimaryNavComponent } from '../../shared/primary-nav/primary-nav.component';
 
 interface PipelineStage {
   name: string;
@@ -70,7 +69,6 @@ const LATE_STAGES = ['Negotiation', 'Closing', 'Post-Sale', 'Closed Won'];
     CockpitBrowseModeBannerComponent,
     CockpitCommandDeckComponent,
     ArcGaugeComponent,
-    PrimaryNavComponent,
   ],
   templateUrl: './pipeline.component.html',
   styleUrl: './pipeline.component.css',
