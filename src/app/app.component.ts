@@ -1,4 +1,4 @@
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgIf } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { map } from 'rxjs';
@@ -12,13 +12,15 @@ import { PlatformMenuComponent } from './shared/platform-menu/platform-menu.comp
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ToastComponent, SiteFooterComponent, CommandPaletteComponent, PlatformMenuComponent, AsyncPipe],
+  imports: [RouterOutlet, ToastComponent, SiteFooterComponent, CommandPaletteComponent, PlatformMenuComponent, AsyncPipe, NgIf],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent {
   private readonly authService = inject( NetworkAuthService );
   readonly isAdmin$ = this.authService.getUser().pipe( map( user => user?.uid === environment.taliferroTenantId ) );
+  readonly isEmbedded = typeof window !== 'undefined'
+    && new URLSearchParams( window.location.search ).get( 'embedded' ) === 'true';
 
   title = 'network';
 }

@@ -76,6 +76,7 @@ body {
 }
 
 app-root > router-outlet + *:not(app-network-landing) { padding-top:4.5rem; box-sizing:border-box; }
+app-root > router-outlet + app-network-app-showcase { background:#141a1e; }
 
 @media (prefers-color-scheme: dark) {
   body {

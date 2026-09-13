@@ -1,4 +1,4 @@
-<div class="app-global-actions"><app-platform-menu [isAdmin]="(isAdmin$ | async) ?? false" /></div>
+<div class="app-global-actions" *ngIf="!isEmbedded"><app-platform-menu [isAdmin]="(isAdmin$ | async) ?? false" /></div>
 <app-command-palette />
 <router-outlet></router-outlet>
 <app-toast></app-toast>
