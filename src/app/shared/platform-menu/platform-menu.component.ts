@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import packageJson from '../../../../package.json';
 import { RouterModule } from '@angular/router';
 
@@ -12,7 +12,7 @@ interface ProductLink {
   description: string;
 }
 
-interface AppRouteLink { label: string; route: string; }
+interface AppRouteLink { label: string; route: string; signOut?: boolean; }
 
 /**
  * Top-right hamburger that slides a panel down over the page. Products on
@@ -30,22 +30,28 @@ interface AppRouteLink { label: string; route: string; }
 } )
 export class PlatformMenuComponent {
   @Input() isAdmin = false;
+  @Input() isLoggedIn = false;
+  @Output() readonly signOut = new EventEmitter<void>();
 
   isOpen = false;
   readonly appVersion = String(packageJson.version || '').trim();
 
-  readonly appRoutes: AppRouteLink[] = [
-    { label: 'Home', route: '/' },
-    { label: 'Relationships', route: '/app' },
-    { label: 'Contacts', route: '/contact-list' },
-    { label: 'Add', route: '/contact-edit' },
-    { label: 'Import', route: '/contact-import' },
-    { label: 'Pipeline', route: '/contact-deal-flow' },
-    { label: 'Networking Progress', route: '/contact-deal-flow-dashboard' },
-    { label: 'iOS App', route: '/ios' },
-    { label: 'Pricing', route: '/pricing' },
-    { label: 'Sign In', route: '/login' },
-  ];
+  get appRoutes (): AppRouteLink[] {
+    return [
+      { label: 'Home', route: '/' },
+      { label: 'Relationships', route: '/app' },
+      { label: 'Contacts', route: '/contact-list' },
+      { label: 'Add', route: '/contact-edit' },
+      { label: 'Import', route: '/contact-import' },
+      { label: 'Pipeline', route: '/contact-deal-flow' },
+      { label: 'Networking Progress', route: '/contact-deal-flow-dashboard' },
+      { label: 'iOS App', route: '/ios' },
+      { label: 'Pricing', route: '/pricing' },
+      this.isLoggedIn
+        ? { label: 'Sign Out', route: '/', signOut: true }
+        : { label: 'Sign In', route: '/login' },
+    ];
+  }
 
   readonly productLinks: ProductLink[] = [
     { label: 'Ask TODD', url: 'https://ask.taliferro.tech', icon: 'assets/find/entities/todd/logo-bw-icon.png', description: 'Turn uncertainty into the next move.' },
@@ -72,5 +78,12 @@ export class PlatformMenuComponent {
 
   close (): void {
     this.isOpen = false;
+  }
+
+  handleRouteClick ( event: MouseEvent, link: AppRouteLink ): void {
+    if ( !link.signOut ) return;
+    event.preventDefault();
+    this.close();
+    this.signOut.emit();
   }
 }

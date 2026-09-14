@@ -24,7 +24,7 @@
       <div class="platform-menu-col">
         <span class="platform-menu-eyebrow">Network</span>
         <nav class="platform-menu-route-list" aria-label="Network routes">
-          <a *ngFor="let link of appRoutes" class="platform-menu-route" [routerLink]="link.route" (click)="close()">
+          <a *ngFor="let link of appRoutes" class="platform-menu-route" [routerLink]="link.route" (click)="handleRouteClick($event, link); close()">
             <span>{{ link.label }}</span><b>&#8599;</b>
           </a>
         </nav>

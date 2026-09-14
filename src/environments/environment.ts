@@ -1,5 +1,8 @@
+import packageJson from '../../package.json';
+
 export const environment = {
   production: false,
+  VERSION: String(packageJson.version || ''),
   COMPANY_NAME: 'Network',
   PLATFORM_URL: 'https://network.taliferro.tech',
   backendURL: 'https://api.taliferro.tech/api',

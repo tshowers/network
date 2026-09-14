@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 import { NetworkAuthService } from '../../services/network-auth.service';
 
 /**
@@ -24,11 +25,16 @@ export class SignInComponent implements OnInit {
 
   constructor (
     private route: ActivatedRoute,
+    private router: Router,
     private authService: NetworkAuthService,
   ) { }
 
-  ngOnInit (): void {
+  async ngOnInit (): Promise<void> {
     this.returnUrl = this.route.snapshot.queryParamMap.get( 'returnUrl' ) || '/app';
+    if ( await firstValueFrom( this.authService.isLoggedIn() ) ) {
+      await this.router.navigateByUrl( this.returnUrl );
+      return;
+    }
     // /login is a compatibility handoff route. Send visitors directly to
     // TODD's shared hosted login instead of making them click twice.
     this.signIn();

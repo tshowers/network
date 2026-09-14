@@ -1,6 +1,6 @@
 {
   "name": "network",
-  "version": "2026.9.13-build.1",
+  "version": "2026.9.13-build.6",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -20,6 +20,7 @@
     "@angular/platform-browser": "^19.0.0",
     "@angular/platform-browser-dynamic": "^19.0.0",
     "@angular/router": "^19.0.0",
+    "@angular/service-worker": "^19.2.25",
     "@fortawesome/fontawesome-free": "^7.3.1",
     "@taliferro/ui": "file:../../taliferro-ui",
     "bootstrap": "^5.3.8",
