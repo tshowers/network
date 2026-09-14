@@ -50,7 +50,7 @@ interface PipelineStatusStep {
 } )
 export class DealFlowDashboardComponent implements OnInit {
   readonly stages: FlowStage[] = [
-    { label: 'Visitor', description: 'Visited the Network site in the last 30 days', statusNames: ['Visitor'], count: 0, accent: 'purple', icon: 'desktop', countLabel: 'visitors', detail: 'Returning 0%' },
+    { label: 'Visitor', description: 'Visited the Network site today', statusNames: ['Visitor'], count: 0, accent: 'purple', icon: 'desktop', countLabel: 'visitors', detail: 'Returning 0%' },
     { label: 'Contacted', description: 'The first move has been made', statusNames: ['Contacted', 'Lead Generation'], count: 0, accent: 'teal', icon: 'paper-plane', countLabel: 'contacts', detail: '0 threads' },
     { label: 'Engaged', description: 'They replied or showed real interest', statusNames: ['Engaged', 'Engagement'], count: 0, accent: 'cyan', icon: 'comments', countLabel: 'contacts', detail: '0 threads' },
     { label: 'Qualified', description: 'A focused follow-up is warranted', statusNames: ['Qualified', 'Qualification'], count: 0, accent: 'green', icon: 'circle-check', countLabel: 'contacts', detail: '0 threads' },
@@ -249,7 +249,7 @@ export class DealFlowDashboardComponent implements OnInit {
   private async loadSourceMetrics ( userId: string ): Promise<void> {
     const headers = new HttpHeaders().set( 'x-tenant-id', this.tenantId ).set( 'x-user-id', userId );
     const momentumRequest = firstValueFrom( this.http.get<any>( `${environment.backendURL}/outreach/momentum/today-summary`, { headers } ) );
-    const visitorRequest = firstValueFrom( this.http.get<any>( `${environment.backendURL}/anonymous-behavior/summary`, { params: new HttpParams().set( 'tenantId', this.tenantId ).set( 'periodDays', '30' ) } ) );
+    const visitorRequest = firstValueFrom( this.http.get<any>( `${environment.backendURL}/anonymous-behavior/summary`, { params: new HttpParams().set( 'tenantId', this.tenantId ).set( 'periodDays', '1' ) } ) );
     const [momentumResult, visitorResult] = await Promise.allSettled( [momentumRequest, visitorRequest] );
     try {
       if ( momentumResult.status !== 'fulfilled' ) return;
