@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
@@ -12,6 +12,7 @@ import { NetworkDataService } from '../../services/network-data.service';
 import { NetworkContactAccessService, ContactAccessState } from '../../services/network-contact-access.service';
 import { NetworkContactPackService } from '../../services/network-contact-pack.service';
 import { NetworkNotificationService } from '../../services/network-notification.service';
+import { NetworkAssistantSignalService } from '../../services/network-assistant-signal.service';
 import { SoundService } from '../../services/sound.service';
 import { Contact, PhoneNumber, EmailAddress } from '../../models/contact.model';
 import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.component';
@@ -54,7 +55,7 @@ interface ImportStep {
   templateUrl: './csv-import.component.html',
   styleUrl: './csv-import.component.css',
 } )
-export class CsvImportComponent implements OnInit {
+export class CsvImportComponent implements OnInit, OnDestroy {
   readonly steps: ImportStep[] = [
     { key: 'upload', label: 'Upload' },
     { key: 'map', label: 'Map Fields' },
@@ -93,6 +94,7 @@ export class CsvImportComponent implements OnInit {
     private contactPackService: NetworkContactPackService,
     private notificationService: NetworkNotificationService,
     private soundService: SoundService,
+    private assistantBus: NetworkAssistantSignalService,
   ) { }
 
   async ngOnInit (): Promise<void> {
@@ -107,6 +109,30 @@ export class CsvImportComponent implements OnInit {
     }
 
     this.isLoading = false;
+    this.publishAssistantContext();
+  }
+
+  ngOnDestroy (): void {
+    this.assistantBus.clearPageContext();
+  }
+
+  private publishAssistantContext (): void {
+    this.assistantBus.setPageContext( {
+      feature: 'contact-import',
+      page: 'contact-import',
+      mode: this.currentStepKey === 'result' ? 'view' : 'create',
+      title: 'Import Contacts',
+      summary: {
+        currentStep: this.currentStep,
+        processing: this.processing,
+        importCompleted: this.importCompleted,
+        csvRowCount: this.csvData.length,
+        mappedRowCount: this.mappedData.length,
+        contactCount: this.contacts.length,
+        successCount: this.lastImportSuccessCount,
+        failureCount: this.lastImportFailureCount,
+      },
+    } );
   }
 
   private firstUserId (): Promise<string> {
@@ -165,11 +191,13 @@ export class CsvImportComponent implements OnInit {
         this.currentStep = 1;
         this.soundService.playSound( 'finished' );
         this.notificationService.show( 'File loaded', `${this.csvData.length} rows ready to map.`, 'success' );
+        this.publishAssistantContext();
       },
       error: ( error: any ) => {
         this.processing = false;
         this.message = 'Unable to read that file.';
         this.notificationService.show( 'Upload failed', error?.message || 'Unable to read that file.', 'error' );
+        this.publishAssistantContext();
       },
     } );
   }
@@ -195,6 +223,7 @@ export class CsvImportComponent implements OnInit {
     } );
     this.currentStep = 2;
     this.soundService.playSound( 'click' );
+    this.publishAssistantContext();
   }
 
   // ── Step 3: Review mapped rows, Step 4: confirm/transform ───────────
@@ -210,6 +239,7 @@ export class CsvImportComponent implements OnInit {
   confirmMappedData (): void {
     this.contacts = this.transformToContact( this.mappedData );
     this.currentStep = 3;
+    this.publishAssistantContext();
   }
 
   private parseBoolean ( value: any ): boolean {
@@ -338,6 +368,7 @@ export class CsvImportComponent implements OnInit {
     this.importCompleted = false;
     this.message = 'Writing contacts to Network...';
     this.soundService.playSound( 'click' );
+    this.publishAssistantContext();
 
     try {
       const results = await this.dataService.uploadContacts( this.tenantId, this.contacts );
@@ -352,6 +383,7 @@ export class CsvImportComponent implements OnInit {
     } finally {
       this.processing = false;
       await this.refreshAccessState();
+      this.publishAssistantContext();
     }
   }
 
@@ -360,6 +392,7 @@ export class CsvImportComponent implements OnInit {
   previousStep (): void {
     this.soundService.playSound( 'click' );
     if ( this.currentStep > 0 ) this.currentStep--;
+    this.publishAssistantContext();
   }
 
   onCancel (): void {
@@ -387,5 +420,6 @@ export class CsvImportComponent implements OnInit {
     this.importCompleted = false;
     this.lastImportSuccessCount = 0;
     this.lastImportFailureCount = 0;
+    this.publishAssistantContext();
   }
 }

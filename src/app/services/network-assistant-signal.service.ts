@@ -1,22 +1,85 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Subject } from 'rxjs';
+
+export interface NetworkAssistantPageContext {
+  feature: string;
+  page: string;
+  route?: string;
+  mode?: 'view' | 'create' | 'edit' | 'list' | 'search' | 'dashboard';
+  title?: string;
+  description?: string;
+  allowedActions?: string[];
+  summary?: Record<string, any>;
+  dataPreview?: Record<string, any>;
+}
+
+export interface NetworkAssistantActivityEvent {
+  feature: string;
+  page: string;
+  action: string;
+  route?: string;
+  mode?: string;
+  summary?: Record<string, any>;
+}
+
+export interface NetworkAssistantTranscriptMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
 
 /**
- * No-op stand-in for the page-context/activity-reporting slice of
- * ToddAssistantBusService. This app deliberately doesn't carry TODD's full
- * assistant bus (see the assistant-box scoping decision - it's a separate,
- * much bigger project than this extraction), so ported components' calls
- * to report page context, transcript nudges, and activity events have
- * nowhere to go. Kept as a same-shaped no-op rather than deleted from each
- * call site, both to minimize the diff against the original component and
- * because a real Network-scoped assistant (if/when built) would plug in
- * here.
+ * Real implementation of the bus that every ported Network page already
+ * calls into (see contact-home.component.ts's emitAssistantActivity /
+ * setPageContext / clearPageContext / pushTranscript / markAssistantUnread /
+ * setSignalReady) - this was a no-op stand-in until a real Network-scoped
+ * assistant existed to plug into it. Same public method names/signatures as
+ * the stub it replaces, so no call site needed to change. Shape mirrors
+ * TODD's ToddAssistantBusService, trimmed to only what this app's pages
+ * actually publish - no suite-wide growth/cross-sell/maturity-stage state.
  */
 @Injectable( { providedIn: 'root' } )
 export class NetworkAssistantSignalService {
-  emitAssistantActivity ( _event: Record<string, unknown> ): void { }
-  setPageContext ( _context: Record<string, unknown> ): void { }
-  clearPageContext (): void { }
-  pushTranscript ( _message: { role: string; content: string } ): void { }
-  markAssistantUnread (): void { }
-  setSignalReady (): void { }
+  private readonly pageContextSubject = new BehaviorSubject<NetworkAssistantPageContext | null>( null );
+  private readonly transcriptInSubject = new Subject<NetworkAssistantTranscriptMessage>();
+  private readonly activitySubject = new Subject<NetworkAssistantActivityEvent>();
+  private readonly unreadSubject = new BehaviorSubject<boolean>( false );
+  private readonly readySubject = new BehaviorSubject<boolean>( false );
+
+  readonly pageContext$ = this.pageContextSubject.asObservable();
+  readonly transcriptIn$ = this.transcriptInSubject.asObservable();
+  readonly activity$ = this.activitySubject.asObservable();
+  readonly unread$ = this.unreadSubject.asObservable();
+  readonly ready$ = this.readySubject.asObservable();
+
+  get currentPageContext (): NetworkAssistantPageContext | null {
+    return this.pageContextSubject.value;
+  }
+
+  emitAssistantActivity ( event: NetworkAssistantActivityEvent ): void {
+    this.activitySubject.next( event );
+  }
+
+  setPageContext ( context: NetworkAssistantPageContext ): void {
+    this.pageContextSubject.next( context );
+  }
+
+  clearPageContext (): void {
+    this.pageContextSubject.next( null );
+  }
+
+  pushTranscript ( message: NetworkAssistantTranscriptMessage ): void {
+    this.transcriptInSubject.next( message );
+  }
+
+  markAssistantUnread (): void {
+    this.unreadSubject.next( true );
+  }
+
+  clearAssistantUnread (): void {
+    this.unreadSubject.next( false );
+  }
+
+  setSignalReady (): void {
+    this.readySubject.next( true );
+  }
 }

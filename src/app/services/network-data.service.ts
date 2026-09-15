@@ -131,4 +131,21 @@ export class NetworkDataService {
     const snap = await getDocs( this.contactsRef( tenantId ) );
     return snap.docs.map( ( d ) => ( { ...( d.data() as any ), id: d.id } ) as Contact );
   }
+
+  /**
+   * Client-side name lookup for the assistant box (find-contact-by-name
+   * intents). Network's collection is small enough per tenant that a full
+   * fetch + filter is fine here - mirrors how getAllContacts is already used
+   * by list.component.ts's own loadData().
+   */
+  async findContactsByName ( tenantId: string, name: string ): Promise<Contact[]> {
+    const needle = ( name || '' ).trim().toLowerCase();
+    if ( !needle ) return [];
+
+    const all = await this.getAllContacts( tenantId );
+    return all.filter( ( c: any ) => {
+      const displayName = c.displayName || [c.firstName, c.lastName].filter( Boolean ).join( ' ' );
+      return String( displayName || '' ).toLowerCase().includes( needle );
+    } );
+  }
 }

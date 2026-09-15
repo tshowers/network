@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { firstValueFrom } from 'rxjs';
@@ -7,6 +7,7 @@ import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { NetworkAuthService } from '../../services/network-auth.service';
 import { NetworkDataService } from '../../services/network-data.service';
+import { NetworkAssistantSignalService } from '../../services/network-assistant-signal.service';
 import { Contact } from '../../models/contact.model';
 import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.component';
 import { PreloaderComponent } from '../../shared/preloader/preloader.component';
@@ -73,7 +74,7 @@ const LATE_STAGES = ['Negotiation', 'Closing', 'Post-Sale', 'Closed Won'];
   templateUrl: './pipeline.component.html',
   styleUrl: './pipeline.component.css',
 } )
-export class PipelineComponent implements OnInit {
+export class PipelineComponent implements OnInit, OnDestroy {
   readonly stageNames: string[] = [
     'Lead Generation',
     'Qualification',
@@ -93,6 +94,7 @@ export class PipelineComponent implements OnInit {
   pipelineContactCount = 0;
   healthMeters: PipelineHealthMeter[] = [];
   momentumScore = 0;
+  closedWonCount = 0;
 
   private tenantId = '';
 
@@ -101,6 +103,7 @@ export class PipelineComponent implements OnInit {
     private titleService: Title,
     private authService: NetworkAuthService,
     private dataService: NetworkDataService,
+    private assistantBus: NetworkAssistantSignalService,
   ) { }
 
   async ngOnInit (): Promise<void> {
@@ -120,11 +123,30 @@ export class PipelineComponent implements OnInit {
       const contacts = await this.dataService.getAllContacts( this.tenantId );
       this.buildStages( contacts );
       this.buildHealthMeters();
+      this.publishAssistantContext();
     } catch {
       this.errorMessage = 'Unable to load your pipeline right now.';
     } finally {
       this.isLoading = false;
     }
+  }
+
+  ngOnDestroy (): void {
+    this.assistantBus.clearPageContext();
+  }
+
+  private publishAssistantContext (): void {
+    this.assistantBus.setPageContext( {
+      feature: 'pipeline',
+      page: 'pipeline',
+      mode: 'dashboard',
+      title: 'Pipeline',
+      summary: {
+        pipelineContactCount: this.pipelineContactCount,
+        momentumScore: this.momentumScore,
+        closedWonCount: this.closedWonCount,
+      },
+    } );
   }
 
   private buildStages ( contacts: Contact[] ): void {
@@ -152,6 +174,7 @@ export class PipelineComponent implements OnInit {
     const lateStageCount = this.countInStages( LATE_STAGES );
     const earlyStageCount = this.countInStages( EARLY_STAGES );
     const closedWonCount = this.stages.find( ( s ) => s.name === 'Closed Won' )?.contacts.length || 0;
+    this.closedWonCount = closedWonCount;
 
     const lateStagePct = this.percentOfPipeline( lateStageCount );
     const earlyStagePct = this.percentOfPipeline( earlyStageCount );

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
@@ -11,6 +11,7 @@ import { NetworkContactStateService } from '../../services/network-contact-state
 import { NetworkContactAccessService } from '../../services/network-contact-access.service';
 import { NetworkContactPackService } from '../../services/network-contact-pack.service';
 import { NetworkNotificationService } from '../../services/network-notification.service';
+import { NetworkAssistantSignalService } from '../../services/network-assistant-signal.service';
 import { Contact, EmailAddress, PhoneNumber } from '../../models/contact.model';
 import { StatusFlowComponent } from '../../shared/status-flow/status-flow.component';
 import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.component';
@@ -59,7 +60,7 @@ interface WizardStep {
   templateUrl: './contact-edit.component.html',
   styleUrl: './contact-edit.component.css',
 } )
-export class ContactEditComponent implements OnInit {
+export class ContactEditComponent implements OnInit, OnDestroy {
   readonly steps: WizardStep[] = [
     { key: 'firstName', label: 'First Name', heading: 'Name' },
     { key: 'middleName', label: 'Middle Name', heading: 'Name' },
@@ -101,7 +102,12 @@ export class ContactEditComponent implements OnInit {
     private accessService: NetworkContactAccessService,
     private contactPackService: NetworkContactPackService,
     private notificationService: NetworkNotificationService,
+    private assistantBus: NetworkAssistantSignalService,
   ) { }
+
+  ngOnDestroy (): void {
+    this.assistantBus.clearPageContext();
+  }
 
   async ngOnInit (): Promise<void> {
     this.titleService.setTitle( `${environment.COMPANY_NAME} - Contact Edit` );
@@ -187,6 +193,18 @@ export class ContactEditComponent implements OnInit {
     this.missingMessage = missing.length
       ? `The contact is missing the following information: ${missing.join( ', ' )}.`
       : '';
+
+    this.assistantBus.setPageContext( {
+      feature: 'contact-edit',
+      page: 'contact-edit',
+      mode: this.contact.id ? 'edit' : 'create',
+      title: this.contact.id ? 'Edit Contact' : 'Add Contact',
+      summary: {
+        isNewContact: !this.contact.id,
+        missingFields: missing,
+        limitMessage: this.limitMessage,
+      },
+    } );
   }
 
   get currentStepKey (): string {

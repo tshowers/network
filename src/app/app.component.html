@@ -1,9 +1,10 @@
 <div class="app-global-actions" *ngIf="!isEmbedded"><app-platform-menu [isAdmin]="(isAdmin$ | async) ?? false" [isLoggedIn]="(isLoggedIn$ | async) ?? false" (signOut)="signOut()" /></div>
 <app-command-palette />
 <router-outlet></router-outlet>
+<app-network-assistant-launcher *ngIf="!isEmbedded"></app-network-assistant-launcher>
 <app-toast></app-toast>
-<app-site-footer></app-site-footer>
 <div *ngIf="updateNotice" class="network-update-notice" role="status" aria-live="polite">
   <span>{{ updateNotice }}</span>
-  <button type="button" aria-label="Dismiss update notification" (click)="dismissUpdateNotice()">×</button>
+  <button *ngIf="chunkRecoveryNeedsManualRefresh" type="button" (click)="refreshAfterChunkError()">Refresh</button>
+  <button *ngIf="!chunkRecoveryNeedsManualRefresh" type="button" aria-label="Dismiss update notification" (click)="dismissUpdateNotice()">×</button>
 </div>

@@ -8,6 +8,7 @@ import { environment } from '../../../environments/environment';
 import { NetworkAuthService } from '../../services/network-auth.service';
 import { NetworkDataService } from '../../services/network-data.service';
 import { NetworkContactStateService } from '../../services/network-contact-state.service';
+import { NetworkAssistantSignalService } from '../../services/network-assistant-signal.service';
 import { Contact } from '../../models/contact.model';
 import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.component';
 import { PreloaderComponent } from '../../shared/preloader/preloader.component';
@@ -60,6 +61,7 @@ export class ListComponent implements OnInit, OnDestroy {
     private authService: NetworkAuthService,
     private dataService: NetworkDataService,
     private contactState: NetworkContactStateService,
+    private assistantBus: NetworkAssistantSignalService,
   ) { }
 
   ngOnInit (): void {
@@ -85,6 +87,7 @@ export class ListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy (): void {
     this.authSubscription?.unsubscribe();
+    this.assistantBus.clearPageContext();
   }
 
   private async loadContacts (): Promise<void> {
@@ -120,6 +123,21 @@ export class ListComponent implements OnInit, OnDestroy {
     } );
 
     this.filteredContacts = [...matches].sort( ( a, b ) => this.compareContacts( a, b ) );
+    this.publishAssistantContext();
+  }
+
+  private publishAssistantContext (): void {
+    this.assistantBus.setPageContext( {
+      feature: 'contact-list',
+      page: 'contact-list',
+      mode: 'list',
+      title: 'Contact List',
+      summary: {
+        totalContacts: this.contacts.length,
+        filteredCount: this.filteredContacts.length,
+        searchText: this.searchText.trim(),
+      },
+    } );
   }
 
   sortBy ( key: ContactSortKey ): void {
