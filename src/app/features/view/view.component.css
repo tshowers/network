@@ -393,88 +393,90 @@
   justify-content: flex-end;
 }
 
-@media (prefers-color-scheme: dark) {
-  .contact-view-shell {
-    --page-text: #f8fafc;
-    --muted-text: rgba(232, 232, 232, 0.78);
-    --panel-bg: linear-gradient(180deg, rgba(36, 39, 46, 0.84), rgba(28, 31, 37, 0.76));
-    --panel-border: rgba(255, 255, 255, 0.10);
-    --panel-shadow:
-      0 24px 56px rgba(0, 0, 0, 0.32),
-      inset 0 1px 0 rgba(255, 255, 255, 0.04);
-    --eyebrow-bg: rgba(255, 255, 255, 0.06);
-    --eyebrow-border: rgba(255, 255, 255, 0.10);
-    --eyebrow-text: #93c5fd;
-    --tab-bg: rgba(255, 255, 255, 0.03);
-    --tab-border: rgba(255, 255, 255, 0.08);
-    --tab-active-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.07));
-    --tab-active-text: #f8fafc;
-    --tab-text: rgba(232, 232, 232, 0.78);
-    --json-bg: rgba(15, 15, 15, 0.38);
-    --json-border: rgba(255, 255, 255, 0.08);
-    --json-text: #dbeafe;
-  }
+/* Keyed off the explicit theme attribute ThemeToggleComponent sets on
+   <html> (data-theme="dark"), not prefers-color-scheme - a manual toggle
+   has to win over the OS setting, the same convention
+   contact-edit.component.css already uses for its own dark-mode block. */
+:host-context(html[data-theme='dark']) .contact-view-shell {
+  --page-text: #f8fafc;
+  --muted-text: rgba(232, 232, 232, 0.78);
+  --panel-bg: linear-gradient(180deg, rgba(36, 39, 46, 0.84), rgba(28, 31, 37, 0.76));
+  --panel-border: rgba(255, 255, 255, 0.10);
+  --panel-shadow:
+    0 24px 56px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --eyebrow-bg: rgba(255, 255, 255, 0.06);
+  --eyebrow-border: rgba(255, 255, 255, 0.10);
+  --eyebrow-text: #93c5fd;
+  --tab-bg: rgba(255, 255, 255, 0.03);
+  --tab-border: rgba(255, 255, 255, 0.08);
+  --tab-active-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.07));
+  --tab-active-text: #f8fafc;
+  --tab-text: rgba(232, 232, 232, 0.78);
+  --json-bg: rgba(15, 15, 15, 0.38);
+  --json-border: rgba(255, 255, 255, 0.08);
+  --json-text: #dbeafe;
+}
 
-  .contact-view-breadcrumb-current {
-    color: rgba(248, 250, 252, 0.94);
-  }
+:host-context(html[data-theme='dark']) .contact-view-breadcrumb-current {
+  color: rgba(248, 250, 252, 0.94);
+}
 
-  .contact-view-edit-btn {
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.06));
-    color: #f8fafc;
-    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.18);
-  }
+:host-context(html[data-theme='dark']) .contact-view-edit-btn {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.06));
+  color: #f8fafc;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.18);
+}
 
-  .contact-view-edit-btn:hover {
-    box-shadow: 0 16px 28px rgba(0, 0, 0, 0.24);
-  }
+:host-context(html[data-theme='dark']) .contact-view-edit-btn:hover {
+  box-shadow: 0 16px 28px rgba(0, 0, 0, 0.24);
+}
 
-  .contact-view-tabs .nav-link:hover {
-    border-color: rgba(255, 255, 255, 0.14);
-  }
+:host-context(html[data-theme='dark']) .contact-view-tabs .nav-link:hover {
+  border-color: rgba(255, 255, 255, 0.14);
+}
 
-  .contact-view-tabs .nav-link.active {
-    border-color: rgba(255, 255, 255, 0.14);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  }
+:host-context(html[data-theme='dark']) .contact-view-tabs .nav-link.active {
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
 
-  .contact-view-tab-content {
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: linear-gradient(180deg, rgba(19, 22, 29, 0.30), rgba(19, 22, 29, 0.18));
-  }
+:host-context(html[data-theme='dark']) .contact-view-tab-content {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(19, 22, 29, 0.30), rgba(19, 22, 29, 0.18));
+}
 
-  .contact-view-json-panel pre {
-    background: rgba(2, 6, 23, 0.52);
-  }
+:host-context(html[data-theme='dark']) .contact-view-json-panel pre {
+  background: rgba(2, 6, 23, 0.52);
+}
 
-  .contact-view-empty-state .alert {
-    border: 1px solid rgba(250, 204, 21, 0.2);
-    background: linear-gradient(180deg, rgba(113, 63, 18, 0.28), rgba(15, 15, 15, 0.18));
-    color: #fef3c7;
-    box-shadow: 0 18px 32px rgba(0, 0, 0, 0.2);
-  }
+:host-context(html[data-theme='dark']) .contact-view-empty-state .alert {
+  border: 1px solid rgba(250, 204, 21, 0.2);
+  background: linear-gradient(180deg, rgba(113, 63, 18, 0.28), rgba(15, 15, 15, 0.18));
+  color: #fef3c7;
+  box-shadow: 0 18px 32px rgba(0, 0, 0, 0.2);
+}
 
-  .contact-reply-risk-banner {
-    color: rgba(241, 245, 249, 0.92);
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.1);
-  }
+:host-context(html[data-theme='dark']) .contact-reply-risk-banner {
+  color: rgba(241, 245, 249, 0.92);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
 
-  .contact-reply-risk-banner[data-risk="low"] {
-    border-color: rgba(74, 222, 128, 0.22);
-    background: rgba(34, 197, 94, 0.12);
-  }
+:host-context(html[data-theme='dark']) .contact-reply-risk-banner[data-risk="low"] {
+  border-color: rgba(74, 222, 128, 0.22);
+  background: rgba(34, 197, 94, 0.12);
+}
 
-  .contact-reply-risk-banner[data-risk="medium"] {
-    border-color: rgba(251, 191, 36, 0.24);
-    background: rgba(245, 245, 245, 0.14);
-  }
+:host-context(html[data-theme='dark']) .contact-reply-risk-banner[data-risk="medium"] {
+  border-color: rgba(251, 191, 36, 0.24);
+  background: rgba(245, 245, 245, 0.14);
+}
 
-  .contact-reply-risk-banner[data-risk="high"] {
-    border-color: rgba(248, 113, 113, 0.28);
-    background: rgba(239, 68, 68, 0.16);
-  }
+:host-context(html[data-theme='dark']) .contact-reply-risk-banner[data-risk="high"] {
+  border-color: rgba(248, 113, 113, 0.28);
+  background: rgba(239, 68, 68, 0.16);
 }
 
 .contact-reply-risk-banner {

@@ -40,3 +40,13 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Cypress
+/cypress/videos
+/cypress/screenshots
+/cypress/downloads
+
+# Firebase emulators
+firestore-debug.log
+ui-debug.log
+firebase-debug.log

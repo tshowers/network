@@ -1,6 +1,6 @@
 {
   "name": "network",
-  "version": "2026.9.15-build.4",
+  "version": "2026.9.15-build.6",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -8,7 +8,14 @@
     "build": "ng build",
     "deploy:hosting": "./deploy.sh",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "test:ci": "ng test --watch=false --browsers=ChromeHeadless",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "typecheck:cypress": "tsc -p tsconfig.cypress.json --noEmit --pretty false",
+    "emulators:start": "firebase emulators:start --project taliferrotech --only auth,firestore",
+    "e2e:app": "start-server-and-test start http://localhost:4200 cy:run",
+    "e2e": "firebase emulators:exec --project taliferrotech --only auth,firestore \"npm run e2e:app\""
   },
   "private": true,
   "dependencies": {
@@ -37,12 +44,14 @@
     "@angular/compiler-cli": "^19.0.0",
     "@types/jasmine": "~5.1.0",
     "@types/papaparse": "^5.5.2",
+    "cypress": "^13.17.0",
     "jasmine-core": "~5.4.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "start-server-and-test": "^2.1.5",
     "typescript": "~5.6.2"
   }
 }

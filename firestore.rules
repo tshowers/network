@@ -1,0 +1,21 @@
+rules_version = '2';
+
+// Emulator-only rules for Cypress coverage (cypress/e2e/*.cy.ts run against
+// `firebase emulators:start`, never against the real taliferrotech
+// project). Mirrors the actual access shape the app relies on:
+// NetworkAuthService.resolveTenantId reads users/{uid}.companyId, and
+// falls back to the uid itself as the tenant when it's unset - which is
+// always true for a freshly created emulator user - so a signed-in user's
+// own tenants/{uid}/contacts collection is exactly what NetworkDataService
+// reads and writes for them.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+    }
+
+    match /tenants/{tenantId}/contacts/{contactId} {
+      allow read, write: if request.auth != null && request.auth.uid == tenantId;
+    }
+  }
+}

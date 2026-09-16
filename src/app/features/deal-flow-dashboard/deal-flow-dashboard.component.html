@@ -1,7 +1,7 @@
 <app-preloader [isLoading]="isLoading" message="Reading your relationship progress…"></app-preloader>
 <app-back-to-top></app-back-to-top>
 
-<div class="deal-flow-page" *ngIf="!isLoading">
+<div class="deal-flow-page" data-cy="deal-flow-dashboard-shell" *ngIf="!isLoading">
   <header class="deal-flow-header" *ngIf="isSignedIn">
     <div>
       <h1>Networking Progress</h1>

@@ -1,5 +1,5 @@
 <app-back-to-top *ngIf="!isEmbedded"></app-back-to-top>
-<div class="cockpit-shell" [class.cockpit-shell--embedded]="isEmbedded" data-demo="contact-list">
+<div class="cockpit-shell" [class.cockpit-shell--embedded]="isEmbedded" data-demo="contact-list" data-cy="contact-home-shell">
   <app-cockpit-command-deck *ngIf="!isEmbedded"
     demoId="contact-command-deck"
     eyebrow="TODD Command Deck"

@@ -1,7 +1,7 @@
 <app-preloader [isLoading]="isLoading"></app-preloader>
 <app-back-to-top></app-back-to-top>
 
-<div class="contact-edit-shell" *ngIf="!isLoading">
+<div class="contact-edit-shell" data-cy="contact-edit-shell" *ngIf="!isLoading">
   <div class="wizard-header">
     <h1 class="mb-1">Network</h1>
     <p class="text-muted mb-3">Add or edit contact details with a live preview on the right.</p>
@@ -57,7 +57,7 @@
           </div>
           <div class="wizard-step-actions">
             <button type="button" class="btn-todd" disabled><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
-            <button type="button" class="btn-todd" [disabled]="!isFirstStepValid" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
+            <button type="button" class="btn-todd" data-cy="contact-wizard-next" [disabled]="!isFirstStepValid" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
           </div>
         </div>
 
@@ -69,7 +69,7 @@
           </div>
           <div class="wizard-step-actions">
             <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
-            <button type="button" class="btn-todd" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
+            <button type="button" class="btn-todd" data-cy="contact-wizard-next" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
           </div>
         </div>
 
@@ -82,7 +82,7 @@
           </div>
           <div class="wizard-step-actions">
             <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
-            <button type="button" class="btn-todd" [disabled]="!isLastNameStepValid" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
+            <button type="button" class="btn-todd" data-cy="contact-wizard-next" [disabled]="!isLastNameStepValid" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
           </div>
         </div>
 
@@ -100,7 +100,7 @@
           </div>
           <div class="wizard-step-actions">
             <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
-            <button type="button" class="btn-todd" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
+            <button type="button" class="btn-todd" data-cy="contact-wizard-next" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
           </div>
         </div>
 
@@ -116,7 +116,7 @@
           </div>
           <div class="wizard-step-actions">
             <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
-            <button type="button" class="btn-todd" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
+            <button type="button" class="btn-todd" data-cy="contact-wizard-next" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
           </div>
         </div>
 
@@ -125,7 +125,7 @@
           <app-status-flow mode="input" viewMode="flow" [currentStatus]="contact.status || ''" (statusChange)="onStatusChange($event)"></app-status-flow>
           <div class="wizard-step-actions">
             <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
-            <button type="button" class="btn-todd" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
+            <button type="button" class="btn-todd" data-cy="contact-wizard-next" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
           </div>
         </div>
 
@@ -137,7 +137,7 @@
           </div>
           <div class="wizard-step-actions">
             <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
-            <button type="button" class="btn-todd" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
+            <button type="button" class="btn-todd" data-cy="contact-wizard-next" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
           </div>
         </div>
 
@@ -155,7 +155,7 @@
           <button type="button" class="btn btn-outline-secondary btn-sm mb-3" (click)="addEmail()">+ Add Email</button>
           <div class="wizard-step-actions">
             <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
-            <button type="button" class="btn-todd" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
+            <button type="button" class="btn-todd" data-cy="contact-wizard-next" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
           </div>
         </div>
 
@@ -174,7 +174,7 @@
           <button type="button" class="btn btn-outline-secondary btn-sm mb-3" (click)="addPhone()">+ Add Phone</button>
           <div class="wizard-step-actions">
             <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
-            <button type="button" class="btn-todd" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
+            <button type="button" class="btn-todd" data-cy="contact-wizard-next" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
           </div>
         </div>
 
@@ -200,7 +200,7 @@
           </div>
           <div class="wizard-step-actions">
             <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
-            <button type="button" class="btn-todd" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
+            <button type="button" class="btn-todd" data-cy="contact-wizard-next" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
           </div>
         </div>
 
@@ -212,7 +212,7 @@
           </div>
           <div class="wizard-step-actions">
             <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
-            <button type="button" class="btn-todd" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
+            <button type="button" class="btn-todd" data-cy="contact-wizard-next" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
           </div>
         </div>
 
@@ -224,7 +224,7 @@
           </div>
           <div class="wizard-step-actions">
             <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
-            <button type="button" class="btn-todd" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
+            <button type="button" class="btn-todd" data-cy="contact-wizard-next" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
           </div>
         </div>
 
@@ -241,7 +241,7 @@
           </div>
           <div class="wizard-step-actions">
             <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
-            <button type="button" class="btn-todd" [disabled]="isSaving" (click)="onSubmit()">
+            <button type="button" class="btn-todd" data-cy="contact-wizard-submit" [disabled]="isSaving" (click)="onSubmit()">
               {{ isSaving ? 'Saving...' : (contact.id ? 'Save Changes' : 'Add') }}
             </button>
           </div>

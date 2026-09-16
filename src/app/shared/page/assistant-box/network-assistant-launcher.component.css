@@ -39,6 +39,13 @@
   height: 180px;
   z-index: 998;
   background: transparent;
+  /* Proximity detection happens via the component's document:mousemove/
+     touchstart listeners (clientX/clientY vs. window bounds) - this div
+     never needs to receive events itself. Without pointer-events: none it
+     silently swallows real clicks on whatever renders underneath it in
+     the bottom-right corner (e.g. a wizard's Next button once a
+     responsive layout collapses into that region). */
+  pointer-events: none;
 }
 
 /* Floating launcher pill */
