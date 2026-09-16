@@ -1,3 +1,4 @@
 :host { display:block; }
-.theme-toggle { display:inline-flex; align-items:center; gap:.45rem; min-height:40px; border:1px solid #d8dcd9; border-radius:999px; padding:.55rem .8rem; background:#fff; color:#1b2023; font:700 .78rem 'Segoe UI',sans-serif; cursor:pointer; box-shadow:0 8px 24px rgba(20,50,35,.08); }
+.theme-toggle { display:inline-flex; align-items:center; gap:.45rem; min-height:40px; border:1px solid var(--network-line, #d8dcd9); border-radius:999px; padding:.55rem .8rem; background:var(--network-surface, #fff); color:var(--network-ink, #1b2023); font:700 .72rem 'Manrope',sans-serif; cursor:pointer; box-shadow:0 8px 24px rgba(20,50,35,.08); backdrop-filter:blur(16px); transition:transform .2s ease, border-color .2s ease; }
+.theme-toggle:hover { transform:translateY(-1px); border-color:var(--network-teal); }
 .theme-toggle span:first-child { font-size:1.05rem; line-height:1; }

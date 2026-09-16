@@ -145,9 +145,8 @@
   color: var(--browse-mode-banner-link-text);
 }
 
-@media (prefers-color-scheme: dark) {
-  .browse-mode-banner {
-    --browse-mode-banner-bg:
+:host-context(html[data-theme='dark']) .browse-mode-banner {
+  --browse-mode-banner-bg:
       linear-gradient(135deg, rgba(12, 23, 39, 0.96), rgba(24, 43, 68, 0.92)),
       rgba(10, 17, 28, 0.92);
     --browse-mode-banner-border: rgba(111, 191, 255, 0.28);
@@ -164,7 +163,6 @@
     --browse-mode-banner-link-bg: rgba(120, 200, 255, 0.1);
     --browse-mode-banner-link-border: rgba(120, 200, 255, 0.22);
     --browse-mode-banner-link-text: #f5fbff;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

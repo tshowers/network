@@ -1,4 +1,5 @@
 @import "@taliferro/ui/styles/controls.css";
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
 
 /* You can add global styles to this file, and also import other style files */
 
@@ -10,12 +11,44 @@
  * far, not a port of the full 7000+ line stylesheet.
  */
 :root {
+  --network-ink: #17252a;
+  --network-muted: #64777a;
+  --network-paper: #f3f7f4;
+  --network-surface: rgba(255, 255, 255, .72);
+  --network-line: rgba(24, 84, 82, .14);
+  --network-accent: #e2f25b;
+  --network-accent-deep: #aabe23;
+  --network-teal: #1f7772;
   --tl-blue: #00bfff;
   --tl-blue-mid: #0095cc;
   --tl-amber: #de8b38;
   --tl-amber-rgb: 194, 101, 10;
   --tl-amber-ink: #ffffff;
 }
+
+html, body { font-family: 'Manrope', system-ui, sans-serif; }
+body { background: var(--network-paper); color: var(--network-ink); transition: background .35s ease, color .35s ease; }
+body::selection { background: var(--network-accent); color: var(--network-ink); }
+
+html[data-theme='light'] { color-scheme: light; }
+html[data-theme='dark'] {
+  color-scheme: dark;
+  --network-ink: #e8f2ee;
+  --network-muted: #91a9a4;
+  --network-paper: #0d1719;
+  --network-surface: rgba(24, 39, 40, .76);
+  --network-line: rgba(168, 232, 208, .13);
+  --network-teal: #8bd4bf;
+}
+
+/* Soft ambient glow: shared by every route, sits behind all page content. */
+.network-ambient { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.app-global-actions, app-root > router-outlet + *, app-root > app-command-palette, app-root > app-network-assistant-launcher, app-root > app-toast { position: relative; z-index: 1; }
+.network-ambient__glow { position: absolute; border-radius: 50%; filter: blur(90px); opacity: .16; animation: network-glow-drift 22s ease-in-out infinite; }
+.network-ambient__glow--a { width: 560px; height: 560px; left: -160px; top: -120px; background: radial-gradient(circle, var(--tl-blue), transparent 70%); }
+.network-ambient__glow--b { width: 520px; height: 520px; right: -140px; bottom: -140px; background: radial-gradient(circle, var(--tl-amber), transparent 70%); animation-delay: -11s; }
+@keyframes network-glow-drift { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-24px) scale(1.06); } }
+@media (prefers-reduced-motion: reduce) { .network-ambient__glow { animation: none; } }
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -84,3 +117,7 @@ app-root > router-outlet + app-network-app-showcase { background:#141a1e; }
     color: #e8edf2;
   }
 }
+
+/* The user's choice wins over the system preference. */
+html[data-theme='light'] body { background: var(--network-paper); color: var(--network-ink); }
+html[data-theme='dark'] body { background: var(--network-paper); color: var(--network-ink); }

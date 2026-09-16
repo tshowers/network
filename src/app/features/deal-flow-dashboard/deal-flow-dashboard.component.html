@@ -2,8 +2,6 @@
 <app-back-to-top></app-back-to-top>
 
 <div class="deal-flow-page" *ngIf="!isLoading">
-  <a class="deal-flow-page-link" routerLink="/contact-deal-flow">Open Pipeline Flow</a>
-
   <header class="deal-flow-header" *ngIf="isSignedIn">
     <div>
       <h1>Networking Progress</h1>
@@ -81,8 +79,7 @@
     </section>
   </ng-container>
   <ng-template #guestView>
-    <app-cockpit-command-deck eyebrow="TODD Command Deck" context="Progress · Network" title="Networking Progress" iconSrc="assets/network/network.png" iconAlt="Network" subtitle="Preview how Network tracks relationship momentum, bottlenecks, and opportunities as your network moves." scoreLabel="Preview momentum" scoreValue="0%"></app-cockpit-command-deck>
+    <app-cockpit-command-deck eyebrow="TODD Command Deck" context="Progress · Network" title="Networking Progress" iconSrc="assets/find/entities/network/logo.png" iconAlt="Network" subtitle="Preview how Network tracks relationship momentum, bottlenecks, and opportunities as your network moves." scoreLabel="Preview momentum" scoreValue="0%"></app-cockpit-command-deck>
     <app-cockpit-browse-mode-banner surfaceLabel="your Network progress" customTitle="Sign in to see your progress" customCopy="Once you sign in, Network will show how your relationships are moving and where the next opportunity needs attention."></app-cockpit-browse-mode-banner>
-    <figure class="progress-guest-ad"><img src="assets/progress-ad.webp" alt="Network relationship progress preview" /></figure>
   </ng-template>
 </div>

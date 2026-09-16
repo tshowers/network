@@ -120,118 +120,116 @@
     background: rgba(0, 191, 255, 0.08) !important;
 }
 
-@media (prefers-color-scheme: dark) {
-    .network-pricing-page {
-        color: #fff;
-        background: var(--tl-dark);
-    }
+:host-context(html[data-theme='dark']) .network-pricing-page {
+    color: #fff;
+    background: var(--tl-dark);
+}
 
-    .network-pricing-hero,
-    .network-pricing-card {
-        background: var(--tl-dark-mid) !important;
-        border: 1px solid rgba(0, 191, 255, 0.14) !important;
-        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45) !important;
-        color: #fff;
-    }
+:host-context(html[data-theme='dark']) .network-pricing-hero,
+:host-context(html[data-theme='dark']) .network-pricing-card {
+    background: var(--tl-dark-mid) !important;
+    border: 1px solid rgba(0, 191, 255, 0.14) !important;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45) !important;
+    color: #fff;
+}
 
-    .network-pricing-card-accent {
-        background: var(--tl-dark-soft) !important;
-        border-color: rgba(0, 191, 255, 0.08) !important;
-        backdrop-filter: blur(14px);
-    }
+:host-context(html[data-theme='dark']) .network-pricing-card-accent {
+    background: var(--tl-dark-soft) !important;
+    border-color: rgba(0, 191, 255, 0.08) !important;
+    backdrop-filter: blur(14px);
+}
 
-    .network-pricing-eyebrow {
-        color: var(--tl-blue);
-        opacity: 1;
-    }
+:host-context(html[data-theme='dark']) .network-pricing-eyebrow {
+    color: var(--tl-blue);
+    opacity: 1;
+}
 
-    .network-pricing-copy h1,
-    .network-pricing-card-header h2 {
-        color: #fff;
-    }
+:host-context(html[data-theme='dark']) .network-pricing-copy h1,
+:host-context(html[data-theme='dark']) .network-pricing-card-header h2 {
+    color: #fff;
+}
 
-    .network-pricing-lead,
-    .network-pricing-card-header p,
-    .network-pricing-list li,
-    .network-pricing-price-note,
-    .network-pricing-login-text {
-        color: rgba(255, 255, 255, 0.72);
-    }
+:host-context(html[data-theme='dark']) .network-pricing-lead,
+:host-context(html[data-theme='dark']) .network-pricing-card-header p,
+:host-context(html[data-theme='dark']) .network-pricing-list li,
+:host-context(html[data-theme='dark']) .network-pricing-price-note,
+:host-context(html[data-theme='dark']) .network-pricing-login-text {
+    color: rgba(255, 255, 255, 0.72);
+}
 
-    .network-pricing-badge {
-        background: rgba(0, 191, 255, 0.1);
-        border: 1px solid rgba(0, 191, 255, 0.2);
-        color: var(--tl-blue);
-    }
+:host-context(html[data-theme='dark']) .network-pricing-badge {
+    background: rgba(0, 191, 255, 0.1);
+    border: 1px solid rgba(0, 191, 255, 0.2);
+    color: var(--tl-blue);
+}
 
-    .network-pricing-price-row,
-    .network-pricing-login-callout {
-        background: rgba(255, 255, 255, 0.04) !important;
-        border: 1px solid rgba(0, 191, 255, 0.08) !important;
-    }
+:host-context(html[data-theme='dark']) .network-pricing-price-row,
+:host-context(html[data-theme='dark']) .network-pricing-login-callout {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(0, 191, 255, 0.08) !important;
+}
 
-    .network-pricing-price-label {
-        color: rgba(255, 255, 255, 0.55);
-        opacity: 1;
-    }
+:host-context(html[data-theme='dark']) .network-pricing-price-label {
+    color: rgba(255, 255, 255, 0.55);
+    opacity: 1;
+}
 
-    .network-pricing-price {
-        color: var(--tl-blue);
-    }
+:host-context(html[data-theme='dark']) .network-pricing-price {
+    color: var(--tl-blue);
+}
 
-    .network-pricing-field span,
-    .network-pricing-login-title {
-        color: rgba(255, 255, 255, 0.85);
-    }
+:host-context(html[data-theme='dark']) .network-pricing-field span,
+:host-context(html[data-theme='dark']) .network-pricing-login-title {
+    color: rgba(255, 255, 255, 0.85);
+}
 
-    .network-pricing-field input {
-        background: rgba(255, 255, 255, 0.06);
-        border-color: rgba(0, 191, 255, 0.2);
-        color: #fff;
-    }
+:host-context(html[data-theme='dark']) .network-pricing-field input {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(0, 191, 255, 0.2);
+    color: #fff;
+}
 
-    .network-pricing-field input::placeholder {
-        color: rgba(255, 255, 255, 0.35);
-    }
+:host-context(html[data-theme='dark']) .network-pricing-field input::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+}
 
-    .network-pricing-field input:focus {
-        border-color: var(--tl-blue-mid);
-        box-shadow: 0 0 0 3px rgba(0, 191, 255, 0.12);
-    }
+:host-context(html[data-theme='dark']) .network-pricing-field input:focus {
+    border-color: var(--tl-blue-mid);
+    box-shadow: 0 0 0 3px rgba(0, 191, 255, 0.12);
+}
 
-    .network-pricing-error {
-        background: rgba(248, 113, 113, 0.1);
-        border-color: rgba(248, 113, 113, 0.25);
-        color: #fca5a5;
-    }
+:host-context(html[data-theme='dark']) .network-pricing-error {
+    background: rgba(248, 113, 113, 0.1);
+    border-color: rgba(248, 113, 113, 0.25);
+    color: #fca5a5;
+}
 
-    .btn.btn-dark,
-    .network-pricing-login-btn,
-    .network-pricing-subscribe {
-        background: var(--tl-blue) !important;
-        border-color: var(--tl-blue) !important;
-        color: #06101a !important;
-        font-weight: 700;
-        border-radius: 999px !important;
-    }
+:host-context(html[data-theme='dark']) .btn.btn-dark,
+:host-context(html[data-theme='dark']) .network-pricing-login-btn,
+:host-context(html[data-theme='dark']) .network-pricing-subscribe {
+    background: var(--tl-blue) !important;
+    border-color: var(--tl-blue) !important;
+    color: #06101a !important;
+    font-weight: 700;
+    border-radius: 999px !important;
+}
 
-    .btn.btn-dark:hover,
-    .network-pricing-login-btn:hover,
-    .network-pricing-subscribe:hover {
-        opacity: 0.88 !important;
-        transform: translateY(-1px);
-    }
+:host-context(html[data-theme='dark']) .btn.btn-dark:hover,
+:host-context(html[data-theme='dark']) .network-pricing-login-btn:hover,
+:host-context(html[data-theme='dark']) .network-pricing-subscribe:hover {
+    opacity: 0.88 !important;
+    transform: translateY(-1px);
+}
 
-    .btn.btn-outline-dark {
-        background: transparent !important;
-        border-color: var(--tl-blue) !important;
-        color: var(--tl-blue) !important;
-        border-radius: 999px !important;
-    }
+:host-context(html[data-theme='dark']) .btn.btn-outline-dark {
+    background: transparent !important;
+    border-color: var(--tl-blue) !important;
+    color: var(--tl-blue) !important;
+    border-radius: 999px !important;
+}
 
-    .btn.btn-outline-dark:hover {
-        background: rgba(0, 191, 255, 0.08) !important;
-    }
+:host-context(html[data-theme='dark']) .btn.btn-outline-dark:hover {
+    background: rgba(0, 191, 255, 0.08) !important;
 }
 
 .network-pricing-page {

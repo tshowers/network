@@ -3,28 +3,29 @@
 }
 
 .contact-read-shell {
-    --page-text: #0f172a;
-    --muted-text: rgba(51, 65, 85, 0.78);
-    --panel-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(241, 245, 249, 0.78));
-    --panel-border: rgba(15, 15, 15, 0.10);
+    --page-text: var(--network-ink);
+    --muted-text: var(--network-muted);
+    --panel-bg: var(--network-surface);
+    --panel-border: var(--network-line);
     --panel-shadow:
         0 18px 42px rgba(15, 15, 15, 0.10),
-        inset 0 1px 0 rgba(255, 255, 255, 0.72);
-    --panel-soft-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(248, 250, 252, 0.52));
-    --panel-soft-border: rgba(148, 163, 184, 0.22);
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    --panel-soft-bg: color-mix(in srgb, var(--network-surface) 70%, transparent);
+    --panel-soft-border: var(--network-line);
     --soft-shadow: 0 12px 28px rgba(15, 15, 15, 0.08);
-    --hero-glow: radial-gradient(circle at top right, rgba(255, 255, 255, 0.82), transparent 40%);
-    --pill-bg: rgba(255, 255, 255, 0.62);
-    --pill-border: rgba(148, 163, 184, 0.24);
-    --pill-text: #0f172a;
-    --accent-text: #1e293b;
-    --alert-bg: linear-gradient(180deg, rgba(254, 240, 138, 0.34), rgba(253, 224, 71, 0.22));
-    --alert-border: rgba(202, 138, 4, 0.22);
-    --alert-text: #713f12;
+    --hero-glow: radial-gradient(circle at top right, rgba(255, 255, 255, 0.18), transparent 40%);
+    --pill-bg: color-mix(in srgb, var(--tl-blue) 10%, transparent);
+    --pill-border: color-mix(in srgb, var(--tl-blue) 22%, transparent);
+    --pill-text: var(--network-ink);
+    --accent-text: var(--network-ink);
+    --alert-bg: color-mix(in srgb, var(--tl-amber) 20%, transparent);
+    --alert-border: color-mix(in srgb, var(--tl-amber) 40%, transparent);
+    --alert-text: var(--network-ink);
     display: flex;
     flex-direction: column;
     gap: 1rem;
     color: var(--page-text);
+    font-family: 'Manrope', sans-serif;
 }
 
 .contact-hero-card,
@@ -111,7 +112,7 @@ app-communication-frequency-line-chart {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #0095cc, #00bfff);
+    background: linear-gradient(135deg, var(--tl-blue-mid), var(--tl-blue));
     color: #fff;
     font-size: 1.9rem;
     font-weight: 800;
@@ -504,29 +505,6 @@ app-communication-frequency-line-chart {
     color: var(--muted-text) !important;
 }
 
-@media (prefers-color-scheme: dark) {
-    .contact-read-shell {
-        --page-text: #f8fafc;
-        --muted-text: rgba(232, 232, 232, 0.76);
-        --panel-bg: linear-gradient(180deg, rgba(34, 37, 44, 0.82), rgba(26, 29, 35, 0.74));
-        --panel-border: rgba(255, 255, 255, 0.09);
-        --panel-shadow:
-            0 18px 42px rgba(0, 0, 0, 0.24),
-            inset 0 1px 0 rgba(255, 255, 255, 0.04);
-        --panel-soft-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.025));
-        --panel-soft-border: rgba(255, 255, 255, 0.08);
-        --soft-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
-        --hero-glow: radial-gradient(circle at top right, rgba(255, 255, 255, 0.08), transparent 42%);
-        --pill-bg: rgba(255, 255, 255, 0.06);
-        --pill-border: rgba(255, 255, 255, 0.08);
-        --pill-text: #f8fafc;
-        --accent-text: #e2e8f0;
-        --alert-bg: linear-gradient(180deg, rgba(15, 15, 15, 0.32), rgba(113, 63, 18, 0.22));
-        --alert-border: rgba(250, 204, 21, 0.18);
-        --alert-text: #fef3c7;
-    }
-}
-
 /* Compact profile layout: information first, containers second. */
 .contact-read-shell {
     gap: 1.25rem;
@@ -765,15 +743,15 @@ app-communication-frequency-line-chart {
 
 /* Flat contact read treatment: keep the content hierarchy without the nested glass panels. */
 .contact-read-shell {
-    --panel-bg: #ffffff;
-    --panel-border: rgba(15, 23, 42, 0.12);
+    --panel-bg: var(--network-surface);
+    --panel-border: var(--network-line);
     --panel-shadow: none;
-    --panel-soft-bg: #f8fafc;
-    --panel-soft-border: rgba(15, 23, 42, 0.1);
+    --panel-soft-bg: color-mix(in srgb, var(--network-surface) 70%, transparent);
+    --panel-soft-border: var(--network-line);
     --soft-shadow: none;
     --hero-glow: none;
-    --pill-bg: #eef6fa;
-    --pill-border: rgba(0, 149, 204, 0.18);
+    --pill-bg: color-mix(in srgb, var(--tl-blue) 10%, transparent);
+    --pill-border: color-mix(in srgb, var(--tl-blue) 22%, transparent);
 }
 
 .contact-hero-card,
@@ -809,7 +787,7 @@ app-communication-frequency-line-chart {
 
 .contact-hero-avatar-initials {
     border-radius: 14px;
-    background: #08afe2;
+    background: var(--tl-blue);
 }
 
 .contact-status-card,
@@ -859,18 +837,3 @@ app-communication-frequency-line-chart {
     border: 1px solid var(--panel-soft-border);
 }
 
-@media (prefers-color-scheme: dark) {
-    .contact-read-shell {
-        --panel-bg: #171d23;
-        --panel-border: rgba(148, 163, 184, 0.22);
-        --panel-soft-bg: #1d252d;
-        --panel-soft-border: rgba(148, 163, 184, 0.2);
-        --pill-bg: #203844;
-        --pill-border: rgba(0, 191, 255, 0.28);
-    }
-
-    .contact-hero-avatar-initials {
-        background: #18b9e9;
-        color: #06202c;
-    }
-}

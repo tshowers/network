@@ -9,16 +9,14 @@
   --edit-accent: #0095cc;
 }
 
-@media (prefers-color-scheme: dark) {
-  :host {
-    --edit-bg: #111820;
-    --edit-surface: #19232c;
-    --edit-surface-soft: #202d37;
-    --edit-text: #edf6fb;
-    --edit-muted: #9aafbc;
-    --edit-border: rgba(151, 198, 220, 0.16);
-    --edit-accent: #00bfff;
-  }
+:host-context(html[data-theme='dark']) {
+  --edit-bg: #111820;
+  --edit-surface: #19232c;
+  --edit-surface-soft: #202d37;
+  --edit-text: #edf6fb;
+  --edit-muted: #9aafbc;
+  --edit-border: rgba(151, 198, 220, 0.16);
+  --edit-accent: #00bfff;
 }
 
 .contact-edit-shell {

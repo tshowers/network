@@ -1,4 +1,12 @@
-<div class="app-global-actions" *ngIf="!isEmbedded"><app-platform-menu [isAdmin]="(isAdmin$ | async) ?? false" [isLoggedIn]="(isLoggedIn$ | async) ?? false" (signOut)="signOut()" /></div>
+<div class="network-ambient" aria-hidden="true">
+  <span class="network-ambient__glow network-ambient__glow--a"></span>
+  <span class="network-ambient__glow network-ambient__glow--b"></span>
+</div>
+<div class="app-global-actions" *ngIf="!isEmbedded">
+  <span class="network-utility-mark">NETWORK <i>·</i> RELATIONSHIP OS</span>
+  <app-theme-toggle />
+  <app-platform-menu [isAdmin]="(isAdmin$ | async) ?? false" [isLoggedIn]="(isLoggedIn$ | async) ?? false" (signOut)="signOut()" />
+</div>
 <app-command-palette />
 <router-outlet></router-outlet>
 <app-network-assistant-launcher *ngIf="!isEmbedded"></app-network-assistant-launcher>

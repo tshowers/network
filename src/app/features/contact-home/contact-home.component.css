@@ -44,6 +44,18 @@
     color: var(--cockpit-text);
 }
 
+:host-context(html[data-theme='dark']) .cockpit-shell {
+    --cockpit-text: #e8f2ee;
+    --cockpit-muted: rgba(210, 232, 224, 0.66);
+    --cockpit-panel-bg: rgba(21, 39, 40, 0.72);
+    --cockpit-panel-border: rgba(168, 232, 208, 0.14);
+    --cockpit-panel-shadow: 0 22px 48px rgba(0, 0, 0, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    --cockpit-track: rgba(168, 232, 208, 0.12);
+    --cockpit-grid-line: rgba(168, 232, 208, 0.10);
+    --cockpit-tile-bg: rgba(22, 48, 47, 0.68);
+    --signal-track-bg: rgba(168, 232, 208, 0.12);
+}
+
 .cockpit-header,
 .cockpit-panel {
     position: relative;

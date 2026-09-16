@@ -1,7 +1,5 @@
 :host { display:block; min-height:100%; }
 .deal-flow-page { width:min(100%, 1240px); margin:0 auto; padding:1rem clamp(1rem,3vw,2.25rem) 3rem; color:var(--page-text,#edf6fb); }
-.deal-flow-page-link { display:inline-block; margin:1.25rem 0 0; padding:.7rem 1rem; border:1px solid rgba(0,191,255,.35); border-radius:999px; color:#06131a; background:#00bfff; font-weight:800; text-decoration:none; }
-.deal-flow-page-link:hover { color:#06131a; background:#45d5ff; }
 .deal-flow-header { display:flex; justify-content:space-between; gap:2rem; align-items:end; padding:2.75rem 0 1.75rem; border-bottom:1px solid rgba(151,198,220,.2); }
 .deal-flow-kicker { margin:0 0 .6rem; color:#00bfff; font-size:.72rem; font-weight:800; letter-spacing:.16em; }
 .deal-flow-header h1,.flow-view h2,.status-view h2,.guest-view h2 { margin:0; color:inherit; letter-spacing:-.04em; line-height:1.05; }
@@ -22,9 +20,6 @@
 .cold-reserve { display:flex; justify-content:center; gap:.6rem; margin:1.1rem auto 0; padding:.8rem 1rem; width:max-content; max-width:100%; border-bottom:1px solid rgba(151,198,220,.2); color:#9aafbc; font-size:.84rem; }.cold-reserve strong { color:#edf6fb; }
 .status-view-heading { margin-bottom:1.25rem; }.status-view-heading > p { margin:.55rem 0 0; }.status-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.75rem; }.status-grid article { display:grid; grid-template-columns:auto 1fr; align-items:center; gap:.75rem; padding:1rem; border-bottom:1px solid rgba(151,198,220,.2); }.status-dot { width:12px; height:12px; border-radius:50%; background:#00bfff; }.status-dot--teal { background:#2ad7c5; }.status-dot--green { background:#55e68a; }.status-dot--gold { background:#ffbd42; }.status-dot--purple { background:#b28aff; }.status-grid strong,.status-grid span { display:block; }.status-grid span { margin-top:.2rem; color:#9aafbc; font-size:.82rem; }.status-bar { grid-column:2; height:4px; background:#243746; }.status-bar i { display:block; height:100%; background:#00bfff; }.lane-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:.75rem; overflow:auto; }.lane { min-width:170px; padding:.85rem; background:#111c27; border:1px solid rgba(151,198,220,.2); }.lane header { display:flex; justify-content:space-between; align-items:center; padding-bottom:.7rem; border-bottom:1px solid rgba(151,198,220,.2); }.lane h3 { margin:0; font-size:.95rem; }.lane header span { color:#00bfff; font-weight:800; }.lane button { display:block; width:100%; margin-top:.65rem; padding:0; border:0; color:#edf6fb; background:transparent; text-align:left; font-weight:700; }.lane small { display:block; margin-top:.15rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }.lane > p { color:#708897; font-size:.8rem; }.guest-view { max-width:680px; margin:3rem auto; padding:2rem 0; }.guest-view p:not(.deal-flow-kicker) { color:#9aafbc; line-height:1.6; }.guest-view a { display:inline-block; margin-top:1rem; padding:.7rem 1rem; border-radius:999px; color:#06131a; background:#00bfff; font-weight:800; }
 @media (max-width:760px) { .deal-flow-header,.flow-view-heading { display:block; }.deal-flow-summary { margin-top:1.25rem; padding:0; border:0; }.deal-flow-tabs { justify-content:flex-start; width:100%; overflow:auto; }.deal-flow-tabs button { flex:0 0 auto; }.flow-track { grid-template-columns:1fr; }.flow-stage { min-height:0; border-right:0; border-bottom:1px solid rgba(151,198,220,.2); }.flow-stage:last-child { border-bottom:0; }.flow-stage p { min-height:0; }.status-grid { grid-template-columns:1fr; }.lane-grid { grid-template-columns:repeat(5,170px); } }
-
-.progress-guest-ad { max-width: 980px; margin: 1.5rem auto 0; overflow: hidden; border: 1px solid rgba(151, 198, 220, .2); border-radius: 1.25rem; background: #fff; box-shadow: 0 18px 36px rgba(15, 23, 42, .12); }
-.progress-guest-ad img { display: block; width: 100%; height: auto; }
 
 /* Closer to the original Deal Flow workspace: a visual funnel, momentum strip,
    and action priorities, using Network's real contact counts. */
@@ -112,38 +107,59 @@
 
 /* Keep every dashboard tab on the same palette as the document theme. */
 :host {
-  --df-page-text: #101820;
-  --df-surface: #ffffff;
-  --df-surface-raised: #f5f8fa;
-  --df-surface-muted: #eaf1f5;
-  --df-border: rgba(15, 55, 78, .16);
-  --df-muted: #536575;
-  --df-subtle: #718493;
-  --df-accent: #08aee0;
-  --df-accent-strong: #007da9;
-  --df-dark-surface: #f8fafb;
+  --df-page-text: #edf6fb;
+  --df-surface: #12263a;
+  --df-surface-raised: #0d192c;
+  --df-surface-muted: #17263a;
+  --df-border: rgba(151, 198, 220, .2);
+  --df-muted: #b5c4ce;
+  --df-subtle: #9aafbc;
+  --df-accent: #00bfff;
+  --df-accent-strong: #00d5ff;
+  --df-dark-surface: #0e1c28;
+
+  /* Cockpit tokens - same names/values as contact-home/pipeline, so
+     CockpitCommandDeckComponent picks up the right colors here too
+     instead of falling back to its own hardcoded light literals. */
+  --cockpit-text: #f8fafc;
+  --cockpit-muted: rgba(232, 232, 232, 0.74);
+  --cockpit-panel-bg: rgba(255, 255, 255, 0.05);
+  --cockpit-panel-border: rgba(255, 255, 255, 0.10);
+  --cockpit-panel-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  --cockpit-grid-line: rgba(255, 255, 255, 0.06);
+  --cockpit-tile-bg: rgba(255, 255, 255, 0.04);
+
   display: block;
   min-height: 100%;
 }
 
-@media (prefers-color-scheme: dark) {
-  :host {
-    --df-page-text: #edf6fb;
-    --df-surface: #12263a;
-    --df-surface-raised: #0d192c;
-    --df-surface-muted: #17263a;
-    --df-border: rgba(151, 198, 220, .2);
-    --df-muted: #b5c4ce;
-    --df-subtle: #9aafbc;
-    --df-accent: #00bfff;
-    --df-accent-strong: #00d5ff;
-    --df-dark-surface: #0e1c28;
-  }
+:host-context(html[data-theme='dark']) {
+  --df-page-text: #edf6fb;
+  --df-surface: #12263a;
+  --df-surface-raised: #0d192c;
+  --df-surface-muted: #17263a;
+  --df-border: rgba(151, 198, 220, .2);
+  --df-muted: #b5c4ce;
+  --df-subtle: #9aafbc;
+  --df-accent: #00bfff;
+  --df-accent-strong: #00d5ff;
+  --df-dark-surface: #0e1c28;
+  --cockpit-text: #f8fafc;
+  --cockpit-muted: rgba(232, 232, 232, 0.74);
+  --cockpit-panel-bg: rgba(255, 255, 255, 0.05);
+  --cockpit-panel-border: rgba(255, 255, 255, 0.10);
+  --cockpit-panel-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  --cockpit-grid-line: rgba(255, 255, 255, 0.06);
+  --cockpit-tile-bg: rgba(255, 255, 255, 0.04);
 }
 
 /* The existing component styling was authored dark-first. These scoped light
    values prevent the light document shell from being mixed with dark panels. */
-@media (prefers-color-scheme: light) {
+:host-context(html[data-theme='light']) {
   .deal-flow-page { color: var(--df-page-text); }
   .deal-flow-header { border-color: var(--df-border); }
   .deal-flow-intro, .flow-view-heading > span, .status-view-heading > p:not(.deal-flow-kicker),

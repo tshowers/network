@@ -1,12 +1,17 @@
 :host {
   display: grid;
   gap: 1rem;
-  --command-deck-text: var(--cockpit-text, var(--page-text, var(--docs-text, var(--social-text, #0f172a))));
-  --command-deck-muted: var(--cockpit-muted, var(--muted-text, var(--docs-muted, var(--social-muted, rgba(15, 23, 42, 0.68)))));
-  --command-deck-panel-bg: var(--cockpit-panel-bg, var(--panel-bg, var(--docs-bg, var(--social-card, rgba(255, 255, 255, 0.72)))));
-  --command-deck-panel-border: var(--cockpit-panel-border, var(--panel-border, var(--docs-border, var(--social-border, rgba(15, 23, 42, 0.1)))));
+  /* Ultimate fallback is the app's own theme-aware --network-* tokens
+     (styles.css, flips with the manual light/dark toggle) rather than a
+     hardcoded light literal, so a route that forgets to define
+     --cockpit-* still renders theme-correctly instead of a broken
+     always-light panel on a dark page. */
+  --command-deck-text: var(--cockpit-text, var(--page-text, var(--docs-text, var(--social-text, var(--network-ink, #0f172a)))));
+  --command-deck-muted: var(--cockpit-muted, var(--muted-text, var(--docs-muted, var(--social-muted, var(--network-muted, rgba(15, 23, 42, 0.68))))));
+  --command-deck-panel-bg: var(--cockpit-panel-bg, var(--panel-bg, var(--docs-bg, var(--social-card, var(--network-surface, rgba(255, 255, 255, 0.72))))));
+  --command-deck-panel-border: var(--cockpit-panel-border, var(--panel-border, var(--docs-border, var(--social-border, var(--network-line, rgba(15, 23, 42, 0.1))))));
   --command-deck-panel-shadow: var(--cockpit-panel-shadow, var(--panel-shadow, var(--docs-shadow, var(--social-shadow, 0 22px 60px rgba(15, 23, 42, 0.08)))));
-  --command-deck-grid-line: var(--cockpit-grid-line, rgba(15, 23, 42, 0.08));
+  --command-deck-grid-line: var(--cockpit-grid-line, var(--network-line, rgba(15, 23, 42, 0.08)));
   --command-deck-accent: var(--tl-blue-mid, var(--tl-blue, #0095cc));
 }
 
