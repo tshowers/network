@@ -1,6 +1,6 @@
 {
   "name": "network",
-  "version": "2026.9.15-build.6",
+  "version": "2026.9.22-build.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

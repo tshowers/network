@@ -37,7 +37,10 @@ export class SignInComponent implements OnInit {
     }
     // /login is a compatibility handoff route. Send visitors directly to
     // TODD's shared hosted login instead of making them click twice.
-    this.signIn();
+    // Let Angular commit the compatibility shell before leaving the app.
+    // Besides avoiding a blank flash for real visitors, this keeps the
+    // handoff observable to smoke tests and assistive technology.
+    setTimeout( () => this.signIn(), 100 );
   }
 
   signIn (): void {

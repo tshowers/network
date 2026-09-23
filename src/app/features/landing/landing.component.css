@@ -14,14 +14,23 @@
 .nx-brand { display: inline-flex; align-items: center; gap: .5rem; font-size: 1rem; font-weight: 800; letter-spacing: -0.01em; color: var(--network-ink); text-decoration: none; }
 .nx-brand__mark { width: 24px; height: 24px; border-radius: 6px; }
 
-.nx-hero { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 46px 40px 0; }
-.nx-hero__title { font-size: clamp(2.6rem, 6vw, 4.25rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.05; margin: 0 0 20px; }
-.nx-hero__lede { font-size: 1.05rem; font-weight: 500; color: var(--network-ink); max-width: 460px; line-height: 1.5; margin: 0 0 10px; }
-.nx-hero__sub { font-size: 1.2rem; font-weight: 400; color: var(--network-muted); max-width: 460px; line-height: 1.5; margin: 0 0 22px; }
+.nx-hero { position: relative; z-index: 2; max-width: 1180px; margin: 0 auto; padding: 68px 40px 90px; }
+.nx-hero__title { font-size: clamp(.55rem, calc((100vw - 80px) / 32), 4.25rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.02; white-space: nowrap; margin: 0 0 42px; }
+.nx-hero__visual-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: clamp(24px, 7vw, 100px); margin-bottom: 42px; }
+.nx-hero__copy { max-width: 720px; min-width: 0; }
+.nx-hero__lede { font-size: clamp(1.12rem, 2vw, 1.35rem); font-weight: 700; color: var(--network-ink); max-width: 560px; line-height: 1.45; margin: 0 0 16px; }
+.nx-hero__sub { font-size: clamp(1rem, 1.6vw, 1.2rem); font-weight: 400; color: var(--network-muted); max-width: 590px; line-height: 1.55; margin: 0 0 18px; }
+.nx-hero__closing { font-size: clamp(1.08rem, 1.8vw, 1.3rem); font-weight: 700; color: var(--network-ink); max-width: 590px; line-height: 1.45; margin: 0 0 26px; }
 .nx-hero__cta { font-size: 1.05rem; font-weight: 700; color: var(--tl-blue-mid); text-decoration: none; }
 .nx-hero__cta:hover { color: var(--tl-blue); }
+.nx-app-store { display: flex; align-items: center; width: max-content; gap: 9px; margin: 22px 0 0; padding: 8px 15px 8px 12px; border: 1px solid color-mix(in srgb, var(--network-ink) 28%, transparent); border-radius: 10px; background: color-mix(in srgb, var(--network-surface) 65%, transparent); color: var(--network-muted); opacity: .55; cursor: not-allowed; text-align: left; }
+.nx-app-store__apple { font-family: Arial, sans-serif; font-size: 1.65rem; line-height: 1; }
+.nx-app-store__label { display: flex; flex-direction: column; line-height: 1.05; }
+.nx-app-store__label small { font-size: .58rem; font-weight: 600; }
+.nx-app-store__label strong { font-size: 1rem; font-weight: 700; }
 
-.nx-card-stage { position: relative; z-index: 2; display: flex; justify-content: center; padding: 34px 40px 90px; }
+.nx-hero__visual { display: flex; align-items: center; justify-content: center; }
+.nx-hero__icon { display: block; width: min(360px, 80%); height: auto; filter: drop-shadow(0 24px 32px rgba(15, 23, 42, .18)); }
 .nx-card { width: min(380px, 100%); background: var(--network-surface); backdrop-filter: blur(18px); border: 1px solid var(--network-line); border-radius: 26px; padding: 26px 28px; transform: rotate(-2deg); box-shadow: 0 10px 24px rgba(15, 23, 42, .08), 0 30px 60px rgba(15, 23, 42, .12); display: flex; flex-direction: column; gap: 14px; }
 .nx-card__top { display: flex; align-items: center; gap: 14px; }
 .nx-card__avatar { width: 52px; height: 52px; border-radius: 50%; flex: none; background: linear-gradient(135deg, var(--tl-blue), var(--tl-blue-mid)); }
@@ -34,6 +43,20 @@
 
 @media (max-width: 560px) {
   .nx-topbar { padding: 20px 20px 0; }
-  .nx-hero { padding: 34px 20px 0; }
-  .nx-card-stage { padding: 26px 20px 70px; }
+  .nx-hero { padding: 34px 20px 70px; }
+  .nx-hero__title { font-size: clamp(.55rem, calc((100vw - 40px) / 32), 4.25rem); margin-bottom: 28px; }
+  .nx-hero__visual-row { gap: 14px; margin-bottom: 30px; }
+  .nx-hero__icon { width: 100%; }
+  .nx-card { padding: 18px 16px; border-radius: 20px; gap: 10px; }
+  .nx-card__top { gap: 8px; }
+  .nx-card__avatar { width: 36px; height: 36px; }
+  .nx-card__who strong { font-size: .82rem; }
+  .nx-card__who span { font-size: .62rem; }
+  .nx-card__note { font-size: .68rem; }
+}
+
+@media (min-width: 561px) and (max-width: 900px) {
+  .nx-hero { padding-left: 28px; padding-right: 28px; }
+  .nx-hero__title { font-size: clamp(.55rem, calc((100vw - 56px) / 32), 4.25rem); }
+  .nx-hero__icon { width: min(300px, 100%); }
 }

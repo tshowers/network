@@ -158,7 +158,14 @@
 .platform-menu-route { display:flex; align-items:baseline; justify-content:space-between; gap:12px; padding:8px 0; border-bottom:1px solid var(--pm-border); color:var(--pm-text); text-decoration:none; font-size:clamp(1.15rem,2vw,1.55rem); font-weight:800; line-height:1.05; transition:color .15s ease,padding-left .2s ease; }
 .platform-menu-route:first-child { padding-top:0; }
 .platform-menu-route b { font-size:.58em; font-weight:700; }
-.platform-menu-route:hover { color:var(--pm-accent); padding-left:10px; }
+/* Guarded to real pointer hover only - a padding shift on touch-simulated
+   hover can move the element out from under the finger that triggered it,
+   which re-triggers :hover and creates a runaway loop (confirmed live via
+   Safari's Graphics/Animations panel showing this looping indefinitely on
+   iOS taps). See platform-menu-editorial__link:hover below for the same fix. */
+@media (hover: hover) and (pointer: fine) {
+  .platform-menu-route:hover { color:var(--pm-accent); padding-left:10px; }
+}
 
 .platform-menu-launcher {
   display: grid;
@@ -239,9 +246,11 @@
   font-weight: 700;
 }
 
-.platform-menu-editorial__link:hover {
-  color: var(--pm-accent);
-  padding-left: 10px;
+@media (hover: hover) and (pointer: fine) {
+  .platform-menu-editorial__link:hover {
+    color: var(--pm-accent);
+    padding-left: 10px;
+  }
 }
 
 @media (prefers-color-scheme: dark) {

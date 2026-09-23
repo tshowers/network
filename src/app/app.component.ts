@@ -27,6 +27,7 @@ export class AppComponent implements OnInit {
   private pendingUpdateVersion = '';
   readonly updateNoticeStorageKey = 'network-updated-version';
   readonly chunkRecoveryStorageKey = 'network-chunk-recovery-attempted';
+  readonly updateReloadStorageKey = 'network-update-reload-attempted';
   updateNotice = '';
   chunkRecoveryNeedsManualRefresh = false;
   readonly isAdmin$ = this.authService.getUser().pipe( map( user => user?.uid === environment.taliferroTenantId ) );
@@ -102,7 +103,10 @@ export class AppComponent implements OnInit {
   }
 
   refreshAfterChunkError (): void {
-    try { sessionStorage.removeItem( this.chunkRecoveryStorageKey ); } catch { }
+    try {
+      sessionStorage.removeItem( this.chunkRecoveryStorageKey );
+      sessionStorage.removeItem( this.updateReloadStorageKey );
+    } catch { }
     window.location.reload();
   }
 
@@ -155,6 +159,23 @@ export class AppComponent implements OnInit {
   private async activateAndReload ( version: string ): Promise<void> {
     if ( this.isReloadingForUpdate ) return;
     this.isReloadingForUpdate = true;
+
+    let alreadyAttempted = false;
+    try {
+      alreadyAttempted = sessionStorage.getItem( this.updateReloadStorageKey ) === '1';
+      if ( !alreadyAttempted ) sessionStorage.setItem( this.updateReloadStorageKey, '1' );
+    } catch { }
+    if ( alreadyAttempted ) {
+      // Already reloaded once this session for a version mismatch and it's still
+      // mismatched - a persisted mismatch (stale CDN edge, stuck service worker)
+      // would otherwise reload forever instead of settling. Stop and let the
+      // person refresh manually rather than fighting them for the page.
+      this.updateNotice = 'Network needs a refresh to finish updating.';
+      this.chunkRecoveryNeedsManualRefresh = true;
+      this.isReloadingForUpdate = false;
+      return;
+    }
+
     try {
       localStorage.setItem( this.updateNoticeStorageKey, version );
     } catch { }

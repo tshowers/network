@@ -39,6 +39,11 @@ export const routes: Routes = [
       import( './features/auth-callback/auth-callback.component' ).then( ( m ) => m.AuthCallbackComponent ),
   },
   {
+    path: 'mobile-handoff',
+    loadComponent: () =>
+      import( './features/mobile-handoff/mobile-handoff.component' ).then( ( m ) => m.MobileHandoffComponent ),
+  },
+  {
     path: 'contact-edit',
     loadComponent: () =>
       import( './features/contact-edit/contact-edit.component' ).then( ( m ) => m.ContactEditComponent ),

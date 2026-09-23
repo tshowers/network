@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
@@ -20,6 +20,10 @@ interface NetworkGuidanceCard {
   icon: string;
   nextStage?: string;
 }
+
+/** What the template actually binds to - the tone class is precomputed here
+ *  so [ngClass] can read a plain field instead of calling a method. */
+type RenderedGuidanceCard = NetworkGuidanceCard & { toneClass: string };
 
 /**
  * Network's launcher shell - a small, from-scratch equivalent of TODD's
@@ -53,6 +57,7 @@ export class NetworkAssistantLauncherComponent implements OnInit, OnDestroy {
   private readonly authService = inject( NetworkAuthService );
   private readonly assistantBus = inject( NetworkAssistantSignalService );
   private readonly router = inject( Router );
+  private readonly zone = inject( NgZone );
 
   private readonly launcherHotzoneSize = 180;
   private readonly launcherRevealDurationMs = 2400;
@@ -69,34 +74,66 @@ export class NetworkAssistantLauncherComponent implements OnInit, OnDestroy {
 
   private readonly subscriptions: Subscription[] = [];
 
+  private readonly onDocumentMouseMove = ( event: MouseEvent ): void => {
+    if ( this.isInBottomRightHotzone( event.clientX, event.clientY ) && !this.isOverOtherInteractiveElement( event.target ) ) {
+      this.revealLauncherTemporarily();
+    }
+  };
+
+  private readonly onDocumentTouchStart = ( event: TouchEvent ): void => {
+    const touch = event.touches?.[0];
+    if ( touch && this.isInBottomRightHotzone( touch.clientX, touch.clientY ) && !this.isOverOtherInteractiveElement( event.target ) ) {
+      this.revealLauncherTemporarily();
+    }
+  };
+
+  /**
+   * The hotzone is a broad 180x180 proximity area, not just the pill's own
+   * footprint - on narrower viewports a page's own bottom-right-anchored
+   * button (e.g. a wizard's primary action) can fall inside it. Revealing
+   * the pill there put it, at a higher z-index, physically on top of that
+   * button for the rest of the same synthetic event sequence, so a click
+   * meant for the page's button landed on the pill instead (toggling the
+   * chat open) and the page's own action never fired. Skip the reveal
+   * whenever the pointer/touch is already on top of some other clickable
+   * element - that means the user is reaching for that, not the assistant.
+   */
+  private isOverOtherInteractiveElement ( target: EventTarget | null ): boolean {
+    if ( !( target instanceof Element ) ) return false;
+    if ( target.closest( '.todd-assistant-root' ) ) return false;
+    return !!target.closest( 'button, a, input, select, textarea, [role="button"]' );
+  }
+
   ngOnInit (): void {
     this.subscriptions.push(
-      this.authService.isLoggedIn().subscribe( ( loggedIn ) => ( this.isLoggedIn = loggedIn ) ),
+      this.authService.isLoggedIn().subscribe( ( loggedIn ) => { this.isLoggedIn = loggedIn; this.refreshGuidanceCard(); } ),
       this.authService.getUserId().subscribe( ( id ) => ( this.userId = id || null ) ),
       this.authService.getTenantId().subscribe( ( id ) => ( this.tenantId = id || null ) ),
-      this.assistantBus.pageContext$.subscribe( ( ctx ) => ( this.pageContext = ctx ) ),
+      this.assistantBus.pageContext$.subscribe( ( ctx ) => { this.pageContext = ctx; this.refreshGuidanceCard(); } ),
       this.assistantBus.unread$.subscribe( ( unread ) => ( this.hasUnread = unread ) ),
     );
+
+    // Bound manually (rather than @HostListener) and outside Angular's zone:
+    // @HostListener always runs its callback inside the zone, which means
+    // zone.js schedules a full app-wide change detection pass after every
+    // single mousemove/touchstart anywhere on the page, whether or not the
+    // pointer is anywhere near the hotzone. On a page with other listeners
+    // that also run inside the zone (this app's Angular Router, other
+    // global listeners), that adds up to change detection running far more
+    // often than the on-screen state actually changes - the fix is to only
+    // re-enter the zone (`this.zone.run`) on the rare occasion the pointer
+    // is actually in the hotzone and launcherVisible needs to update.
+    this.zone.runOutsideAngular( () => {
+      document.addEventListener( 'mousemove', this.onDocumentMouseMove, { passive: true } );
+      document.addEventListener( 'touchstart', this.onDocumentTouchStart, { passive: true } );
+    } );
   }
 
   ngOnDestroy (): void {
     if ( this.launcherHideTimer ) clearTimeout( this.launcherHideTimer );
     this.subscriptions.forEach( ( s ) => s.unsubscribe() );
-  }
-
-  @HostListener( 'document:mousemove', ['$event'] )
-  onMouseMove ( event: MouseEvent ): void {
-    if ( this.isInBottomRightHotzone( event.clientX, event.clientY ) ) {
-      this.revealLauncherTemporarily();
-    }
-  }
-
-  @HostListener( 'document:touchstart', ['$event'] )
-  onTouchStart ( event: TouchEvent ): void {
-    const touch = event.touches?.[0];
-    if ( touch && this.isInBottomRightHotzone( touch.clientX, touch.clientY ) ) {
-      this.revealLauncherTemporarily();
-    }
+    document.removeEventListener( 'mousemove', this.onDocumentMouseMove );
+    document.removeEventListener( 'touchstart', this.onDocumentTouchStart );
   }
 
   private isInBottomRightHotzone ( clientX: number, clientY: number ): boolean {
@@ -105,14 +142,16 @@ export class NetworkAssistantLauncherComponent implements OnInit, OnDestroy {
   }
 
   private revealLauncherTemporarily (): void {
-    this.launcherVisible = true;
-    if ( this.launcherHideTimer ) clearTimeout( this.launcherHideTimer );
+    this.zone.run( () => {
+      this.launcherVisible = true;
+      if ( this.launcherHideTimer ) clearTimeout( this.launcherHideTimer );
 
-    if ( this.showAssistant ) return;
+      if ( this.showAssistant ) return;
 
-    this.launcherHideTimer = setTimeout( () => {
-      if ( !this.showAssistant ) this.launcherVisible = false;
-    }, this.launcherRevealDurationMs );
+      this.launcherHideTimer = setTimeout( () => {
+        if ( !this.showAssistant ) this.launcherVisible = false;
+      }, this.launcherRevealDurationMs );
+    } );
   }
 
   toggleAssistant (): void {
@@ -134,9 +173,11 @@ export class NetworkAssistantLauncherComponent implements OnInit, OnDestroy {
     void this.router.navigate( [target.path], { queryParams: target.queryParams, fragment: target.fragment } );
   }
 
-  get guidanceCard (): NetworkGuidanceCard | null {
-    if ( !this.isLoggedIn ) return this.guestOrientationCard;
-    return this.computeGuidanceCard( this.pageContext );
+  guidanceCard: RenderedGuidanceCard | null = null;
+
+  private refreshGuidanceCard (): void {
+    const card = this.isLoggedIn ? this.computeGuidanceCard( this.pageContext ) : this.guestOrientationCard;
+    this.guidanceCard = card ? { ...card, toneClass: `todd-activation-card--${card.tone}` } : null;
   }
 
   /**
@@ -467,9 +508,5 @@ export class NetworkAssistantLauncherComponent implements OnInit, OnDestroy {
       whyItMatters: 'Late-stage volume (Negotiation or later) is the strongest signal of near-term revenue.',
       bullets: [`${momentumScore}% of the pipeline is in Negotiation or later.`],
     };
-  }
-
-  guidanceToneClass ( tone: GuidanceTone ): string {
-    return `todd-activation-card--${tone}`;
   }
 }

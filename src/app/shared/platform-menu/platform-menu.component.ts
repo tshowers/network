@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import packageJson from '../../../../package.json';
 import { RouterModule } from '@angular/router';
 
@@ -20,6 +20,15 @@ interface AppRouteLink { label: string; route: string; signOut?: boolean; }
  * routes that never got ported per-app - profile, billing, admin, etc.) -
  * see taliferrotech's TODD-routes-migration doc and the Maya app's version,
  * which this mirrors.
+ *
+ * appRoutes/accountItems used to be getters that built a fresh array on
+ * every single template check - Angular checks bindings on every change
+ * detection pass (which zone.js triggers on nearly any browser event
+ * app-wide, not just ones inside this component), so *ngFor was seeing a
+ * new array identity constantly and destroying/rebuilding every link
+ * element in the list far more often than the content ever actually
+ * changed. They're computed once here and only recomputed when the inputs
+ * that actually affect their content change.
  */
 @Component( {
   selector: 'app-platform-menu',
@@ -28,7 +37,7 @@ interface AppRouteLink { label: string; route: string; signOut?: boolean; }
   templateUrl: './platform-menu.component.html',
   styleUrl: './platform-menu.component.css',
 } )
-export class PlatformMenuComponent {
+export class PlatformMenuComponent implements OnChanges {
   @Input() isAdmin = false;
   @Input() isLoggedIn = false;
   @Output() readonly signOut = new EventEmitter<void>();
@@ -36,22 +45,8 @@ export class PlatformMenuComponent {
   isOpen = false;
   readonly appVersion = String(packageJson.version || '').trim();
 
-  get appRoutes (): AppRouteLink[] {
-    return [
-      { label: 'Home', route: '/' },
-      { label: 'Relationships', route: '/app' },
-      { label: 'Contacts', route: '/contact-list' },
-      { label: 'Add', route: '/contact-edit' },
-      { label: 'Import', route: '/contact-import' },
-      { label: 'Pipeline', route: '/contact-deal-flow' },
-      { label: 'Networking Progress', route: '/contact-deal-flow-dashboard' },
-      { label: 'iOS App', route: '/ios' },
-      { label: 'Pricing', route: '/pricing' },
-      this.isLoggedIn
-        ? { label: 'Sign Out', route: '/', signOut: true }
-        : { label: 'Sign In', route: '/login' },
-    ];
-  }
+  appRoutes: AppRouteLink[] = [];
+  accountItems: PlatformMenuItem[] = [];
 
   readonly productLinks: ProductLink[] = [
     { label: 'Ask TODD', url: 'https://ask.taliferro.tech', icon: 'assets/find/entities/todd/logo-bw-icon.png', description: 'Turn uncertainty into the next move.' },
@@ -68,8 +63,35 @@ export class PlatformMenuComponent {
     { label: 'Music', url: 'https://music.taliferro.com', icon: 'assets/find/entities/music/logo-bw-icon.png', description: 'Let the soundtrack keep moving.' },
   ];
 
-  get accountItems (): PlatformMenuItem[] {
-    return getPlatformMenuItems().filter( ( item ) => !item.adminOnly || this.isAdmin );
+  constructor () {
+    this.recompute();
+  }
+
+  ngOnChanges (): void {
+    this.recompute();
+  }
+
+  private recompute (): void {
+    this.appRoutes = [
+      { label: 'Home', route: '/' },
+      { label: 'Relationships', route: '/app' },
+      { label: 'Contacts', route: '/contact-list' },
+      { label: 'Add', route: '/contact-edit' },
+      { label: 'Import', route: '/contact-import' },
+      { label: 'Pipeline', route: '/contact-deal-flow' },
+      { label: 'Networking Progress', route: '/contact-deal-flow-dashboard' },
+      { label: 'iOS App', route: '/ios' },
+      { label: 'Pricing', route: '/pricing' },
+      this.isLoggedIn
+        ? { label: 'Sign Out', route: '/', signOut: true }
+        : { label: 'Sign In', route: '/login' },
+    ];
+
+    this.accountItems = getPlatformMenuItems().filter( ( item ) => !item.adminOnly || this.isAdmin );
+  }
+
+  trackByLabel ( _index: number, item: { label: string } ): string {
+    return item.label;
   }
 
   toggle (): void {

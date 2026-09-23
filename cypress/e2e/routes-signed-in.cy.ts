@@ -105,8 +105,11 @@ describe( 'Network routes - signed in', () => {
     // Step 3: Review the mapped rows.
     cy.contains( '.import-step-actions button', 'Continue' ).click();
 
-    // Step 4: Confirm + import.
-    cy.contains( '.import-step-actions button', /^Import$/ ).click();
+    // Step 4: Confirm + import. Target the button's unique class rather than
+    // its exact label text (getImportButtonLabel()'s "Import" is whitespace-
+    // padded by the template interpolation, which made an exact-text regex
+    // match unreliable).
+    cy.get( '.import-step-actions .btn-todd--primary' ).should( 'contain.text', 'Import' ).click();
 
     cy.contains( '.result-summary h5', 'Import complete', { timeout: 15000 } ).should( 'be.visible' );
   } );

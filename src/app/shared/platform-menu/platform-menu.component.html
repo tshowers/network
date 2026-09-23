@@ -24,7 +24,7 @@
       <div class="platform-menu-col">
         <span class="platform-menu-eyebrow">Network</span>
         <nav class="platform-menu-route-list" aria-label="Network routes">
-          <a *ngFor="let link of appRoutes" class="platform-menu-route" [routerLink]="link.route" (click)="handleRouteClick($event, link); close()">
+          <a *ngFor="let link of appRoutes; trackBy: trackByLabel" class="platform-menu-route" [routerLink]="link.route" (click)="handleRouteClick($event, link); close()">
             <span>{{ link.label }}</span><b>&#8599;</b>
           </a>
         </nav>
@@ -32,7 +32,7 @@
         <span class="platform-menu-eyebrow">Products</span>
         <div class="platform-menu-launcher">
           <a
-            *ngFor="let link of productLinks"
+            *ngFor="let link of productLinks; trackBy: trackByLabel"
             class="platform-menu-app"
             [href]="link.url"
             target="_blank"
@@ -50,7 +50,7 @@
         <span class="platform-menu-eyebrow">Account</span>
         <nav class="platform-menu-editorial">
           <a
-            *ngFor="let item of accountItems"
+            *ngFor="let item of accountItems; trackBy: trackByLabel"
             class="platform-menu-editorial__link"
             [href]="item.url"
             target="_blank"
