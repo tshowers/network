@@ -15,7 +15,7 @@
 .nx-brand__mark { width: 24px; height: 24px; border-radius: 6px; }
 
 .nx-hero { position: relative; z-index: 2; max-width: 1180px; margin: 0 auto; padding: 68px 40px 90px; }
-.nx-hero__title { font-size: clamp(.55rem, calc((100vw - 80px) / 32), 4.25rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.02; white-space: nowrap; margin: 0 0 42px; }
+.nx-hero__title { width: 100vw; margin: 0 calc(50% - 50vw) 42px; padding: 0 24px; font-size: clamp(.55rem, calc((100vw - 80px) / 32), 4.25rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.02; text-align: center; white-space: nowrap; }
 .nx-hero__visual-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: clamp(24px, 7vw, 100px); margin-bottom: 42px; }
 .nx-hero__copy { max-width: 720px; min-width: 0; }
 .nx-hero__lede { font-size: clamp(1.12rem, 2vw, 1.35rem); font-weight: 700; color: var(--network-ink); max-width: 560px; line-height: 1.45; margin: 0 0 16px; }
@@ -30,7 +30,25 @@
 .nx-app-store__label strong { font-size: 1rem; font-weight: 700; }
 
 .nx-hero__visual { display: flex; align-items: center; justify-content: center; }
-.nx-hero__icon { display: block; width: min(360px, 80%); height: auto; filter: drop-shadow(0 24px 32px rgba(15, 23, 42, .18)); }
+.nx-network-logo { position: relative; display: block; width: min(360px, 80%); aspect-ratio: 304 / 298; border-radius: 24%; overflow: hidden; }
+.nx-network-logo__svg { display: block; width: 100%; height: 100%; }
+.nx-network-logo__tile { stroke: #020b22; stroke-width: 4; }
+.nx-network-logo__links { stroke-width: 8; }
+.nx-network-logo__link { stroke-dasharray: 1; stroke-dashoffset: 1; animation: nx-draw-link 4.5s cubic-bezier(.22, .72, .2, 1) forwards; }
+.nx-network-logo__link--1 { animation-delay: .5s; }
+.nx-network-logo__link--2 { animation-delay: 6.5s; }
+.nx-network-logo__link--3 { animation-delay: 12.5s; }
+.nx-network-logo__link--4 { animation-delay: 18.5s; }
+.nx-network-logo__link--5 { animation-delay: 24.5s; }
+.nx-network-logo__node { opacity: 0; transform-box: fill-box; transform-origin: center; animation: nx-node-in 1.25s cubic-bezier(.22, .72, .2, 1) forwards; }
+.nx-network-logo__node--center { opacity: 1; animation: none; }
+.nx-network-logo__node--1 { animation-delay: 4.2s; }
+.nx-network-logo__node--2 { animation-delay: 10.2s; }
+.nx-network-logo__node--3 { animation-delay: 16.2s; }
+.nx-network-logo__node--4 { animation-delay: 22.2s; }
+.nx-network-logo__node--5 { animation-delay: 28.2s; }
+@keyframes nx-draw-link { to { stroke-dashoffset: 0; } }
+@keyframes nx-node-in { from { opacity: 0; transform: scale(.55); } to { opacity: 1; transform: scale(1); } }
 .nx-card { width: min(380px, 100%); background: var(--network-surface); backdrop-filter: blur(18px); border: 1px solid var(--network-line); border-radius: 26px; padding: 26px 28px; transform: rotate(-2deg); box-shadow: 0 10px 24px rgba(15, 23, 42, .08), 0 30px 60px rgba(15, 23, 42, .12); display: flex; flex-direction: column; gap: 14px; }
 .nx-card__top { display: flex; align-items: center; gap: 14px; }
 .nx-card__avatar { width: 52px; height: 52px; border-radius: 50%; flex: none; background: linear-gradient(135deg, var(--tl-blue), var(--tl-blue-mid)); }
@@ -44,9 +62,9 @@
 @media (max-width: 560px) {
   .nx-topbar { padding: 20px 20px 0; }
   .nx-hero { padding: 34px 20px 70px; }
-  .nx-hero__title { font-size: clamp(.55rem, calc((100vw - 40px) / 32), 4.25rem); margin-bottom: 28px; }
+  .nx-hero__title { margin-bottom: 28px; }
   .nx-hero__visual-row { gap: 14px; margin-bottom: 30px; }
-  .nx-hero__icon { width: 100%; }
+  .nx-network-logo { width: 100%; }
   .nx-card { padding: 18px 16px; border-radius: 20px; gap: 10px; }
   .nx-card__top { gap: 8px; }
   .nx-card__avatar { width: 36px; height: 36px; }
@@ -57,6 +75,14 @@
 
 @media (min-width: 561px) and (max-width: 900px) {
   .nx-hero { padding-left: 28px; padding-right: 28px; }
-  .nx-hero__title { font-size: clamp(.55rem, calc((100vw - 56px) / 32), 4.25rem); }
-  .nx-hero__icon { width: min(300px, 100%); }
+  .nx-network-logo { width: min(300px, 100%); }
+}
+
+@media (min-width: 901px) {
+  .nx-hero__title { text-align: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nx-network-logo__link { animation: none; stroke-dashoffset: 0; }
+  .nx-network-logo__node { animation: none; opacity: 1; transform: none; }
 }
