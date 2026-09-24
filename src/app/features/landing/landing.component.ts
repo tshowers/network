@@ -1,7 +1,9 @@
 import { AfterViewInit, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { Title, Meta } from '@angular/platform-browser';
 import { LandingEngagementService } from '../../services/landing-engagement.service';
 import { NetworkAuthService } from '../../services/network-auth.service';
+import { SeoService } from '../../shared/seo.service';
 
 @Component( {
   selector: 'app-network-landing',
@@ -15,12 +17,31 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor (
     private readonly landingContext: LandingEngagementService,
-    private readonly authService: NetworkAuthService
+    private readonly authService: NetworkAuthService,
+    private readonly title: Title,
+    private readonly meta: Meta,
+    private readonly seo: SeoService
   ) {
     this.isLoggedIn$ = this.authService.isLoggedIn();
   }
 
   ngOnInit (): void {
+    // index.html ships the homepage's title/meta/canonical as static
+    // defaults, but Help and About overwrite them via Title/Meta/SeoService
+    // when visited — restore the defaults here so a client-side navigation
+    // back to Home (no full page reload) doesn't leave those pages'
+    // metadata stuck in place. This route is excluded from prerendering
+    // (see app.routes.server.ts — it depends on Firebase Auth state, which
+    // isn't safe to evaluate at build time), so this only ever runs client-side.
+    this.title.setTitle( 'Network — Know who matters and what to do next | Taliferro Tech' );
+    this.meta.updateTag( { name: 'description', content: 'Network keeps contacts, companies, conversations, and opportunities connected so TODD can surface who needs attention and what to do next.' } );
+    this.meta.updateTag( { property: 'og:title', content: 'Network — Know who matters and what to do next' } );
+    this.meta.updateTag( { property: 'og:description', content: 'Keep relationship context together so TODD can identify who needs attention, which opportunities are moving, and what should happen next.' } );
+    this.meta.updateTag( { property: 'og:url', content: 'https://network.taliferro.tech/' } );
+    this.meta.updateTag( { name: 'twitter:title', content: 'Network — Know who matters and what to do next' } );
+    this.meta.updateTag( { name: 'twitter:description', content: 'Keep relationship context together so TODD can identify who needs attention and what should happen next.' } );
+    this.seo.setCanonical( 'https://network.taliferro.tech/' );
+
     this.landingContext.start( {
       featureKey: 'network',
       title: 'Network Landing',

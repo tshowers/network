@@ -1,6 +1,6 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideServiceWorker } from '@angular/service-worker';
 import { initializeApp } from 'firebase/app';
 import { connectAuthEmulator, createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
@@ -8,6 +8,7 @@ import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
 
 import { routes } from './app.routes';
 import { environment } from '../environments/environment';
+import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 
 initializeApp( environment.firebaseConfig );
 
@@ -51,10 +52,10 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(),
+    provideHttpClient(withFetch()),
     provideServiceWorker('ngsw-worker.js', {
       enabled: environment.production,
       registrationStrategy: 'registerWhenStable:30000',
-    }),
+    }), provideClientHydration(withEventReplay()),
   ]
 };

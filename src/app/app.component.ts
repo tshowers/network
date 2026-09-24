@@ -1,5 +1,5 @@
-import { AsyncPipe, NgIf } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { AsyncPipe, isPlatformBrowser, NgIf } from '@angular/common';
+import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
 import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
@@ -22,6 +22,7 @@ export class AppComponent implements OnInit {
   private readonly authService = inject( NetworkAuthService );
   private readonly router = inject( Router );
   private readonly updates = inject( SwUpdate );
+  private readonly isBrowser = isPlatformBrowser( inject( PLATFORM_ID ) );
   private isReloadingForUpdate = false;
   private isRecoveringFromChunkError = false;
   private pendingUpdateVersion = '';
@@ -43,6 +44,12 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit (): void {
+    // Service-worker update checks, chunk-error recovery, and the update
+    // notice all only make sense in a real browser session — none of this
+    // has meaning during prerendering (Node, no window/localStorage), and
+    // unlike showUpdateNoticeAfterReload's own try/catch, the calls below
+    // aren't wrapped, so they'd throw and fail the prerender build.
+    if ( !this.isBrowser ) return;
     this.showUpdateNoticeAfterReload();
     if ( !environment.production ) return;
     window.addEventListener( 'error', this.handleWindowError, true );

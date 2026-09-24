@@ -82,6 +82,7 @@ export class PlatformMenuComponent implements OnChanges {
       { label: 'Pipeline', route: '/contact-deal-flow' },
       { label: 'Networking Progress', route: '/contact-deal-flow-dashboard' },
       { label: 'Help', route: '/help' },
+      { label: 'About', route: '/about' },
       { label: 'iOS App', route: '/ios' },
       this.isLoggedIn
         ? { label: 'Sign Out', route: '/', signOut: true }

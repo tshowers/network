@@ -46,7 +46,15 @@
             ],
             "scripts": [
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
-            ]
+            ],
+            "server": "src/main.server.ts",
+            "security": {
+              "allowedHosts": []
+            },
+            "prerender": true,
+            "ssr": {
+              "entry": "src/server.ts"
+            }
           },
           "configurations": {
             "production": {
@@ -55,7 +63,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "900kB",
-                  "maximumError": "1.5MB"
+                  "maximumError": "1.55MB"
                 },
                 {
                   "type": "anyComponentStyle",

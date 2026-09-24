@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Disallow: /app
+Disallow: /contact-edit
+Disallow: /contact-import
+Disallow: /contact-list
+Disallow: /contact/
+Disallow: /contact-deal-flow
+Disallow: /contact-deal-flow-dashboard
+Disallow: /mobile-handoff
+Disallow: /auth/callback
+Disallow: /success
+
+Sitemap: https://network.taliferro.tech/sitemap.xml

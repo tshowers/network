@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, NgZone, OnDestroy, OnInit, inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, NgZone, OnDestroy, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
@@ -58,6 +58,10 @@ export class NetworkAssistantLauncherComponent implements OnInit, OnDestroy {
   private readonly assistantBus = inject( NetworkAssistantSignalService );
   private readonly router = inject( Router );
   private readonly zone = inject( NgZone );
+  // document.addEventListener below has no meaning during prerendering
+  // (Node, no document) — gate ngOnInit's listener setup on this instead of
+  // adding a guard at every call site.
+  private readonly isBrowser = isPlatformBrowser( inject( PLATFORM_ID ) );
 
   private readonly launcherHotzoneSize = 180;
   private readonly launcherRevealDurationMs = 2400;
@@ -123,6 +127,7 @@ export class NetworkAssistantLauncherComponent implements OnInit, OnDestroy {
     // often than the on-screen state actually changes - the fix is to only
     // re-enter the zone (`this.zone.run`) on the rare occasion the pointer
     // is actually in the hotzone and launcherVisible needs to update.
+    if ( !this.isBrowser ) return;
     this.zone.runOutsideAngular( () => {
       document.addEventListener( 'mousemove', this.onDocumentMouseMove, { passive: true } );
       document.addEventListener( 'touchstart', this.onDocumentTouchStart, { passive: true } );
@@ -132,6 +137,7 @@ export class NetworkAssistantLauncherComponent implements OnInit, OnDestroy {
   ngOnDestroy (): void {
     if ( this.launcherHideTimer ) clearTimeout( this.launcherHideTimer );
     this.subscriptions.forEach( ( s ) => s.unsubscribe() );
+    if ( !this.isBrowser ) return;
     document.removeEventListener( 'mousemove', this.onDocumentMouseMove );
     document.removeEventListener( 'touchstart', this.onDocumentTouchStart );
   }

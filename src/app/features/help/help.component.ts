@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { Title, Meta } from '@angular/platform-browser';
+import { SeoService } from '../../shared/seo.service';
 
 interface HelpOutcome {
   icon: string;
@@ -39,7 +41,26 @@ interface HelpRoutineStep {
   templateUrl: './help.component.html',
   styleUrl: './help.component.css',
 })
-export class HelpComponent {
+export class HelpComponent implements OnInit {
+  constructor(
+    private readonly title: Title,
+    private readonly meta: Meta,
+    private readonly seo: SeoService,
+  ) {}
+
+  ngOnInit(): void {
+    const pageTitle = 'Network Help — How to work your relationships | Taliferro Tech';
+    const description = 'A walkthrough of Network: import or add contacts, give each relationship a stage, check relationship health, and act on TODD\'s weekly priorities.';
+    this.title.setTitle(pageTitle);
+    this.meta.updateTag({ name: 'description', content: description });
+    this.meta.updateTag({ property: 'og:title', content: pageTitle });
+    this.meta.updateTag({ property: 'og:description', content: description });
+    this.meta.updateTag({ property: 'og:url', content: 'https://network.taliferro.tech/help' });
+    this.meta.updateTag({ name: 'twitter:title', content: pageTitle });
+    this.meta.updateTag({ name: 'twitter:description', content: description });
+    this.seo.setCanonical('https://network.taliferro.tech/help');
+  }
+
   readonly outcomes: HelpOutcome[] = [
     {
       icon: 'fa-bell',

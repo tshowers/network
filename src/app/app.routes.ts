@@ -34,6 +34,11 @@ export const routes: Routes = [
       import( './features/help/help.component' ).then( ( m ) => m.HelpComponent ),
   },
   {
+    path: 'about',
+    loadComponent: () =>
+      import( './features/about/about.component' ).then( ( m ) => m.AboutComponent ),
+  },
+  {
     path: 'login',
     loadComponent: () =>
       import( './features/sign-in/sign-in.component' ).then( ( m ) => m.SignInComponent ),
