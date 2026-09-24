@@ -10,7 +10,7 @@ describe( 'Network routes - signed out', () => {
   it( 'renders the landing page at /', () => {
     cy.visit( '/' );
     cy.get( '[data-cy="landing-shell"]' ).should( 'be.visible' );
-    cy.contains( '.nx-hero__title', 'Never lose the thread.' ).should( 'be.visible' );
+    cy.contains( '.nx-hero__title', 'Relationships → Attention → Opportunities → Revenue' ).should( 'be.visible' );
   } );
 
   it( 'renders the iOS showcase at /ios', () => {
@@ -22,7 +22,7 @@ describe( 'Network routes - signed out', () => {
   it( 'renders the pricing page signed out at /pricing', () => {
     cy.visit( '/pricing' );
     cy.get( '[data-cy="pricing-shell"]' ).should( 'be.visible' );
-    cy.contains( '.network-pricing-login-btn', 'Sign in to purchase' ).should( 'be.visible' );
+    cy.contains( 'h2', 'Network Expanded' ).should( 'be.visible' );
   } );
 
   it( 'redirects /login to the TODD hosted login page', () => {

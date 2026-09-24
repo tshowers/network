@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NetworkPurchaseFlowService } from '../../services/network-purchase-flow.service';
 import { NETWORK_PURCHASE_FLOW } from '../../services/purchase-flow.config';
 import { ClickSoundDirective } from '../../shared/directives/click-sound.directive';
@@ -9,7 +9,7 @@ import { ClickSoundDirective } from '../../shared/directives/click-sound.directi
 @Component( {
   selector: 'app-paid-success',
   standalone: true,
-  imports: [CommonModule, RouterLink, ClickSoundDirective],
+  imports: [CommonModule, ClickSoundDirective],
   templateUrl: './paid-success.component.html',
   styleUrl: './paid-success.component.css'
 } )

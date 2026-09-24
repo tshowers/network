@@ -25,13 +25,13 @@ export const COMMAND_PALETTE_ENTRIES: CommandPaletteEntry[] = [
   { id: 'network-deal-flow-dashboard', label: 'Networking Progress', group: 'Network', path: '/contact-deal-flow-dashboard', keywords: ['dashboard', 'deal flow', 'funnel', 'progress'] },
   { id: 'network-ios', label: 'Network for iOS', group: 'Network', path: '/ios', keywords: ['ios', 'mobile app', 'iphone', 'showcase'] },
   { id: 'network-pricing', label: 'Pricing', group: 'Network', path: '/pricing', keywords: ['pricing', 'plans', 'upgrade', 'billing'] },
-  { id: 'network-login', label: 'Sign In', group: 'Network', path: '/login', keywords: ['login', 'sign in', 'auth'] },
 
   // --- Other Apps -----------------------------------------------------------
   { id: 'app-maya', label: 'Maya', group: 'Other Apps', path: 'https://maya.taliferro.tech', icon: 'assets/find/entities/maya/logo-bw-icon.png', external: true, keywords: ['maya', 'marketing director'] },
   { id: 'app-todd', label: 'Ask TODD', group: 'Other Apps', path: 'https://ask.taliferro.tech', icon: 'assets/find/entities/todd/logo-bw-icon.png', external: true, keywords: ['todd', 'ask todd', 'assistant', 'chat'] },
   { id: 'app-docs', label: 'Docs', group: 'Other Apps', path: 'https://docs.taliferro.tech', icon: 'assets/find/entities/docs/logo-bw-icon.png', external: true, keywords: ['docs', 'documents', 'proposals', 'contracts'] },
   { id: 'app-signature', label: 'Email Signature Builder', group: 'Other Apps', path: 'https://signature.taliferro.tech', icon: 'assets/find/entities/email-signature-builder/logo-bw-icon.png', external: true, keywords: ['email signature', 'signature builder'] },
+  { id: 'app-image-creator', label: 'Image Creator', group: 'Other Apps', path: 'https://images.taliferro.tech', icon: 'assets/find/entities/image-creator/logo-bw-icon.svg', external: true, keywords: ['image creator', 'images', 'generate image', 'logo', 'icon', 'banner'] },
   { id: 'app-find', label: 'Find', group: 'Other Apps', path: 'https://find.taliferro.tech', icon: 'assets/find/entities/find/logo-bw-icon.png', external: true, keywords: ['find', 'ask a question'] },
   { id: 'app-lead-vault', label: 'Lead Vault', group: 'Other Apps', path: 'https://lead-vault.taliferro.tech', icon: 'assets/find/entities/lead-vault/logo-bw-icon.png', external: true, keywords: ['lead vault', 'leads', 'purchased leads'] },
   { id: 'app-moves', label: 'Moves', group: 'Other Apps', path: 'https://moves.taliferro.tech', icon: 'assets/find/entities/moves/logo-bw-icon.png', external: true, keywords: ['moves', 'tasks', 'projects', 'to-dos'] },
