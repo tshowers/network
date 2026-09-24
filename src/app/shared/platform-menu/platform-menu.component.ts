@@ -81,13 +81,19 @@ export class PlatformMenuComponent implements OnChanges {
       { label: 'Import', route: '/contact-import' },
       { label: 'Pipeline', route: '/contact-deal-flow' },
       { label: 'Networking Progress', route: '/contact-deal-flow-dashboard' },
+      { label: 'Help', route: '/help' },
       { label: 'iOS App', route: '/ios' },
       this.isLoggedIn
         ? { label: 'Sign Out', route: '/', signOut: true }
         : { label: 'Sign In', route: '/login' },
     ];
 
-    this.accountItems = getPlatformMenuItems().filter( ( item ) => item.label !== 'Billing' && ( !item.adminOnly || this.isAdmin ) );
+    // Network owns its own in-product help page. The shared platform menu
+    // also provides a TODD-level Help link, but leaving both visible makes
+    // it unclear which help experience belongs to this app.
+    this.accountItems = getPlatformMenuItems().filter( ( item ) =>
+      item.label !== 'Billing' && item.label !== 'Help' && ( !item.adminOnly || this.isAdmin )
+    );
   }
 
   trackByLabel ( _index: number, item: { label: string } ): string {

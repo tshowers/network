@@ -1,0 +1,110 @@
+<main class="network-help" data-cy="help-shell">
+  <header class="help-hero">
+    <div class="help-hero__eyebrow">Network Help</div>
+    <div class="help-hero__content">
+      <div>
+        <p class="help-hero__context">Relationships · Attention · Opportunities · Revenue</p>
+        <h1>Use Network to know where to look next.</h1>
+        <p class="help-hero__lead">Your network is worth more when you know who to talk to next. Network keeps track of everyone you know and where each relationship stands, then shows you where your attention will matter most.</p>
+      </div>
+      <img src="assets/seo/network-icon.png" alt="Network" class="help-hero__logo" />
+    </div>
+
+    <div class="help-outcomes" data-cy="help-outcomes">
+      <div class="help-outcome" *ngFor="let outcome of outcomes">
+        <i class="fa-solid {{ outcome.icon }}" aria-hidden="true"></i>
+        <strong>{{ outcome.title }}</strong>
+        <small>{{ outcome.copy }}</small>
+      </div>
+    </div>
+
+    <nav class="help-quick-links" aria-label="Help topics">
+      <button type="button" (click)="scrollTo('help-start-title')">Get started</button>
+      <button type="button" (click)="scrollTo('help-stages-title')">What the stages mean</button>
+      <button type="button" (click)="scrollTo('help-routine-title')">Weekly routine</button>
+    </nav>
+  </header>
+
+  <section class="help-todd-callout" aria-labelledby="help-todd-title">
+    <div class="help-todd-callout__icon"><i class="fa-solid fa-message" aria-hidden="true"></i></div>
+    <div>
+      <p class="help-section-kicker">Help on every page</p>
+      <h2 id="help-todd-title">Talk to TODD when you need a hand.</h2>
+      <p>Move your mouse toward the bottom-right corner of the page and the <strong>Talk to TODD</strong> assistant appears. Click it to ask about Network or the page you’re on. TODD can see which page you’re viewing, so you can get help without leaving your work.</p>
+      <p class="help-todd-callout__tip"><i class="fa-solid fa-lightbulb" aria-hidden="true"></i> On a touch device, tap the bottom-right corner to show TODD.</p>
+    </div>
+  </section>
+
+  <section class="help-section" aria-labelledby="help-start-title">
+    <div class="help-section__heading">
+      <p class="help-section-kicker">Getting started</p>
+      <h2 id="help-start-title">From an empty network to your next move</h2>
+      <p>Follow these steps in order the first time. You’ll need people in Network and a stage for each one before the Relationships and Progress pages have anything to show.</p>
+    </div>
+
+    <div class="help-steps">
+      <article class="help-step" *ngFor="let step of steps">
+        <div class="help-step__number">{{ step.number }}</div>
+        <div class="help-step__body">
+          <h3>{{ step.title }}</h3>
+          <p class="help-step__copy">{{ step.copy }}</p>
+          <ul>
+            <li *ngFor="let detail of step.details">{{ detail }}</li>
+          </ul>
+          <a class="help-try-link" [routerLink]="step.route">{{ step.action }} <span aria-hidden="true">→</span></a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="help-section" aria-labelledby="help-stages-title" data-cy="help-stages">
+    <div class="help-section__heading">
+      <p class="help-section-kicker">What the stages mean</p>
+      <h2 id="help-stages-title">Every relationship is somewhere on this path</h2>
+      <p>When you edit a contact, you choose a status. Networking Progress groups those statuses into five stages. Pick the one that matches what is really happening. That’s what makes the priorities useful.</p>
+    </div>
+
+    <ol class="help-stages">
+      <li class="help-stage" *ngFor="let stage of stages; let i = index">
+        <span class="help-stage__index">{{ i + 1 }}</span>
+        <div>
+          <h3>{{ stage.label }}</h3>
+          <p>{{ stage.meaning }}</p>
+          <p class="help-stage__statuses"><span>Choose:</span> {{ stage.statuses }}</p>
+          <p class="help-stage__next"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i> {{ stage.nextMove }}</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="help-section" aria-labelledby="help-routine-title" data-cy="help-routine">
+    <div class="help-section__heading">
+      <p class="help-section-kicker">Improve your network</p>
+      <h2 id="help-routine-title">A 20-minute weekly routine</h2>
+      <p>Network works best as a habit. Follow this routine each week and your relationships keep moving forward instead of going quiet.</p>
+    </div>
+
+    <div class="help-routine">
+      <article class="help-routine__step" *ngFor="let item of routine">
+        <p class="help-routine__when">{{ item.when }}</p>
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.copy }}</p>
+        <a class="help-try-link" [routerLink]="item.route">{{ item.action }} <span aria-hidden="true">→</span></a>
+      </article>
+    </div>
+  </section>
+
+  <section class="help-section help-section--compact" aria-labelledby="help-account-title">
+    <div class="help-section__heading">
+      <p class="help-section-kicker">Other places to go</p>
+      <h2 id="help-account-title">Explore at your own pace</h2>
+    </div>
+    <div class="help-destination-grid">
+      <a class="help-destination" routerLink="/login"><span><strong>Sign in</strong><small>Connect your account so you can save and work with your own network.</small></span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+      <a class="help-destination" routerLink="/pricing"><span><strong>Pricing</strong><small>See how Network Expanded gives you room for more relationships.</small></span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+      <a class="help-destination" routerLink="/ios"><span><strong>iOS App</strong><small>Take your network with you on your phone.</small></span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+    </div>
+  </section>
+
+  <footer class="help-footer"><a routerLink="/">← Back to Network</a><span>Need help right now? Move to the bottom-right corner and Talk to TODD.</span></footer>
+</main>

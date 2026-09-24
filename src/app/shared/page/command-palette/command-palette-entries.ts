@@ -25,6 +25,7 @@ export const COMMAND_PALETTE_ENTRIES: CommandPaletteEntry[] = [
   { id: 'network-deal-flow-dashboard', label: 'Networking Progress', group: 'Network', path: '/contact-deal-flow-dashboard', keywords: ['dashboard', 'deal flow', 'funnel', 'progress'] },
   { id: 'network-ios', label: 'Network for iOS', group: 'Network', path: '/ios', keywords: ['ios', 'mobile app', 'iphone', 'showcase'] },
   { id: 'network-pricing', label: 'Pricing', group: 'Network', path: '/pricing', keywords: ['pricing', 'plans', 'upgrade', 'billing'] },
+  { id: 'network-help', label: 'Help', group: 'Network', path: '/help', keywords: ['help', 'guide', 'how to', 'todd', 'assistance'] },
 
   // --- Other Apps -----------------------------------------------------------
   { id: 'app-maya', label: 'Maya', group: 'Other Apps', path: 'https://maya.taliferro.tech', icon: 'assets/find/entities/maya/logo-bw-icon.png', external: true, keywords: ['maya', 'marketing director'] },
