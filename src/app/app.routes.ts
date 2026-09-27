@@ -39,6 +39,23 @@ export const routes: Routes = [
       import( './features/about/about.component' ).then( ( m ) => m.AboutComponent ),
   },
   {
+    // Pre-sign-in onboarding wizard (name, role, company, goals, timezone)
+    // - the web twin of network-ios's OnboardingWizardView. Sign-in entry
+    // points land here; /login stays a direct handoff for returning users,
+    // purchase flows, and deep links.
+    path: 'get-started',
+    loadComponent: () =>
+      import( './features/get-started/get-started.component' ).then( ( m ) => m.GetStartedComponent ),
+  },
+  {
+    // In-app profile management (shared fields/API with network-ios's
+    // TODDProfileKit) - replaces the menu's old link out to TODD's
+    // /update-profile. Signed-out visitors are sent to /login.
+    path: 'profile',
+    loadComponent: () =>
+      import( './features/profile/profile.component' ).then( ( m ) => m.ProfileComponent ),
+  },
+  {
     path: 'login',
     loadComponent: () =>
       import( './features/sign-in/sign-in.component' ).then( ( m ) => m.SignInComponent ),

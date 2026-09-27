@@ -86,14 +86,16 @@ export class PlatformMenuComponent implements OnChanges {
       { label: 'iOS App', route: '/ios' },
       this.isLoggedIn
         ? { label: 'Sign Out', route: '/', signOut: true }
-        : { label: 'Sign In', route: '/login' },
+        : { label: 'Sign In', route: '/get-started' },
     ];
 
     // Network owns its own in-product help page. The shared platform menu
     // also provides a TODD-level Help link, but leaving both visible makes
     // it unclear which help experience belongs to this app.
+    // Profile is in-app (/profile), not TODD's page - it's shown as its
+    // own routerLink above these in the template.
     this.accountItems = getPlatformMenuItems().filter( ( item ) =>
-      item.label !== 'Billing' && item.label !== 'Help' && ( !item.adminOnly || this.isAdmin )
+      item.id !== 'platform-profile' && item.label !== 'Billing' && item.label !== 'Help' && ( !item.adminOnly || this.isAdmin )
     );
   }
 

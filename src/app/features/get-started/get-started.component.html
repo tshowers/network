@@ -1,0 +1,87 @@
+<main class="gs-shell" data-cy="get-started-shell">
+  <div class="gs-topbar">
+    <a class="gs-brand" routerLink="/"><img src="assets/find/entities/network/logo.png" alt="" class="gs-brand__mark">Network</a>
+  </div>
+
+  <section class="gs-card" aria-live="polite">
+    <div class="gs-card__nav">
+      <button *ngIf="stepIndex > 0" type="button" class="gs-back" (click)="back()" data-cy="get-started-back">
+        <span aria-hidden="true">&lsaquo;</span> Back
+      </button>
+      <span class="gs-count">Step {{ step.section + 1 }} of {{ sections.length }}</span>
+    </div>
+
+    <ol class="gs-progress" role="progressbar" aria-label="Setup progress"
+        [attr.aria-valuenow]="step.section + 1" aria-valuemin="1" [attr.aria-valuemax]="sections.length"
+        data-cy="get-started-progress">
+      <li *ngFor="let section of sections; let i = index" class="gs-progress__segment"
+          [class.is-done]="sectionFill(i) >= 1" [class.is-active]="i === step.section"
+          [attr.data-fill]="sectionFill(i)">
+        <span class="gs-progress__track"><span class="gs-progress__fill" [style.width.%]="sectionFill(i) * 100"></span></span>
+        <span class="gs-progress__label">
+          <span *ngIf="sectionFill(i) >= 1" class="gs-progress__check" aria-hidden="true">&#10003;</span>
+          {{ section.title }}
+        </span>
+      </li>
+    </ol>
+
+    <p *ngIf="step.key === 'firstName'" class="gs-lede">You're already 1 step in. Let's set up the rest - it takes under a minute.</p>
+
+    <h1 class="gs-question" data-cy="get-started-question">{{ step.question }}</h1>
+    <p *ngIf="step.hint" class="gs-hint">{{ step.hint }}</p>
+
+    <form class="gs-answer" (ngSubmit)="next()">
+      <div *ngIf="step.key === 'role'" class="gs-chips gs-chips--roles" role="radiogroup" [attr.aria-label]="step.question">
+        <button *ngFor="let option of roleOptions" type="button" class="gs-chip" role="radio"
+                [class.is-selected]="draft.role === option" [attr.aria-checked]="draft.role === option"
+                (click)="selectRole(option)" data-cy="get-started-role">
+          <span *ngIf="draft.role === option" aria-hidden="true">&#10003;</span>
+          {{ option }}
+        </button>
+        <button type="button" class="gs-chip" role="radio"
+                [class.is-selected]="hasCustomRole" [attr.aria-checked]="hasCustomRole"
+                (click)="selectOtherRole()" data-cy="get-started-role-other">
+          <span *ngIf="hasCustomRole" aria-hidden="true">&#10003;</span>
+          Other
+        </button>
+      </div>
+
+      <input *ngIf="isTextStep" #answerInput class="gs-input" type="text" name="answer"
+             [attr.autocomplete]="textAutocomplete" [attr.aria-label]="step.key === 'role' ? 'Your role' : step.question"
+             [attr.placeholder]="step.key === 'role' ? 'Your role' : null"
+             [(ngModel)]="textValue" data-cy="get-started-input" />
+
+      <ng-container *ngIf="step.key === 'helpWith'">
+        <div class="gs-chips" role="group" [attr.aria-label]="step.question">
+          <button *ngFor="let option of helpOptions" type="button" class="gs-chip"
+                  [class.is-selected]="draft.helpWith.includes(option)"
+                  [attr.aria-pressed]="draft.helpWith.includes(option)"
+                  (click)="toggleHelp(option)" data-cy="get-started-chip">
+            <span *ngIf="draft.helpWith.includes(option)" aria-hidden="true">&#10003;</span>
+            {{ option }}
+          </button>
+        </div>
+        <textarea class="gs-input gs-input--note" name="helpNote" rows="2" placeholder="Anything else? (optional)"
+                  [(ngModel)]="draft.helpNote" (ngModelChange)="persist()"></textarea>
+      </ng-container>
+
+      <select *ngIf="step.key === 'timezone'" class="gs-input" name="timezone" aria-label="Timezone"
+              [(ngModel)]="draft.timezone" (ngModelChange)="persist()" data-cy="get-started-timezone">
+        <option *ngFor="let zone of timezones" [value]="zone">{{ timezoneLabel(zone) }}</option>
+      </select>
+
+      <div *ngIf="step.key !== 'signIn'" class="gs-actions">
+        <button *ngIf="step.optional" type="button" class="gs-button gs-button--ghost" (click)="skip()">Skip</button>
+        <button type="submit" class="gs-button" [disabled]="!canAdvance" data-cy="get-started-next">Next</button>
+      </div>
+    </form>
+
+    <div *ngIf="step.key === 'signIn'" class="gs-actions">
+      <button type="button" class="gs-button" [disabled]="isSigningIn" (click)="signIn()" data-cy="get-started-sign-in">
+        {{ isSigningIn ? 'Redirecting...' : 'Sign in with TODD' }}
+      </button>
+    </div>
+
+    <a class="gs-existing" routerLink="/login" [queryParams]="{ returnUrl: '/app' }" data-cy="get-started-existing">Already have an account? Sign in</a>
+  </section>
+</main>

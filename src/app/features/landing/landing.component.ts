@@ -46,7 +46,7 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
       featureKey: 'network',
       title: 'Network Landing',
       description: 'Public product landing page for visitors evaluating Network as the relationship context TODD uses to recommend next steps.',
-      primaryRoute: '/app',
+      primaryRoute: '/get-started',
       pricingRoute: '/pricing'
     } );
   }

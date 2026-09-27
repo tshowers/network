@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NetworkAuthService } from '../../services/network-auth.service';
+import { OnboardingProfileService } from '../../services/onboarding-profile.service';
 
 /**
  * Lands here after TODD's hosted login (todd.taliferro.tech/login) hands
@@ -24,6 +25,7 @@ export class AuthCallbackComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private authService: NetworkAuthService,
+    private onboardingProfile: OnboardingProfileService,
   ) { }
 
   async ngOnInit (): Promise<void> {
@@ -38,6 +40,9 @@ export class AuthCallbackComponent implements OnInit {
 
     try {
       await this.authService.signInWithCustomToken( token );
+      // Saves any /get-started wizard answers to the TODD profile (blank
+      // fields only). Never throws - see submitIfPending().
+      await this.onboardingProfile.submitIfPending();
       await this.router.navigateByUrl( pending.returnUrl || '/app' );
     } catch ( error: any ) {
       this.errorMessage = error?.message || 'Sign-in failed. Please try again.';
