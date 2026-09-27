@@ -10,7 +10,7 @@
     [subtitle]="isLoggedIn
       ? 'Diagnose relationship pain, watch TODD treat it, and see which contacts are moving back toward momentum.'
       : 'Preview how TODD diagnoses relationship pain, treats it, and proves relief once your relationship graph is connected.'"
-    [scoreLabel]="isLoggedIn ? 'Relationship health' : 'Preview health'"
+    [scoreLabel]="isLoggedIn ? 'Network health' : 'Preview health'"
     [scoreValue]="momentumScore + '%'"
     [links]="relationshipsCommandDeckLinks"
   ></app-cockpit-command-deck>
@@ -140,22 +140,12 @@
           </div>
           <div class="cockpit-metric-tile cockpit-metric-tile--cockpit">
             <div class="mc-instrument-slot">
-              <app-arc-gauge [value]="activeDashboardCounts.reconfiguredContacts" [max]="activeDashboardCounts.totalContacts || 1" [tone]="activeDashboardCounts.reconfiguredContacts > 0 ? 'attention' : 'info'"></app-arc-gauge>
-            </div>
-            <div class="mc-instrument-text">
-              <div class="cockpit-metric-tile__label">Next move ready</div>
-              <div class="cockpit-metric-tile__value">{{ activeDashboardCounts.reconfiguredContacts | number }}</div>
-              <div class="cockpit-metric-tile__hint">contacts staged</div>
-            </div>
-          </div>
-          <div class="cockpit-metric-tile cockpit-metric-tile--cockpit">
-            <div class="mc-instrument-slot">
               <app-arc-gauge [value]="usagePercent" [max]="100" [tone]="usageWarningLevel === 'safe' ? 'positive' : (usageWarningLevel === 'warning' ? 'attention' : 'warn')"></app-arc-gauge>
             </div>
             <div class="mc-instrument-text">
-              <div class="cockpit-metric-tile__label">Capacity used</div>
-              <div class="cockpit-metric-tile__value">{{ usagePercent }}%</div>
-              <div class="cockpit-metric-tile__hint">{{ isLoggedIn ? (usageWarning || ((limits?.remaining || 0) + ' remaining')) : 'no live usage yet' }}</div>
+              <div class="cockpit-metric-tile__label">{{ isUnlimitedCapacity ? 'Capacity' : 'Capacity used' }}</div>
+              <div class="cockpit-metric-tile__value">{{ isUnlimitedCapacity ? 'Unlimited' : usagePercent + '%' }}</div>
+              <div class="cockpit-metric-tile__hint">{{ !isLoggedIn ? 'no live usage yet' : (isUnlimitedCapacity ? ((limits?.currentCount || 0) | number) + ' contacts, no limit' : (usageWarning || (((limits?.remaining || 0) | number) + ' remaining'))) }}</div>
             </div>
           </div>
         </div>
@@ -176,15 +166,6 @@
             </div>
             <div class="network-progress-track">
               <div class="network-progress-fill network-progress-fill-mid" [style.width.%]="(activeDashboardCounts.totalContacts || 0) > 0 ? (activeDashboardCounts.enrichedContacts / (activeDashboardCounts.totalContacts || 1)) * 100 : 0"></div>
-            </div>
-          </div>
-          <div class="cockpit-progress-row">
-            <div class="cockpit-progress-row__topline">
-              <span>Ready for next move</span>
-              <span>{{ activeDashboardCounts.reconfiguredContacts | number }}</span>
-            </div>
-            <div class="network-progress-track">
-              <div class="network-progress-fill network-progress-fill-strong" [style.width.%]="(activeDashboardCounts.totalContacts || 0) > 0 ? (activeDashboardCounts.reconfiguredContacts / (activeDashboardCounts.totalContacts || 1)) * 100 : 0"></div>
             </div>
           </div>
         </div>

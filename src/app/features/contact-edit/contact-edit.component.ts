@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { ChoiceFieldComponent, ChoiceOption } from '../../shared/choice-field/choice-field.component';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -48,7 +49,7 @@ interface WizardStep {
 @Component( {
   selector: 'app-contact-edit',
   standalone: true,
-  imports: [
+  imports: [ChoiceFieldComponent, 
     CommonModule,
     FormsModule,
     StatusFlowComponent,
@@ -61,13 +62,24 @@ interface WizardStep {
   styleUrl: './contact-edit.component.css',
 } )
 export class ContactEditComponent implements OnInit, OnDestroy {
+  // Tap, don't type: the choices each field offers (see ChoiceFieldComponent).
+  readonly categoryOptions: ChoiceOption[] = ['Prospect', 'Client', 'Partner', 'Friend'].map( ( value ) => ( { value, label: value } ) );
+  readonly emailTypeOptions: ChoiceOption[] = ['Work', 'Personal', 'Other'].map( ( value ) => ( { value, label: value } ) );
+  readonly phoneTypeOptions: ChoiceOption[] = ['Mobile', 'Work', 'Home', 'Other'].map( ( value ) => ( { value, label: value } ) );
+  readonly genderOptions: ChoiceOption[] = [
+    { value: '', label: 'Prefer not to say' },
+    { value: 'Male', label: 'Male' },
+    { value: 'Female', label: 'Female' },
+    { value: 'Other', label: 'Other' },
+  ];
+
   readonly steps: WizardStep[] = [
     { key: 'firstName', label: 'First Name', heading: 'Name' },
     { key: 'middleName', label: 'Middle Name', heading: 'Name' },
     { key: 'lastName', label: 'Last Name', heading: 'Name' },
     { key: 'company', label: 'Company', heading: 'Company' },
     { key: 'category', label: 'Category', heading: 'Tags' },
-    { key: 'status', label: 'Status', heading: 'State' },
+    { key: 'status', label: 'Stage', heading: 'Stage' },
     { key: 'profession', label: 'Profession', heading: 'Professional' },
     { key: 'email', label: 'Email', heading: 'Email' },
     { key: 'phone', label: 'Phone', heading: 'Phone' },
@@ -151,8 +163,10 @@ export class ContactEditComponent implements OnInit, OnDestroy {
       status: '',
       category: '',
       company: { name: '', url: '' },
-      emailAddresses: [],
-      phoneNumbers: [],
+      // One empty row each, with a default type, so a new contact's email
+      // and phone steps are ready to type into (blank rows are dropped on save).
+      emailAddresses: [{ emailAddress: '', emailAddressType: 'Work' }],
+      phoneNumbers: [{ phoneNumber: '', phoneNumberType: 'Mobile' }],
       addresses: [{ streetAddress: '', city: '', state: '', zip: '' }],
     };
   }
@@ -257,7 +271,7 @@ export class ContactEditComponent implements OnInit, OnDestroy {
 
   addPhone (): void {
     this.contact.phoneNumbers = this.contact.phoneNumbers || [];
-    this.contact.phoneNumbers.push( { phoneNumber: '', phoneNumberType: 'Work' } );
+    this.contact.phoneNumbers.push( { phoneNumber: '', phoneNumberType: 'Mobile' } );
   }
 
   removePhone ( index: number ): void {

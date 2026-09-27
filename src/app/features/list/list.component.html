@@ -31,6 +31,11 @@
       />
     </div>
 
+    <div class="contact-list-hint" *ngIf="setStageMode" role="note" data-cy="set-stage-hint">
+      <i class="fa-solid fa-lightbulb" aria-hidden="true"></i>
+      <span>Tap <strong>Set stage</strong> on a contact to choose where the relationship stands. Contacts without a stage are listed first.</span>
+    </div>
+
     <div class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</div>
 
     <app-preloader [isLoading]="isLoading" message="Loading your contacts…"></app-preloader>
@@ -61,18 +66,33 @@
           <span class="contact-list-name">{{ displayName(contact) }}<span *ngIf="isSelf(contact)" class="contact-self-tag" data-cy="contact-self-tag"> (You)</span></span>
           <span class="contact-list-profession" *ngIf="contact.profession">{{ contact.profession }}</span>
         </div>
-        <div class="col-company">{{ contact.company?.name || '—' }}</div>
-        <div class="col-email">{{ primaryEmail(contact) || '—' }}</div>
-        <div class="col-phone">{{ primaryPhone(contact) || '—' }}</div>
+        <div class="col-company" [class.is-empty]="!contact.company?.name">{{ contact.company?.name || '—' }}</div>
+        <div class="col-email" [class.is-empty]="!primaryEmail(contact)">{{ primaryEmail(contact) || '—' }}</div>
+        <div class="col-phone" [class.is-empty]="!primaryPhone(contact)">{{ primaryPhone(contact) || '—' }}</div>
         <div class="col-status">
-          <span class="badge bg-light text-dark text-capitalize" *ngIf="contact.status">{{ contact.status }}</span>
+          <!-- Not on the user's own record: that's their profile, not a relationship. -->
+          <button *ngIf="!isSelf(contact)" type="button" class="contact-stage-button" [class.is-empty]="!contact.status"
+                  [attr.aria-expanded]="stagePickerFor === $any(contact).id" (click)="toggleStagePicker($event, contact)"
+                  (keydown.enter)="$event.stopPropagation()" data-cy="set-stage-button">
+            <span>{{ contact.status || 'Set stage' }}</span>
+            <i class="fa-solid fa-chevron-right" [class.is-open]="stagePickerFor === $any(contact).id" aria-hidden="true"></i>
+          </button>
+          <span class="contact-stage-saved" *ngIf="stageSavedFor === $any(contact).id" role="status">Saved</span>
+          <span class="contact-stage-error" *ngIf="stageErrorFor === $any(contact).id" role="alert">Couldn't save</span>
         </div>
         <div class="col-actions">
-          <button type="button" class="btn btn-sm btn-outline-danger" (click)="deleteContact($event, contact)">
+          <!-- Never delete the user's own record from here - it's their profile. -->
+          <button *ngIf="!isSelf(contact)" type="button" class="contact-delete" (click)="deleteContact($event, contact)"
+                  [attr.aria-label]="'Delete ' + displayName(contact)">
             <i class="fa-solid fa-trash"></i>
           </button>
         </div>
-        <aside class="contact-list-hover-card" aria-label="Contact preview">
+        <div class="contact-stage-picker" *ngIf="stagePickerFor === $any(contact).id"
+             (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()" data-cy="stage-picker">
+          <app-status-flow mode="input" [listOnly]="true" [currentStatus]="contact.status || ''"
+                           (statusChange)="saveStage(contact, $event)"></app-status-flow>
+        </div>
+        <aside class="contact-list-hover-card" aria-label="Contact preview" *ngIf="stagePickerFor !== $any(contact).id">
           <div class="contact-list-hover-card__topline">
             <div class="contact-list-hover-card__avatar">
               <span aria-hidden="true">{{ displayName(contact).slice(0, 1) }}</span>

@@ -82,6 +82,11 @@ export class GettingStartedService {
     }
   }
 
+  /** The stages step opens the contact list in Set stage mode. */
+  queryParamsFor ( step: GettingStartedStep ): Record<string, string> | null {
+    return step.id === 'stages' ? { setStage: '1' } : null;
+  }
+
   actionFor ( step: GettingStartedStep ): string {
     switch ( step.id ) {
       case 'profile': return step.done ? 'View profile' : 'Complete profile';

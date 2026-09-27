@@ -49,7 +49,13 @@
 
     <p *ngIf="errorMessage" class="pf-error" role="alert" data-cy="profile-error">{{ errorMessage }}</p>
 
-    <div *ngIf="!profile && !errorMessage" class="pf-loading">Loading your profile…</div>
+    <section *ngIf="isSignedIn === false" class="pf-card" data-cy="profile-signed-out">
+      <h2>Sign in to manage your profile</h2>
+      <p class="pf-note">Your profile is shared across Network, Maya, and TODD.</p>
+      <button type="button" class="pf-button" (click)="signIn()" data-cy="profile-sign-in">Sign in</button>
+    </section>
+
+    <div *ngIf="isSignedIn && !profile && !errorMessage" class="pf-loading">Loading your profile…</div>
 
     <form *ngIf="profile && isEditing" (ngSubmit)="save()" data-cy="profile-form">
       <section class="pf-card">

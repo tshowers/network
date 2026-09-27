@@ -47,25 +47,40 @@
 
     <section class="pipeline-panel pipeline-board-panel" *ngIf="pipelineContactCount > 0">
       <div class="pipeline-panel__kicker">Lane View</div>
+      <!-- Phone: pick one lane to view instead of scrolling sideways through eight. -->
+      <div class="pipeline-stage-select" data-cy="pipeline-stage-select">
+        <app-choice-field label="Stage" [options]="stageChoiceOptions" [value]="mobileStage"
+                          (valueChange)="mobileStage = $event"></app-choice-field>
+      </div>
       <div class="pipeline-board">
-        <div class="pipeline-column" *ngFor="let stage of stages">
+        <div class="pipeline-column" *ngFor="let stage of stages" [class.is-active]="stage.name === mobileStage">
           <div class="pipeline-column__header">
             <div class="pipeline-column__title">{{ stage.name }}</div>
             <div class="pipeline-column__count">{{ stage.contacts.length }}</div>
           </div>
           <div class="pipeline-column__cards">
-            <button
-              type="button"
-              class="pipeline-card"
-              *ngFor="let contact of stage.contacts"
-              (click)="openContact(contact)"
-            >
-              <div class="pipeline-card__avatar">{{ initials(contact) }}</div>
-              <div class="pipeline-card__body">
-                <div class="pipeline-card__name">{{ displayName(contact) }}</div>
-                <div class="pipeline-card__meta" *ngIf="contact.company?.name">{{ contact.company?.name }}</div>
+            <div class="pipeline-card-wrap" *ngFor="let contact of stage.contacts" [attr.data-contact-id]="contact.id" data-cy="pipeline-card">
+              <div class="pipeline-card">
+                <button type="button" class="pipeline-card__open" (click)="openContact(contact)">
+                  <div class="pipeline-card__avatar">{{ initials(contact) }}</div>
+                  <div class="pipeline-card__body">
+                    <div class="pipeline-card__name">{{ displayName(contact) }}</div>
+                    <div class="pipeline-card__meta" *ngIf="contact.company?.name">{{ contact.company?.name }}</div>
+                  </div>
+                </button>
+                <button type="button" class="pipeline-card__move" [attr.aria-expanded]="movePickerFor === contact.id"
+                        [attr.aria-label]="'Move ' + displayName(contact) + ' to another stage'"
+                        (click)="toggleMove($event, contact)" data-cy="pipeline-move">
+                  Move <i class="fa-solid fa-chevron-right" [class.is-open]="movePickerFor === contact.id" aria-hidden="true"></i>
+                </button>
               </div>
-            </button>
+              <div class="pipeline-card__picker" *ngIf="movePickerFor === contact.id" data-cy="pipeline-move-picker">
+                <app-status-flow mode="input" [listOnly]="true" [currentStatus]="contact.status || ''"
+                                 (statusChange)="moveContact(contact, $event)"></app-status-flow>
+              </div>
+              <span class="pipeline-card__moved" *ngIf="movedFor === contact.id" role="status">Moved</span>
+              <span class="pipeline-card__error" *ngIf="moveErrorFor === contact.id" role="alert">Couldn't move</span>
+            </div>
             <div class="pipeline-column__empty" *ngIf="stage.contacts.length === 0">No contacts</div>
           </div>
         </div>

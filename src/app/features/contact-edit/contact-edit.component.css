@@ -322,3 +322,13 @@
     grid-template-columns: 1fr 100px 40px;
   }
 }
+
+/* Choice fields (tap, don't type) */
+.contact-edit-toggle { margin-top: 16px; }
+.contact-edit-toggle .contact-field-label { display: block; margin-bottom: 8px; }
+.choice-toggle { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 8px 14px; border: 1px solid var(--network-line); border-radius: 999px; background: var(--network-paper); color: var(--network-ink); font: inherit; font-weight: 700; cursor: pointer; }
+.choice-toggle.is-on { border-color: #d49a00; background: #fff4d6; color: #7a5600; }
+:host-context(html[data-theme='dark']) .choice-toggle.is-on { background: #3a2d05; color: #ffd66b; }
+.edit-row { grid-template-columns: 1fr 44px; padding-bottom: 0.6rem; border-bottom: 1px solid var(--network-line); }
+/* Type chips get their own line under the address/number. */
+.edit-row__type { grid-column: 1 / -1; grid-row: 2; }

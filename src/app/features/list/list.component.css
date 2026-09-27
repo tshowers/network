@@ -341,3 +341,47 @@
 
 /* Same color TODD's contact list uses for "(You)". */
 .contact-self-tag { font-weight: 700; color: #2c99e0; }
+
+/* Set stage right from the list (tap, don't type) */
+.contact-list-hint { display: flex; gap: 10px; align-items: flex-start; margin: 0 0 14px; padding: 12px 16px; border: 1px solid var(--network-line); border-radius: 14px; background: var(--network-surface); color: var(--network-ink); }
+.contact-list-hint i { color: #d49a00; margin-top: 3px; }
+.contact-stage-button { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 6px 12px; border: 1px solid var(--network-line); border-radius: 999px; background: var(--network-paper); color: var(--network-ink); font: inherit; font-size: .88rem; font-weight: 700; text-transform: capitalize; cursor: pointer; white-space: nowrap; }
+.contact-stage-button.is-empty { border-style: dashed; color: #123d8b; text-transform: none; }
+:host-context(html[data-theme='dark']) .contact-stage-button.is-empty { color: var(--tl-blue); }
+.contact-stage-button i { font-size: .75rem; color: var(--network-muted); transition: transform .2s ease; }
+.contact-stage-button i.is-open { transform: rotate(90deg); }
+.contact-stage-saved { margin-left: 8px; color: #1f9d55; font-size: .85rem; font-weight: 700; }
+.contact-stage-error { margin-left: 8px; color: #b42318; font-size: .85rem; font-weight: 700; }
+.contact-stage-picker { grid-column: 1 / -1; padding: 4px 0 8px; cursor: default; }
+
+@media (max-width: 720px) {
+  /* Phone: each contact is a card - avatar, name and stage on top, then
+     company and contact details (empty ones hidden), delete last. */
+  .contact-list-table { display: grid; gap: 10px; border: 0; background: transparent; }
+  .contact-list-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "name status"
+      "company company"
+      "email email"
+      "phone actions";
+    padding: 14px 16px;
+    border: 1px solid var(--network-line);
+    border-radius: 16px;
+    background: var(--network-surface);
+    row-gap: 4px;
+  }
+  .col-name { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 10px; min-width: 0; padding-left: 0; }
+  .contact-list-avatar { position: static; transform: none; flex: 0 0 auto; }
+  .contact-list-name { font-weight: 800; min-width: 0; }
+  .contact-list-profession { flex-basis: 100%; padding-left: 40px; color: var(--network-muted); font-size: .9rem; }
+  .col-company, .col-email, .col-phone { padding-left: 40px; color: var(--network-muted); font-size: .9rem; }
+  .col-company.is-empty, .col-email.is-empty, .col-phone.is-empty { display: none; }
+  .col-status { align-self: start; }
+  .col-actions { align-self: end; justify-self: end; }
+  .contact-stage-picker { grid-column: 1 / -1; }
+}
+
+/* Quiet icon button - the shared btn-outline-danger style is too loud per row. */
+.contact-delete { display: inline-grid; place-items: center; width: 36px; height: 36px; border: 0; border-radius: 10px; background: transparent; color: var(--network-muted); cursor: pointer; }
+.contact-delete:hover, .contact-delete:focus-visible { color: #b42318; background: color-mix(in srgb, #b42318 10%, transparent); }

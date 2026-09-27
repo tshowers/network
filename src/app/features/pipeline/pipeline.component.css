@@ -274,3 +274,25 @@ app-cockpit-command-deck {
     flex-basis: 240px;
   }
 }
+
+/* Card = open button + Move button; the stage list opens inline under it. */
+.pipeline-card { cursor: default; padding: 0.35rem 0.4rem 0.35rem 0.35rem; }
+.pipeline-card__open { display: flex; flex: 1 1 auto; min-width: 0; align-items: center; gap: 0.65rem; padding: 0.25rem 0.35rem; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.pipeline-card__body { min-width: 0; }
+.pipeline-card__move { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 4px; min-height: 32px; padding: 4px 10px; border: 1px solid var(--pipeline-card-border); border-radius: 999px; background: transparent; color: var(--network-muted); font: inherit; font-size: .8rem; font-weight: 700; cursor: pointer; }
+.pipeline-card__move:hover { color: var(--pipeline-accent); border-color: var(--pipeline-accent); }
+.pipeline-card__move i { font-size: .65rem; transition: transform .2s ease; }
+.pipeline-card__move i.is-open { transform: rotate(90deg); }
+.pipeline-card__picker { margin-top: 6px; }
+.pipeline-card__moved { display: block; margin-top: 4px; color: #1f9d55; font-size: .8rem; font-weight: 700; }
+.pipeline-card__error { display: block; margin-top: 4px; color: #b42318; font-size: .8rem; font-weight: 700; }
+
+.pipeline-stage-select { display: none; margin-bottom: 12px; }
+
+@media (max-width: 640px) {
+  /* Phone: choose a lane, see it full width - no sideways scrolling. */
+  .pipeline-stage-select { display: block; }
+  .pipeline-board { flex-direction: column; overflow-x: visible; }
+  .pipeline-column { display: none; flex-basis: auto; }
+  .pipeline-column.is-active { display: flex; }
+}

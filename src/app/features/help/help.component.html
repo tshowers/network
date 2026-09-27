@@ -42,7 +42,7 @@
           <strong>{{ step.title }}</strong>
           <span>{{ step.detail }}</span>
         </div>
-        <a class="help-try-link" [routerLink]="gettingStarted.routeFor(step)">{{ gettingStarted.actionFor(step) }} <span aria-hidden="true">→</span></a>
+        <a class="help-try-link" [routerLink]="gettingStarted.routeFor(step)" [queryParams]="gettingStarted.queryParamsFor(step)">{{ gettingStarted.actionFor(step) }} <span aria-hidden="true">→</span></a>
         <span class="visually-hidden">{{ step.done ? 'Done' : 'Not done' }}</span>
       </li>
     </ol>

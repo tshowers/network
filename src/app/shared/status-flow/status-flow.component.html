@@ -7,8 +7,21 @@
   </div>
 </ng-container>
 
+<!-- Input: pick a stage - a chevron list (8+ stages), per the tap-don't-type rule -->
+<ng-container *ngIf="mode === 'input'">
+  <app-choice-field
+    [options]="stageOptions"
+    [value]="currentStatus"
+    placeholder="Choose a stage"
+    [startExpanded]="startExpanded"
+    [listOnly]="listOnly"
+    (valueChange)="statusChange.emit($event)"
+    data-cy="stage-choice"
+  ></app-choice-field>
+</ng-container>
+
 <!-- ViewMode: FLOW (show the full pipeline and custom statuses) -->
-<ng-container *ngIf="viewMode === 'flow'">
+<ng-container *ngIf="viewMode === 'flow' && mode === 'view'">
   <div class="status-flow justify-content-center d-flex align-items-center flex-wrap gap-3 mb-2 mt-4">
     <ng-container *ngIf="isCustomStatusInView">
       <div class="status-pill unknown">

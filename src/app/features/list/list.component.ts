@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterModule, Router } from '@angular/router';
+import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -13,6 +13,7 @@ import { Contact } from '../../models/contact.model';
 import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.component';
 import { PreloaderComponent } from '../../shared/preloader/preloader.component';
 import { CockpitBrowseModeBannerComponent } from '../../shared/cockpit-browse-mode-banner/cockpit-browse-mode-banner.component';
+import { StatusFlowComponent } from '../../shared/status-flow/status-flow.component';
 
 type ContactSortKey = 'name' | 'company' | 'email' | 'phone' | 'status';
 type SortDirection = 'asc' | 'desc';
@@ -37,7 +38,7 @@ type SortDirection = 'asc' | 'desc';
 @Component( {
   selector: 'app-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, BackToTopComponent, PreloaderComponent, CockpitBrowseModeBannerComponent],
+  imports: [CommonModule, FormsModule, RouterModule, BackToTopComponent, PreloaderComponent, CockpitBrowseModeBannerComponent, StatusFlowComponent],
   templateUrl: './list.component.html',
   styleUrl: './list.component.css',
 } )
@@ -52,11 +53,19 @@ export class ListComponent implements OnInit, OnDestroy {
   /** null = auth state not resolved yet (still show the preloader); false = resolved and signed out. */
   isSignedIn: boolean | null = null;
   currentUserId = '';
+  /** Arrived from Getting Started's "Give relationships a stage"
+   * (/contact-list?setStage=1): show a hint and list unstaged contacts first. */
+  setStageMode = false;
+  /** The row whose stage list is open, and the one just saved. */
+  stagePickerFor = '';
+  stageSavedFor = '';
+  stageErrorFor = '';
 
   private tenantId = '';
   private authSubscription?: Subscription;
 
   constructor (
+    private route: ActivatedRoute,
     private router: Router,
     private titleService: Title,
     private authService: NetworkAuthService,
@@ -67,6 +76,7 @@ export class ListComponent implements OnInit, OnDestroy {
 
   ngOnInit (): void {
     this.titleService.setTitle( `${environment.COMPANY_NAME} - Contacts` );
+    this.setStageMode = this.route.snapshot.queryParamMap.get( 'setStage' ) === '1';
 
     this.authSubscription = combineLatest( [this.authService.getUserId(), this.authService.getTenantId()] )
       .subscribe( ( [userId, tenantId] ) => {
@@ -125,6 +135,13 @@ export class ListComponent implements OnInit, OnDestroy {
     } );
 
     this.filteredContacts = [...matches].sort( ( a, b ) => this.compareContacts( a, b ) );
+    if ( this.setStageMode ) {
+      // Contacts still needing a stage first (stable within each group).
+      this.filteredContacts = [
+        ...this.filteredContacts.filter( ( contact ) => !contact.status?.trim() ),
+        ...this.filteredContacts.filter( ( contact ) => !!contact.status?.trim() ),
+      ];
+    }
     this.publishAssistantContext();
   }
 
@@ -180,6 +197,29 @@ export class ListComponent implements OnInit, OnDestroy {
    * with a "(You)" tag, the same cue TODD's contact list gives. */
   isSelf ( contact: Contact ): boolean {
     return !!this.currentUserId && ( contact as any ).id === this.currentUserId;
+  }
+
+  toggleStagePicker ( event: Event, contact: Contact ): void {
+    event.stopPropagation();
+    const id = ( contact as any ).id as string;
+    this.stagePickerFor = this.stagePickerFor === id ? '' : id;
+  }
+
+  /** Saves a stage straight from the list - no trip through the edit page. */
+  async saveStage ( contact: Contact, status: string ): Promise<void> {
+    const id = ( contact as any ).id as string;
+    const previous = contact.status;
+    contact.status = status;
+    this.stagePickerFor = '';
+    this.stageErrorFor = '';
+    try {
+      await this.dataService.updateContact( this.tenantId, id, { status } );
+      this.stageSavedFor = id;
+      setTimeout( () => { if ( this.stageSavedFor === id ) this.stageSavedFor = ''; }, 2000 );
+    } catch {
+      contact.status = previous;
+      this.stageErrorFor = id;
+    }
   }
 
   displayName ( contact: Contact ): string {

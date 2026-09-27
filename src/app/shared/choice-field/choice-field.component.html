@@ -1,0 +1,44 @@
+<div class="choice-field" [attr.data-cy]="'choice-field'">
+  <span *ngIf="label" class="choice-field__label" [id]="id + '-label'">{{ label }}</span>
+
+  <!-- Few choices: chips -->
+  <div *ngIf="useChips" class="choice-field__chips" role="radiogroup" [attr.aria-labelledby]="label ? id + '-label' : null">
+    <button *ngFor="let option of options" type="button" class="choice-chip" role="radio"
+            [class.is-selected]="isSelected(option)" [attr.aria-checked]="isSelected(option)"
+            (click)="choose(option)" data-cy="choice-chip">
+      <span *ngIf="isSelected(option)" aria-hidden="true">✓</span>{{ option.label }}
+    </button>
+    <button *ngIf="allowOther" type="button" class="choice-chip" role="radio"
+            [class.is-selected]="isOther" [attr.aria-checked]="isOther"
+            (click)="chooseOther()" data-cy="choice-chip-other">
+      <span *ngIf="isOther" aria-hidden="true">✓</span>{{ allowOther }}
+    </button>
+  </div>
+
+  <!-- Many choices: a row with a chevron that expands the list inline -->
+  <div *ngIf="!useChips" class="choice-field__picker">
+    <button *ngIf="!listOnly" type="button" class="choice-row" [attr.aria-expanded]="expanded" [attr.aria-controls]="id + '-list'"
+            (click)="toggle()" data-cy="choice-row">
+      <span class="choice-row__value" [class.is-placeholder]="!value">{{ currentLabel || placeholder }}</span>
+      <i class="fa-solid fa-chevron-right choice-row__chevron" [class.is-open]="expanded" aria-hidden="true"></i>
+    </button>
+    <ul *ngIf="expanded" class="choice-list" role="listbox" [id]="id + '-list'" [attr.aria-labelledby]="label ? id + '-label' : null">
+      <li *ngFor="let option of options" role="option" [attr.aria-selected]="isSelected(option)">
+        <button type="button" class="choice-list__item" [class.is-selected]="isSelected(option)" (click)="choose(option)" data-cy="choice-option">
+          <span>{{ option.label }}</span>
+          <i *ngIf="isSelected(option)" class="fa-solid fa-check" aria-hidden="true"></i>
+        </button>
+      </li>
+      <li *ngIf="allowOther" role="option" [attr.aria-selected]="isOther">
+        <button type="button" class="choice-list__item" [class.is-selected]="isOther" (click)="chooseOther()">
+          <span>{{ allowOther }}</span>
+          <i *ngIf="isOther" class="fa-solid fa-check" aria-hidden="true"></i>
+        </button>
+      </li>
+    </ul>
+  </div>
+
+  <input *ngIf="isOther" #otherInput type="text" class="form-control choice-field__other" [placeholder]="otherPlaceholder"
+         [attr.aria-label]="(label || allowOther) + ': ' + otherPlaceholder"
+         [ngModel]="value" (ngModelChange)="onOtherInput($event)" data-cy="choice-other-input" />
+</div>

@@ -618,9 +618,18 @@
         width: 100%;
     }
 
-    .diagnosis-board__column-headers,
+    /* Four cramped columns between tablet and wide desktop - two health
+       tiles per row, and each care-cycle row stacks into one column. */
+    .diagnosis-health-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .diagnosis-board__column-headers {
+        display: none;
+    }
+
     .diagnosis-row {
-        grid-template-columns: 1.2fr 1fr 1fr 0.9fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 }
 

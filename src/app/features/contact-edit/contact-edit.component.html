@@ -106,13 +106,14 @@
 
         <div class="wizard-step-card" *ngIf="currentStepKey === 'category'">
           <h5>{{ steps[4].heading }}</h5>
-          <div class="form-group full-width">
-            <label class="contact-field-label">Category</label>
-            <input type="text" class="form-control" name="category" [(ngModel)]="contact.category" placeholder="e.g. Prospect, Client, Friend" />
-          </div>
-          <div class="form-check mt-2">
-            <input type="checkbox" class="form-check-input" id="important" name="important" [(ngModel)]="contact.important" />
-            <label class="form-check-label" for="important">Important / VIP</label>
+          <app-choice-field label="Category" [options]="categoryOptions" allowOther="Other" otherPlaceholder="Your own category"
+                            [value]="$any(contact.category) || ''" (valueChange)="contact.category = $event"></app-choice-field>
+          <div class="contact-edit-toggle">
+            <span class="contact-field-label">Priority</span>
+            <button type="button" class="choice-toggle" [class.is-on]="contact.important" [attr.aria-pressed]="!!contact.important"
+                    (click)="contact.important = !contact.important" data-cy="contact-important-toggle">
+              <span aria-hidden="true">{{ contact.important ? '★' : '☆' }}</span> Important / VIP
+            </button>
           </div>
           <div class="wizard-step-actions">
             <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
@@ -145,11 +146,8 @@
           <h5>{{ steps[7].heading }}</h5>
           <div class="edit-row" *ngFor="let email of contact.emailAddresses; let i = index">
             <input type="email" class="form-control" name="email{{i}}" [(ngModel)]="email.emailAddress" placeholder="name@company.com" />
-            <select class="form-select" name="emailType{{i}}" [(ngModel)]="email.emailAddressType">
-              <option value="Work">Work</option>
-              <option value="Personal">Personal</option>
-              <option value="Other">Other</option>
-            </select>
+            <app-choice-field class="edit-row__type" [options]="emailTypeOptions" [value]="email.emailAddressType || 'Work'"
+                              (valueChange)="email.emailAddressType = $event"></app-choice-field>
             <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeEmail(i)"><i class="fa-solid fa-trash"></i></button>
           </div>
           <button type="button" class="btn btn-outline-secondary btn-sm mb-3" (click)="addEmail()">+ Add Email</button>
@@ -163,12 +161,8 @@
           <h5>{{ steps[8].heading }}</h5>
           <div class="edit-row" *ngFor="let phone of contact.phoneNumbers; let i = index">
             <input type="tel" class="form-control" name="phone{{i}}" [(ngModel)]="phone.phoneNumber" placeholder="(555) 555-5555" />
-            <select class="form-select" name="phoneType{{i}}" [(ngModel)]="phone.phoneNumberType">
-              <option value="Work">Work</option>
-              <option value="Mobile">Mobile</option>
-              <option value="Home">Home</option>
-              <option value="Other">Other</option>
-            </select>
+            <app-choice-field class="edit-row__type" [options]="phoneTypeOptions" [value]="phone.phoneNumberType || 'Mobile'"
+                              (valueChange)="phone.phoneNumberType = $event"></app-choice-field>
             <button type="button" class="btn btn-outline-danger btn-sm" (click)="removePhone(i)"><i class="fa-solid fa-trash"></i></button>
           </div>
           <button type="button" class="btn btn-outline-secondary btn-sm mb-3" (click)="addPhone()">+ Add Phone</button>
@@ -230,15 +224,8 @@
 
         <div class="wizard-step-card" *ngIf="currentStepKey === 'gender'">
           <h5>{{ steps[12].heading }}</h5>
-          <div class="form-group full-width">
-            <label class="contact-field-label">Gender</label>
-            <select class="form-select" name="gender" [(ngModel)]="contact.gender">
-              <option value="">Prefer not to say</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
+          <app-choice-field label="Gender" [options]="genderOptions" [value]="$any(contact.gender) || ''"
+                            (valueChange)="contact.gender = $event"></app-choice-field>
           <div class="wizard-step-actions">
             <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
             <button type="button" class="btn-todd" data-cy="contact-wizard-submit" [disabled]="isSaving" (click)="onSubmit()">

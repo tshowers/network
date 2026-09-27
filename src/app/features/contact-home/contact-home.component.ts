@@ -87,6 +87,8 @@ interface NetworkDiagnosisRow {
   styleUrl: './contact-home.component.css'
 } )
 export class ContactHomeComponent implements OnInit, AfterViewInit, OnDestroy {
+  private static readonly UNLIMITED_CAPACITY_THRESHOLD = 100_000_000;
+
   private readonly emptyDashboardCounts: NetworkDashboardCounts = {
     totalContacts: 0,
     validEmailContacts: 0,
@@ -104,6 +106,9 @@ export class ContactHomeComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoadingLimits = false;
   limitsError = '';
   usagePercent = 0;
+  /** The backend reports a very large effectiveLimit for unlimited plans
+   * (e.g. internal tenants) - show "Unlimited" instead of that number. */
+  isUnlimitedCapacity = false;
   usageWarning = '';
   usageWarningLevel: 'safe' | 'warning' | 'danger' | 'full' = 'safe';
   isAtContactLimit = false;
@@ -334,11 +339,13 @@ export class ContactHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         relief: this.isLoggedIn
           ? 'Re-engagement begins as the highest-value contacts get a recommended next move.'
           : 'Relief appears when TODD can act on real relationship history.',
-        proofLabel: 'Next moves staged',
-        proofValue: counts.reconfiguredContacts,
+        // Proof of relief for cooling relationships is how many are still
+        // warm - not staged next moves, which the last row already shows.
+        proofLabel: 'Relationships up to date',
+        proofValue: Math.max( 0, totalContacts - counts.contactsNeedingFollowUp ),
         proofMax: totalContacts || 1,
         proofDetail: this.isLoggedIn
-          ? `${counts.reconfiguredContacts} contacts are already staged for action.`
+          ? `${Math.max( 0, totalContacts - counts.contactsNeedingFollowUp )} contacts have been in touch within the last month.`
           : 'Proof stays at zero in preview mode.'
       },
       {
@@ -653,11 +660,15 @@ export class ContactHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     const currentCount = Number( this.limits?.currentCount ) || 0;
     const remaining = Number( this.limits?.remaining ) || 0;
 
-    this.usagePercent = effectiveLimit <= 0
+    this.isUnlimitedCapacity = effectiveLimit >= ContactHomeComponent.UNLIMITED_CAPACITY_THRESHOLD;
+    this.usagePercent = effectiveLimit <= 0 || this.isUnlimitedCapacity
       ? 0
       : Math.max( 0, Math.min( 100, Math.round( ( currentCount / effectiveLimit ) * 100 ) ) );
 
-    if ( this.usagePercent >= 100 ) {
+    if ( this.isUnlimitedCapacity ) {
+      this.usageWarning = '';
+      this.usageWarningLevel = 'safe';
+    } else if ( this.usagePercent >= 100 ) {
       this.usageWarning = 'At 100% of contact capacity.';
       this.usageWarningLevel = 'full';
     } else if ( this.usagePercent >= 90 ) {

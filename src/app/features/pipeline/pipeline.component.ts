@@ -14,6 +14,8 @@ import { PreloaderComponent } from '../../shared/preloader/preloader.component';
 import { CockpitBrowseModeBannerComponent } from '../../shared/cockpit-browse-mode-banner/cockpit-browse-mode-banner.component';
 import { CockpitCommandDeckComponent } from '../../shared/cockpit-command-deck/cockpit-command-deck.component';
 import { ArcGaugeComponent, ArcGaugeTone } from '../../shared/arc-gauge/arc-gauge.component';
+import { StatusFlowComponent } from '../../shared/status-flow/status-flow.component';
+import { ChoiceFieldComponent, ChoiceOption } from '../../shared/choice-field/choice-field.component';
 
 interface PipelineStage {
   name: string;
@@ -70,6 +72,8 @@ const LATE_STAGES = ['Negotiation', 'Closing', 'Post-Sale', 'Closed Won'];
     CockpitBrowseModeBannerComponent,
     CockpitCommandDeckComponent,
     ArcGaugeComponent,
+    StatusFlowComponent,
+    ChoiceFieldComponent,
   ],
   templateUrl: './pipeline.component.html',
   styleUrl: './pipeline.component.css',
@@ -96,7 +100,15 @@ export class PipelineComponent implements OnInit, OnDestroy {
   momentumScore = 0;
   closedWonCount = 0;
 
+  /** Phone: which single lane to show (picked with the stage chooser). */
+  mobileStage = '';
+  /** The card whose Move list is open, and the one just moved. */
+  movePickerFor = '';
+  movedFor = '';
+  moveErrorFor = '';
+
   private tenantId = '';
+  private allContacts: Contact[] = [];
 
   constructor (
     private router: Router,
@@ -120,8 +132,8 @@ export class PipelineComponent implements OnInit, OnDestroy {
     this.tenantId = await this.authService.resolveTenantId( userId );
 
     try {
-      const contacts = await this.dataService.getAllContacts( this.tenantId );
-      this.buildStages( contacts );
+      this.allContacts = await this.dataService.getAllContacts( this.tenantId );
+      this.buildStages( this.allContacts );
       this.buildHealthMeters();
       this.publishAssistantContext();
     } catch {
@@ -157,6 +169,63 @@ export class PipelineComponent implements OnInit, OnDestroy {
       name,
       contacts: validContacts.filter( ( contact ) => contact.status === name ),
     } ) );
+    if ( !this.mobileStage ) {
+      this.mobileStage = this.stages.find( ( stage ) => stage.contacts.length > 0 )?.name || this.stageNames[0];
+    }
+  }
+
+  /** Phone stage chooser: each lane with its count. */
+  get stageChoiceOptions (): ChoiceOption[] {
+    return this.stages.map( ( stage ) => ( { value: stage.name, label: `${stage.name} (${stage.contacts.length})` } ) );
+  }
+
+  toggleMove ( event: Event, contact: Contact ): void {
+    event.stopPropagation();
+    const id = contact.id || '';
+    this.movePickerFor = this.movePickerFor === id ? '' : id;
+  }
+
+  /** Moves a contact to another stage right from the board. */
+  async moveContact ( contact: Contact, status: string ): Promise<void> {
+    const id = contact.id || '';
+    const previous = contact.status;
+    this.movePickerFor = '';
+    this.moveErrorFor = '';
+    if ( !id || status === previous ) return;
+    contact.status = status;
+    // Follow the card: on phones switch to its new lane; on wider screens
+    // scroll it into view (lanes past the edge are off-screen otherwise).
+    this.mobileStage = status;
+    this.refreshBoard();
+    setTimeout( () => this.revealCard( id ), 50 );
+    try {
+      await this.dataService.updateContact( this.tenantId, id, { status } );
+      this.movedFor = id;
+      setTimeout( () => { if ( this.movedFor === id ) this.movedFor = ''; }, 2000 );
+    } catch {
+      contact.status = previous;
+      this.refreshBoard();
+      this.moveErrorFor = id;
+    }
+  }
+
+  /** Scroll the board sideways (and the page if needed) so a card is in view. */
+  private revealCard ( id: string ): void {
+    const card = document.querySelector<HTMLElement>( `[data-contact-id="${id}"]` );
+    const board = card?.closest<HTMLElement>( '.pipeline-board' );
+    if ( !card || !board ) return;
+    const cardRect = card.getBoundingClientRect();
+    const boardRect = board.getBoundingClientRect();
+    if ( cardRect.right > boardRect.right || cardRect.left < boardRect.left ) {
+      board.scrollLeft += cardRect.left - boardRect.left - ( boardRect.width - cardRect.width ) / 2;
+    }
+    card.scrollIntoView( { block: 'nearest' } );
+  }
+
+  private refreshBoard (): void {
+    this.buildStages( this.allContacts );
+    this.buildHealthMeters();
+    this.publishAssistantContext();
   }
 
   private countInStages ( stageNames: string[] ): number {

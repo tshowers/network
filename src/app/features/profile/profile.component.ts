@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { Router, RouterModule } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
+import { Subscription } from 'rxjs';
 import {
   COMPANY_DESCRIPTION_CHOICES,
   computeProfileCompletion,
@@ -41,7 +41,7 @@ interface ChoiceField {
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css',
 } )
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, OnDestroy {
   readonly roles = PROFILE_ROLES;
   readonly choiceFields: ChoiceField[] = [
     { key: 'companyDescription', title: 'What does your company do?', choices: COMPANY_DESCRIPTION_CHOICES },
@@ -69,12 +69,33 @@ export class ProfileComponent implements OnInit {
     private readonly title: Title,
   ) { }
 
-  async ngOnInit (): Promise<void> {
+  /** null until Firebase reports auth state; false shows the sign-in panel. */
+  isSignedIn: boolean | null = null;
+  private authSubscription?: Subscription;
+  private loadedForUser = false;
+
+  ngOnInit (): void {
     this.title.setTitle( 'Profile — Network | Taliferro Tech' );
-    if ( !( await firstValueFrom( this.authService.isLoggedIn() ) ) ) {
-      await this.router.navigate( ['/login'], { queryParams: { returnUrl: '/profile' } } );
-      return;
-    }
+    // React to auth state rather than checking once: a session that finishes
+    // signing in after the page loads should still load the profile.
+    this.authSubscription = this.authService.isLoggedIn().subscribe( ( signedIn ) => {
+      this.isSignedIn = signedIn;
+      if ( signedIn && !this.loadedForUser ) {
+        this.loadedForUser = true;
+        void this.loadProfile();
+      }
+    } );
+  }
+
+  ngOnDestroy (): void {
+    this.authSubscription?.unsubscribe();
+  }
+
+  signIn (): void {
+    this.authService.signIn( '/profile' );
+  }
+
+  private async loadProfile (): Promise<void> {
     try {
       const loaded = await this.api.load();
       if ( !loaded.timezone ) loaded.timezone = this.onboarding.detectTimezone();
