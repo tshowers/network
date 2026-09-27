@@ -62,3 +62,11 @@ textarea.pf-input { resize: vertical; }
 .pf-read dt { margin-bottom: 4px; font-size: .82rem; font-weight: 700; color: var(--network-muted); }
 .pf-read dd { margin: 0; line-height: 1.5; white-space: pre-line; }
 .pf-read dd.is-empty { color: var(--network-muted); font-style: italic; }
+
+.pf-completion__head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+.pf-completion__head span { font-weight: 800; color: var(--pf-accent); }
+.pf-completion__meter { height: 8px; border-radius: 999px; background: var(--network-line); overflow: hidden; margin-bottom: 12px; }
+.pf-completion__meter span { display: block; height: 100%; border-radius: inherit; background: var(--pf-accent); transition: width .35s ease; }
+.pf-completion__meter span.is-complete { background: #1f9d55; }
+.pf-completion .pf-note { margin-bottom: 0; }
+.pf-link { border: 0; background: none; padding: 0; color: var(--pf-accent); font: inherit; font-weight: 700; cursor: pointer; }

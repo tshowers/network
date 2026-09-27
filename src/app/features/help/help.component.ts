@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Title, Meta } from '@angular/platform-browser';
 import { SeoService } from '../../shared/seo.service';
+import { NetworkAuthService } from '../../services/network-auth.service';
+import { GettingStarted, GettingStartedService, GettingStartedStep } from '../../services/getting-started.service';
 
 interface HelpOutcome {
   icon: string;
@@ -42,13 +44,28 @@ interface HelpRoutineStep {
   styleUrl: './help.component.css',
 })
 export class HelpComponent implements OnInit {
+  /** Signed-in only: the Getting Started checklist, checked off from real data. */
+  progress: GettingStarted | null = null;
+  showAfterSignIn = true;
+
   constructor(
     private readonly title: Title,
     private readonly meta: Meta,
     private readonly seo: SeoService,
+    private readonly authService: NetworkAuthService,
+    readonly gettingStarted: GettingStartedService,
   ) {}
 
   ngOnInit(): void {
+    this.showAfterSignIn = this.gettingStarted.showAfterSignIn;
+    this.authService.getUserId().subscribe( ( userId ) => {
+      if ( !userId ) {
+        this.progress = null;
+        return;
+      }
+      this.gettingStarted.load().then( ( progress ) => ( this.progress = progress ) ).catch( () => ( this.progress = null ) );
+    } );
+
     const pageTitle = 'Network Help — How to work your relationships | Taliferro Tech';
     const description = 'A walkthrough of Network: import or add contacts, give each relationship a stage, check relationship health, and act on TODD\'s weekly priorities.';
     this.title.setTitle(pageTitle);
@@ -210,5 +227,14 @@ export class HelpComponent implements OnInit {
 
   scrollTo ( id: string ): void {
     document.getElementById( id )?.scrollIntoView( { behavior: 'smooth', block: 'start' } );
+  }
+
+  toggleShowAfterSignIn ( value: boolean ): void {
+    this.showAfterSignIn = value;
+    this.gettingStarted.showAfterSignIn = value;
+  }
+
+  trackStep ( _index: number, step: GettingStartedStep ): string {
+    return step.id;
   }
 }

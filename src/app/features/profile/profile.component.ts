@@ -6,6 +6,8 @@ import { Router, RouterModule } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import {
   COMPANY_DESCRIPTION_CHOICES,
+  computeProfileCompletion,
+  ProfileCompletion,
   fillProfileChoice,
   MISSION_CHOICES,
   PROFILE_ROLES,
@@ -80,6 +82,15 @@ export class ProfileComponent implements OnInit {
     } catch ( error: any ) {
       this.errorMessage = error?.error?.message || error?.message || 'We could not load your profile.';
     }
+  }
+
+  /** Completion of the saved profile (not unsaved edits), same items as iOS. */
+  get completion (): ProfileCompletion | null {
+    return this.savedJson ? computeProfileCompletion( JSON.parse( this.savedJson ) ) : null;
+  }
+
+  get missingSummary (): string {
+    return ( this.completion?.missing || [] ).map( ( item ) => item.label.toLowerCase() ).join( ', ' );
   }
 
   get isDirty (): boolean {

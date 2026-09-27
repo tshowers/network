@@ -10,6 +10,17 @@
     </header>
 
     <ng-container *ngIf="profile && !isEditing">
+      <section *ngIf="completion as c" class="pf-card pf-completion" data-cy="profile-completion">
+        <div class="pf-completion__head">
+          <strong>{{ c.percent === 100 ? 'Profile complete' : 'Profile ' + c.percent + '% complete' }}</strong>
+          <span>{{ c.percent }}%</span>
+        </div>
+        <div class="pf-completion__meter" role="progressbar" [attr.aria-valuenow]="c.percent" aria-valuemin="0" aria-valuemax="100">
+          <span [style.width.%]="c.percent" [class.is-complete]="c.percent === 100"></span>
+        </div>
+        <p *ngIf="c.percent < 100" class="pf-note">Still to add: {{ missingSummary }}.
+          <button type="button" class="pf-link" (click)="startEditing()">Complete profile</button></p>
+      </section>
       <section class="pf-card" data-cy="profile-read">
         <h2>About you</h2>
         <dl class="pf-read">

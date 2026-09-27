@@ -19,6 +19,7 @@
                     </div>
                     <h2 class="contact-hero-name">
                         {{ contact.firstName }} {{ contact.middleName }} {{ contact.lastName }}
+                        <span *ngIf="userId && contact.id === userId" class="contact-self-tag" data-cy="contact-self-tag">(You)</span>
                     </h2>
                     <div class="contact-hero-badges" *ngIf="showAdditionalInfo">
                         <span *ngIf="isPublicProfile" class="badge rounded-pill text-bg-secondary" title="Limited fields are shown on public profiles"> Public Profile </span>

@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NetworkAuthService } from '../../services/network-auth.service';
 import { OnboardingProfileService } from '../../services/onboarding-profile.service';
+import { GettingStartedService } from '../../services/getting-started.service';
 
 /**
  * Lands here after TODD's hosted login (todd.taliferro.tech/login) hands
@@ -26,6 +27,7 @@ export class AuthCallbackComponent implements OnInit {
     private router: Router,
     private authService: NetworkAuthService,
     private onboardingProfile: OnboardingProfileService,
+    private gettingStarted: GettingStartedService,
   ) { }
 
   async ngOnInit (): Promise<void> {
@@ -43,7 +45,14 @@ export class AuthCallbackComponent implements OnInit {
       // Saves any /get-started wizard answers to the TODD profile (blank
       // fields only). Never throws - see submitIfPending().
       await this.onboardingProfile.submitIfPending();
-      await this.router.navigateByUrl( pending.returnUrl || '/app' );
+      const returnUrl = pending.returnUrl || '/app';
+      // Heading to the default landing (not a specific deep link) and steps
+      // remain: show the Getting Started checklist first, once per session.
+      if ( ( returnUrl === '/app' || returnUrl === '/' ) && await this.gettingStarted.shouldShowAfterSignIn() ) {
+        await this.router.navigate( ['/help'], { fragment: 'your-progress' } );
+        return;
+      }
+      await this.router.navigateByUrl( returnUrl );
     } catch ( error: any ) {
       this.errorMessage = error?.message || 'Sign-in failed. Please try again.';
     }

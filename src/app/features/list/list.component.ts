@@ -51,6 +51,7 @@ export class ListComponent implements OnInit, OnDestroy {
   sortDirection: SortDirection = 'asc';
   /** null = auth state not resolved yet (still show the preloader); false = resolved and signed out. */
   isSignedIn: boolean | null = null;
+  currentUserId = '';
 
   private tenantId = '';
   private authSubscription?: Subscription;
@@ -70,6 +71,7 @@ export class ListComponent implements OnInit, OnDestroy {
     this.authSubscription = combineLatest( [this.authService.getUserId(), this.authService.getTenantId()] )
       .subscribe( ( [userId, tenantId] ) => {
         this.isSignedIn = !!userId;
+        this.currentUserId = userId || '';
 
         if ( !userId ) {
           // Resolved and signed out - stop spinning instead of waiting on a
@@ -172,6 +174,12 @@ export class ListComponent implements OnInit, OnDestroy {
       case 'name':
       default: return this.displayName( contact );
     }
+  }
+
+  /** The signed-in user's own contact record (its id is their uid) - shown
+   * with a "(You)" tag, the same cue TODD's contact list gives. */
+  isSelf ( contact: Contact ): boolean {
+    return !!this.currentUserId && ( contact as any ).id === this.currentUserId;
   }
 
   displayName ( contact: Contact ): string {

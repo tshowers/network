@@ -837,3 +837,6 @@ app-communication-frequency-line-chart {
     border: 1px solid var(--panel-soft-border);
 }
 
+
+/* Same color TODD's contact list uses for "(You)". */
+.contact-self-tag { font-size: .55em; font-weight: 700; color: #2c99e0; vertical-align: middle; }

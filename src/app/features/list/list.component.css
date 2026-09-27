@@ -338,3 +338,6 @@
     display: none;
   }
 }
+
+/* Same color TODD's contact list uses for "(You)". */
+.contact-self-tag { font-weight: 700; color: #2c99e0; }
