@@ -24,9 +24,13 @@ export const routes: Routes = [
       import( './features/app-showcase/app-showcase.component' ).then( ( m ) => m.AppShowcaseComponent ),
   },
   {
+    // "Browse free, create with the app" (Ty, 2026-09-28) - shared wording
+    // in @taliferro/ui/platform/get-the-app.model.ts; replaces the old
+    // Stripe plan page.
     path: 'pricing',
+    data: { product: 'network' },
     loadComponent: () =>
-      import( './features/pricing/pricing.component' ).then( ( m ) => m.PricingComponent ),
+      import( './features/get-the-app/get-the-app.component' ).then( ( m ) => m.GetTheAppComponent ),
   },
   {
     path: 'help',
