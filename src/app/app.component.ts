@@ -7,14 +7,13 @@ import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { NetworkAuthService } from './services/network-auth.service';
 import { ToastComponent } from './shared/toast/toast.component';
-import { CommandPaletteComponent } from './shared/page/command-palette/command-palette.component';
 import { PlatformMenuComponent } from './shared/platform-menu/platform-menu.component';
 import { NetworkAssistantLauncherComponent } from './shared/page/assistant-box/network-assistant-launcher.component';
 import { ThemeToggleComponent } from './shared/theme-toggle/theme-toggle.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ToastComponent, CommandPaletteComponent, PlatformMenuComponent, NetworkAssistantLauncherComponent, ThemeToggleComponent, AsyncPipe, NgIf],
+  imports: [RouterOutlet, ToastComponent, PlatformMenuComponent, NetworkAssistantLauncherComponent, ThemeToggleComponent, AsyncPipe, NgIf],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -33,6 +32,8 @@ export class AppComponent implements OnInit {
   chunkRecoveryNeedsManualRefresh = false;
   readonly isAdmin$ = this.authService.getUser().pipe( map( user => user?.uid === environment.taliferroTenantId ) );
   readonly isLoggedIn$ = this.authService.isLoggedIn();
+  readonly userName$ = this.authService.getUser().pipe( map( user => user?.displayName || '' ) );
+  readonly userEmail$ = this.authService.getUser().pipe( map( user => user?.email || '' ) );
   readonly isEmbedded = typeof window !== 'undefined'
     && new URLSearchParams( window.location.search ).get( 'embedded' ) === 'true';
 
