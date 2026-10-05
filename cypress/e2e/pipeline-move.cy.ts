@@ -18,12 +18,12 @@ describe( 'Pipeline - move between stages', () => {
     cy.contains( '[data-cy="pipeline-card"]', 'Marcus Webb' ).find( '[data-cy="pipeline-move"]' ).click();
     cy.get( '[data-cy="pipeline-move-picker"]' ).should( 'be.visible' );
     cy.get( '[data-cy="pipeline-move-picker"]' ).contains( '[data-cy="choice-option"]', 'Negotiation' ).click();
-    const laneOf = ( name: string ) => cy.contains( '[data-cy="pipeline-card"]', name ).parents( '.pipeline-column' ).find( '.pipeline-column__title' );
+    const laneOf = ( name: string ) => cy.contains( '[data-cy="pipeline-card"]', name ).parents( '.pl-lane' ).find( 'h2' );
     laneOf( 'Marcus Webb' ).should( 'have.text', 'Negotiation' );
-    cy.contains( '.pipeline-column__title', 'Lead Generation' ).parents( '.pipeline-column' ).should( 'not.contain.text', 'Marcus Webb' );
+    cy.contains( '.pl-lane h2', 'Lead Generation' ).parents( '.pl-lane' ).should( 'not.contain.text', 'Marcus Webb' );
 
     // Wait for the save to finish before reloading.
-    cy.contains( '.pipeline-card__moved', 'Moved' ).should( 'be.visible' );
+    cy.contains( '.pl-note', 'Moved' ).should( 'be.visible' );
     cy.reload();
     laneOf( 'Marcus Webb' ).should( 'have.text', 'Negotiation' );
   } );
@@ -32,10 +32,10 @@ describe( 'Pipeline - move between stages', () => {
     cy.viewport( 390, 844 );
     seedAndVisit();
     cy.get( '[data-cy="pipeline-stage-select"]' ).should( 'be.visible' );
-    cy.get( '.pipeline-column:visible' ).should( 'have.length', 1 ).and( 'contain.text', 'Marcus Webb' );
+    cy.get( '.pl-lane:visible' ).should( 'have.length', 1 ).and( 'contain.text', 'Marcus Webb' );
     cy.get( '[data-cy="choice-row"]' ).click();
     cy.contains( '[data-cy="choice-option"]', 'Proposal (1)' ).click();
-    cy.get( '.pipeline-column:visible' ).should( 'have.length', 1 ).and( 'contain.text', 'Priya Nair' );
+    cy.get( '.pl-lane:visible' ).should( 'have.length', 1 ).and( 'contain.text', 'Priya Nair' );
     cy.document().then( ( doc ) => expect( doc.documentElement.scrollWidth ).to.be.at.most( 390 ) );
     cy.get( '[data-cy="pipeline-stage-select"]' ).scrollIntoView();
     cy.screenshot( 'pipeline-phone', { capture: 'viewport' } );

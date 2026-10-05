@@ -9,7 +9,7 @@ describe( 'Network contact creation wizard', () => {
     } ).as( 'entitlement' );
   };
 
-  it( 'walks through every step of the wizard and creates a contact', () => {
+  it( 'fills the five sections and creates a contact', () => {
     stubEntitlement();
 
     cy.visitWithFirebaseEmulators( '/contact-edit', {
@@ -19,35 +19,18 @@ describe( 'Network contact creation wizard', () => {
 
     cy.get( '[data-cy="contact-edit-shell"]', { timeout: 15000 } ).should( 'be.visible' );
 
-    // Step 1: First Name (required) - the step that reported nothing
-    // happening when Next was clicked. cy.click() does real hit-testing
-    // (unlike a raw DOM .click()), so a covering element regression like
-    // the assistant launcher's hotzone div fails this the same way it
-    // failed for a real user, instead of silently passing.
+    // Section 1: Name. cy.click() does real hit-testing, so a covering
+    // element (the assistant launcher's hotzone, once) fails here too.
     cy.get( '[name="firstName"]' ).should( 'be.visible' ).type( 'Network' );
+    cy.get( '[name="lastName"]' ).type( 'Emulator' );
     cy.get( '[data-cy="contact-wizard-next"]' ).click();
 
-    // Step 2: Middle Name (optional) - confirms the step actually advanced.
-    cy.get( '[name="middleName"]' ).should( 'be.visible' );
-    cy.get( '[data-cy="contact-wizard-next"]' ).click();
-
-    // Step 3: Last Name (required)
-    cy.get( '[name="lastName"]' ).should( 'be.visible' ).type( 'Emulator' );
-    cy.get( '[data-cy="contact-wizard-next"]' ).click();
-
-    // Step 4: Company
+    // Section 2: Company. Next walks the remaining sections.
     cy.get( '[name="companyName"]' ).should( 'be.visible' ).type( 'Acme Testing Co' );
-    cy.get( '[data-cy="contact-wizard-next"]' ).click();
-
-    // Steps 5-12: Category, Status, Profession, Email, Phone, Address,
-    // Nickname, Birthday - none of these gate advancement, so this just
-    // proves every remaining Next button is actually reachable and
-    // clickable, all the way to the last step.
-    for ( let step = 0; step < 8; step++ ) {
+    for ( let section = 0; section < 3; section++ ) {
       cy.get( '[data-cy="contact-wizard-next"]' ).click();
     }
 
-    // Step 13: Gender - final step, submit.
     cy.get( '[data-cy="contact-wizard-submit"]' ).click();
 
     cy.location( 'pathname', { timeout: 15000 } ).should( 'match', /^\/contact\// );
@@ -56,7 +39,7 @@ describe( 'Network contact creation wizard', () => {
     cy.contains( 'Emulator' ).should( 'exist' );
   } );
 
-  it( 'keeps Next disabled on the First Name step until a name is entered', () => {
+  it( 'blocks Save until a first name is entered', () => {
     stubEntitlement();
 
     cy.visitWithFirebaseEmulators( '/contact-edit', {
@@ -65,9 +48,10 @@ describe( 'Network contact creation wizard', () => {
     } );
 
     cy.get( '[data-cy="contact-edit-shell"]', { timeout: 15000 } ).should( 'be.visible' );
-    cy.get( '[data-cy="contact-wizard-next"]' ).should( 'be.disabled' );
+    cy.get( '[data-cy="contact-wizard-submit"]' ).should( 'have.attr', 'aria-disabled', 'true' ).click();
+    cy.contains( '.ce-error', 'First name is required' ).should( 'be.visible' );
     cy.get( '[name="firstName"]' ).type( 'Booker' );
-    cy.get( '[data-cy="contact-wizard-next"]' ).should( 'not.be.disabled' ).click();
-    cy.get( '[name="middleName"]' ).should( 'be.visible' );
+    cy.get( '[data-cy="contact-wizard-submit"]' ).should( 'have.attr', 'aria-disabled', 'false' );
+    cy.get( '.ce-error' ).should( 'not.exist' );
   } );
 } );

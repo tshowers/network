@@ -1,298 +1,132 @@
-:host {
-  display: block;
+/* 15f Pipeline lane view (laptop), 15p (iPhone). */
+:host { display: block; }
+
+.pl { display: grid; gap: 24px; width: auto; margin: 0; padding-left: 40px; padding-right: 0; }
+.pl > :not(.pl-board) { margin-right: 40px; }
+.nw-banner a { color: inherit; font-weight: 700; }
+
+.pl-top { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+.pl-top .nw-sub { max-width: 560px; margin-top: 6px; font-size: 17px; }
+
+.pl-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.pl-chip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px 12px 12px;
+  border-radius: 22px;
+  background: var(--surface);
 }
 
-.pipeline-shell {
-  min-height: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 1.5rem;
-  color: var(--cockpit-text);
+.pl-chip .nw-ring { --size: 44px; --inset: 5px; }
+.pl-chip strong { display: block; font-size: 20px; font-weight: 700; line-height: 1.1; }
+.pl-chip small { font-size: 13px; color: var(--muted); }
 
-  /* Cockpit tokens - same names/values as contact-home.component.css's
-     .cockpit-shell, so CockpitCommandDeckComponent/ArcGaugeComponent
-     (both themed via inherited CSS custom properties, not Angular
-     bindings) pick up the right colors here too, and .pipeline-panel
-     below can reuse them for the same glass-panel look. */
-  --cockpit-text: #0f172a;
-  --cockpit-muted: rgba(15, 15, 15, 0.68);
-  --cockpit-panel-bg: rgba(255, 255, 255, 0.58);
-  --cockpit-panel-border: rgba(15, 15, 15, 0.08);
-  --cockpit-panel-shadow:
-    0 22px 48px rgba(15, 15, 15, 0.10),
-    inset 0 1px 0 rgba(255, 255, 255, 0.58);
-  --cockpit-grid-line: rgba(15, 15, 15, 0.08);
-  --cockpit-tile-bg: rgba(255, 255, 255, 0.45);
+.pl-empty { margin: 0; padding: 40px 0; color: var(--muted); text-align: center; }
+.pl-stage { display: none; }
 
-  /* Pipeline-specific tokens for the Kanban board section. */
-  --pipeline-column-bg: rgba(15, 23, 42, 0.03);
-  --pipeline-column-border: rgba(15, 23, 42, 0.10);
-  --pipeline-card-bg: #ffffff;
-  --pipeline-card-border: rgba(15, 23, 42, 0.08);
-  --pipeline-text: #0d1117;
-  --pipeline-muted: #68727d;
-  --pipeline-accent: #0095cc;
+.pl-board {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 300px;
+  gap: 14px;
+  overflow-x: auto;
+  padding: 0 40px 12px 0;
+  scroll-snap-type: x proximity;
 }
 
-:host-context(html[data-theme='dark']) .pipeline-shell {
-  --cockpit-text: #f8fafc;
-  --cockpit-muted: rgba(232, 232, 232, 0.74);
-  --cockpit-panel-bg: rgba(255, 255, 255, 0.05);
-  --cockpit-panel-border: rgba(255, 255, 255, 0.10);
-  --cockpit-panel-shadow:
-    0 18px 45px rgba(0, 0, 0, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.03);
-  --cockpit-grid-line: rgba(255, 255, 255, 0.06);
-  --cockpit-tile-bg: rgba(255, 255, 255, 0.04);
-
-  --pipeline-column-bg: rgba(255, 255, 255, 0.03);
-  --pipeline-column-border: rgba(151, 198, 220, 0.16);
-  --pipeline-card-bg: #19232c;
-  --pipeline-card-border: rgba(151, 198, 220, 0.14);
-  --pipeline-text: #edf6fb;
-  --pipeline-muted: #9aafbc;
-  --pipeline-accent: #00bfff;
+.pl-lane {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  min-height: 60vh;
+  padding: 18px 12px 12px;
+  border-radius: 28px 28px 0 0;
+  background: var(--surface);
+  scroll-snap-align: start;
 }
 
-app-cockpit-command-deck {
-  display: block;
-  margin-bottom: 1.25rem;
+.pl-lane > header { display: flex; align-items: center; justify-content: space-between; padding: 0 6px 4px; }
+.pl-lane h2 { margin: 0; font-size: 16px; font-weight: 700; }
+
+.pl-count {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--tint, var(--t-grey));
+  color: var(--tint-fg, var(--t-grey-fg));
+  font-size: 12px;
+  font-weight: 700;
 }
 
-/* Glass panels - same recipe as contact-home's .cockpit-panel, kept as
-   its own rule here since Angular scopes each component's stylesheet to
-   its own template; the shared look comes from the shared --cockpit-*
-   tokens above, not a shared class. */
-.pipeline-panel {
-  position: relative;
-  overflow: hidden;
-  background: var(--cockpit-panel-bg);
-  border: 1px solid var(--cockpit-panel-border);
-  box-shadow: var(--cockpit-panel-shadow);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border-radius: 24px;
-  padding: 1.3rem;
-  margin-bottom: 1.25rem;
+.pl-cards { display: grid; gap: 8px; }
+.pl-card-wrap { display: grid; gap: 6px; }
+
+.pl-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 10px 10px 12px;
+  border-radius: 18px;
+  background: var(--bg);
 }
 
-.pipeline-panel__kicker {
+.pl-open {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  text-align: left;
+  box-shadow: none;
+}
+
+.pl-open:hover { transform: none; }
+.pl-open:hover strong { text-decoration: underline; }
+.pl-who { display: grid; min-width: 0; }
+.pl-who strong { font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pl-who small { font-size: 13px; font-weight: 400; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.pl-move {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.42rem 0.78rem;
-  border-radius: 999px;
-  border: 1px solid rgba(0, 149, 204, 0.16);
-  background: rgba(0, 149, 204, 0.08);
-  color: var(--tl-blue-mid, #0095cc);
-  font-size: 0.73rem;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin-bottom: 1rem;
-}
-
-.pipeline-empty {
-  border: 1px solid var(--cockpit-panel-border);
-  border-radius: 0.9rem;
-  padding: 2rem;
-  text-align: center;
-}
-
-/* Health tiles */
-
-.pipeline-health-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.9rem;
-}
-
-.pipeline-health-card {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  padding: 1rem;
-  background: var(--cockpit-tile-bg);
-  border: 1px solid rgba(148, 163, 184, 0.16);
-  border-radius: 20px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
-}
-
-.pipeline-health-card__instrument {
-  flex: 0 0 72px;
-}
-
-.pipeline-health-card__body {
-  min-width: 0;
-}
-
-.pipeline-health-card__label {
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--cockpit-muted);
-}
-
-.pipeline-health-card__value {
-  margin-top: 0.35rem;
-  font-size: clamp(1.55rem, 2.2vw, 2.3rem);
-  line-height: 1;
-  font-weight: 800;
-  letter-spacing: -0.05em;
-  color: var(--cockpit-text);
-}
-
-.pipeline-health-card__detail {
-  margin-top: 0.35rem;
-  font-size: 0.9rem;
-  line-height: 1.45;
-  color: var(--cockpit-muted);
-}
-
-/* Board */
-
-.pipeline-board {
-  display: flex;
-  gap: 1rem;
-  overflow-x: auto;
-  padding-bottom: 0.25rem;
-}
-
-.pipeline-column {
-  flex: 0 0 260px;
-  display: flex;
-  flex-direction: column;
-  background: var(--pipeline-column-bg);
-  border: 1px solid var(--pipeline-column-border);
-  border-radius: 0.9rem;
-  max-height: calc(100vh - 340px);
-}
-
-.pipeline-column__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  padding: 0.85rem 1rem;
-  border-bottom: 1px solid var(--pipeline-column-border);
-}
-
-.pipeline-column__title {
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--pipeline-text);
-}
-
-.pipeline-column__count {
-  font-size: 0.76rem;
-  font-weight: 700;
-  color: var(--pipeline-accent);
-  background: color-mix(in srgb, var(--pipeline-accent) 12%, transparent);
-  border-radius: 999px;
-  padding: 0.1rem 0.55rem;
-  min-width: 22px;
-  text-align: center;
-}
-
-.pipeline-column__cards {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  padding: 0.75rem;
-  overflow-y: auto;
-}
-
-.pipeline-column__empty {
-  font-size: 0.8rem;
-  color: var(--pipeline-muted);
-  text-align: center;
-  padding: 0.75rem 0;
-}
-
-/* Cards */
-
-.pipeline-card {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  width: 100%;
-  text-align: left;
-  background: var(--pipeline-card-bg);
-  border: 1px solid var(--pipeline-card-border);
-  border-radius: 0.7rem;
-  padding: 0.6rem 0.7rem;
-  cursor: pointer;
-}
-
-.pipeline-card:hover {
-  border-color: color-mix(in srgb, var(--pipeline-accent) 35%, transparent);
-  box-shadow: 0 4px 14px color-mix(in srgb, var(--pipeline-accent) 12%, transparent);
-}
-
-.pipeline-card__avatar {
-  flex: 0 0 auto;
-  width: 32px;
+  gap: 4px;
   height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, var(--pipeline-accent), #00bfff);
-  color: #06131a;
-  font-size: 0.75rem;
-  font-weight: 800;
+  min-height: 0;
+  padding: 0 10px 0 12px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font: 700 13px/1 var(--font);
+  box-shadow: none;
 }
 
-.pipeline-card__body {
-  min-width: 0;
-}
+.pl-move:hover { background: var(--surface2); transform: none; }
+.pl-move .nw-icon { width: 13px; height: 13px; transition: transform .15s; }
+.pl-move .nw-icon.is-open { transform: rotate(90deg); }
 
-.pipeline-card__name {
-  font-size: 0.86rem;
-  font-weight: 700;
-  color: var(--pipeline-text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+.pl-picker { padding: 12px; border-radius: 18px; background: var(--bg); box-shadow: inset 0 0 0 1px var(--surface2); }
+.pl-note { padding-left: 12px; font-size: 12px; font-weight: 700; color: var(--t-green-fg); }
+.pl-note--error { color: var(--t-red-fg); }
+.pl-none { margin: 0; padding: 14px 6px; font-size: 14px; color: var(--muted); }
 
-.pipeline-card__meta {
-  font-size: 0.76rem;
-  color: var(--pipeline-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-@media (max-width: 640px) {
-  .pipeline-health-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .pipeline-column {
-    flex-basis: 240px;
-  }
-}
-
-/* Card = open button + Move button; the stage list opens inline under it. */
-.pipeline-card { cursor: default; padding: 0.35rem 0.4rem 0.35rem 0.35rem; }
-.pipeline-card__open { display: flex; flex: 1 1 auto; min-width: 0; align-items: center; gap: 0.65rem; padding: 0.25rem 0.35rem; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
-.pipeline-card__body { min-width: 0; }
-.pipeline-card__move { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 4px; min-height: 32px; padding: 4px 10px; border: 1px solid var(--pipeline-card-border); border-radius: 999px; background: transparent; color: var(--network-muted); font: inherit; font-size: .8rem; font-weight: 700; cursor: pointer; }
-.pipeline-card__move:hover { color: var(--pipeline-accent); border-color: var(--pipeline-accent); }
-.pipeline-card__move i { font-size: .65rem; transition: transform .2s ease; }
-.pipeline-card__move i.is-open { transform: rotate(90deg); }
-.pipeline-card__picker { margin-top: 6px; }
-.pipeline-card__moved { display: block; margin-top: 4px; color: #1f9d55; font-size: .8rem; font-weight: 700; }
-.pipeline-card__error { display: block; margin-top: 4px; color: #b42318; font-size: .8rem; font-weight: 700; }
-
-.pipeline-stage-select { display: none; margin-bottom: 12px; }
-
-@media (max-width: 640px) {
-  /* Phone: choose a lane, see it full width - no sideways scrolling. */
-  .pipeline-stage-select { display: block; }
-  .pipeline-board { flex-direction: column; overflow-x: visible; }
-  .pipeline-column { display: none; flex-basis: auto; }
-  .pipeline-column.is-active { display: flex; }
+/* iPhone (15p): stage picker, one lane. */
+@media (max-width: 760px) {
+  .pl { padding-left: 16px; }
+  .pl > :not(.pl-board) { margin-right: 16px; }
+  .pl-chips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; width: 100%; }
+  .pl-chip { flex-direction: column; align-items: flex-start; gap: 6px; padding: 10px; border-radius: 18px; }
+  .pl-chip .nw-ring { --size: 32px; --inset: 4px; }
+  .pl-chip strong { font-size: 16px; }
+  .pl-chip small { font-size: 11px; }
+  .pl-stage { display: block; }
+  .pl-board { grid-auto-flow: row; grid-auto-columns: auto; padding-right: 16px; overflow: visible; }
+  .pl-lane { display: none; min-height: 0; border-radius: 24px; }
+  .pl-lane.is-active { display: grid; }
 }

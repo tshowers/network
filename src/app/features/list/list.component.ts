@@ -12,8 +12,8 @@ import { NetworkAssistantSignalService } from '../../services/network-assistant-
 import { Contact } from '../../models/contact.model';
 import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.component';
 import { PreloaderComponent } from '../../shared/preloader/preloader.component';
-import { CockpitBrowseModeBannerComponent } from '../../shared/cockpit-browse-mode-banner/cockpit-browse-mode-banner.component';
 import { StatusFlowComponent } from '../../shared/status-flow/status-flow.component';
+import { stageTint } from '../../shared/stage-tint';
 
 type ContactSortKey = 'name' | 'company' | 'email' | 'phone' | 'status';
 type SortDirection = 'asc' | 'desc';
@@ -38,11 +38,13 @@ type SortDirection = 'asc' | 'desc';
 @Component( {
   selector: 'app-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, BackToTopComponent, PreloaderComponent, CockpitBrowseModeBannerComponent, StatusFlowComponent],
+  imports: [CommonModule, FormsModule, RouterModule, BackToTopComponent, PreloaderComponent, StatusFlowComponent],
   templateUrl: './list.component.html',
   styleUrl: './list.component.css',
 } )
 export class ListComponent implements OnInit, OnDestroy {
+  readonly tint = stageTint;
+
   contacts: Contact[] = [];
   filteredContacts: Contact[] = [];
   searchText = '';

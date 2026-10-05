@@ -1,90 +1,63 @@
+<!-- Pipeline lane view (design_handoff_music_leadvault_network 15f; 15p on iPhone). -->
 <app-preloader [isLoading]="isLoading"></app-preloader>
 <app-back-to-top></app-back-to-top>
 
-<div class="pipeline-shell" data-cy="pipeline-shell">
-  <app-cockpit-command-deck
-    eyebrow="TODD Command Deck"
-    context="Pipeline · Network"
-    title="Pipeline"
-    iconSrc="assets/find/entities/network/logo.png"
-    iconAlt="Network"
-    [subtitle]="isSignedIn
-      ? 'Track every stage from first contact to closed won, and see where deals are gaining or losing momentum.'
-      : 'Preview how TODD groups your contacts by stage and tracks momentum toward closed won.'"
-    [scoreLabel]="isSignedIn ? 'Late-Stage Momentum' : 'Preview Momentum'"
-    [scoreValue]="isSignedIn ? (momentumScore | number: '1.0-2') + '%' : '0%'"
-  ></app-cockpit-command-deck>
+<main class="nw-page pl" data-cy="pipeline-shell">
+  <header class="pl-top">
+    <div>
+      <h1 class="nw-title">Pipeline</h1>
+      <p class="nw-sub">{{ isSignedIn
+        ? 'Track every stage from first contact to closed won, and see where deals are gaining or losing momentum.'
+        : 'Preview how TODD groups your contacts by stage and tracks momentum toward closed won.' }}</p>
+    </div>
+    <div class="pl-chips" *ngIf="isSignedIn && pipelineContactCount > 0">
+      <div class="pl-chip" *ngFor="let meter of healthMeters" [title]="meter.detail">
+        <span class="nw-ring" [style.--v]="meter.value > 0 && meter.value < 2 ? 2 : meter.value" [attr.data-tier]="ringTier(meter)"><span></span></span>
+        <div><strong>{{ formatPct(meter.value) }}%</strong><small>{{ meter.label }}</small></div>
+      </div>
+    </div>
+  </header>
 
-  <app-cockpit-browse-mode-banner
-    *ngIf="isSignedIn === false"
-    surfaceLabel="your Pipeline"
-    customTitle="Sign in to view your Pipeline"
-    customCopy="Once you sign in, TODD will group your contacts here by stage - lead, qualification, engagement, and on through closed won."
-  ></app-cockpit-browse-mode-banner>
+  <p class="nw-banner" *ngIf="isSignedIn === false" role="status"><strong>Sign in to view your Pipeline.</strong> Once you sign in, TODD will group your contacts here by stage - lead, qualification, engagement, and on through closed won. <a routerLink="/get-started">Sign in</a></p>
 
   <ng-container *ngIf="isSignedIn">
-    <div class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</div>
+    <p class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</p>
 
-    <section class="pipeline-panel pipeline-health-panel" *ngIf="pipelineContactCount > 0">
-      <div class="pipeline-panel__kicker">Pipeline Health</div>
-      <div class="pipeline-health-grid">
-        <article class="pipeline-health-card" *ngFor="let meter of healthMeters">
-          <div class="pipeline-health-card__instrument">
-            <app-arc-gauge [value]="meter.value" [max]="100" [tone]="meter.tone"></app-arc-gauge>
-          </div>
-          <div class="pipeline-health-card__body">
-            <div class="pipeline-health-card__label">{{ meter.label }}</div>
-            <div class="pipeline-health-card__value">{{ meter.value < 1 && meter.value > 0 ? (meter.value | number: '1.2-2') : (meter.value | number: '1.0-0') }}%</div>
-            <div class="pipeline-health-card__detail">{{ meter.detail }}</div>
-          </div>
-        </article>
+    <p class="pl-empty" *ngIf="!isLoading && pipelineContactCount === 0 && !errorMessage">No contacts have a pipeline status yet. Set a contact's status from its edit page to see it here.</p>
+
+    <ng-container *ngIf="pipelineContactCount > 0">
+      <!-- Phone: pick one lane instead of scrolling sideways through eight. -->
+      <div class="pl-stage" data-cy="pipeline-stage-select">
+        <app-choice-field label="Stage" [options]="stageChoiceOptions" [value]="mobileStage" (valueChange)="mobileStage = $event"></app-choice-field>
       </div>
-    </section>
 
-    <div class="pipeline-empty" *ngIf="!isLoading && pipelineContactCount === 0 && !errorMessage">
-      <p class="text-muted">No contacts have a pipeline status yet. Set a contact's status from its edit page to see it here.</p>
-    </div>
-
-    <section class="pipeline-panel pipeline-board-panel" *ngIf="pipelineContactCount > 0">
-      <div class="pipeline-panel__kicker">Lane View</div>
-      <!-- Phone: pick one lane to view instead of scrolling sideways through eight. -->
-      <div class="pipeline-stage-select" data-cy="pipeline-stage-select">
-        <app-choice-field label="Stage" [options]="stageChoiceOptions" [value]="mobileStage"
-                          (valueChange)="mobileStage = $event"></app-choice-field>
-      </div>
-      <div class="pipeline-board">
-        <div class="pipeline-column" *ngFor="let stage of stages" [class.is-active]="stage.name === mobileStage">
-          <div class="pipeline-column__header">
-            <div class="pipeline-column__title">{{ stage.name }}</div>
-            <div class="pipeline-column__count">{{ stage.contacts.length }}</div>
-          </div>
-          <div class="pipeline-column__cards">
-            <div class="pipeline-card-wrap" *ngFor="let contact of stage.contacts" [attr.data-contact-id]="contact.id" data-cy="pipeline-card">
-              <div class="pipeline-card">
-                <button type="button" class="pipeline-card__open" (click)="openContact(contact)">
-                  <div class="pipeline-card__avatar">{{ initials(contact) }}</div>
-                  <div class="pipeline-card__body">
-                    <div class="pipeline-card__name">{{ displayName(contact) }}</div>
-                    <div class="pipeline-card__meta" *ngIf="contact.company?.name">{{ contact.company?.name }}</div>
-                  </div>
+      <div class="pl-board">
+        <section class="pl-lane" *ngFor="let stage of stages" [class.is-active]="stage.name === mobileStage" [attr.data-tint]="tint(stage.name)" [attr.aria-label]="stage.name">
+          <header>
+            <h2>{{ stage.name }}</h2>
+            <span class="pl-count">{{ stage.contacts.length }}</span>
+          </header>
+          <div class="pl-cards">
+            <div class="pl-card-wrap" *ngFor="let contact of stage.contacts" [attr.data-contact-id]="contact.id" data-cy="pipeline-card">
+              <div class="pl-card">
+                <button type="button" class="pl-open" (click)="openContact(contact)">
+                  <span class="nw-avatar" [attr.data-tint]="tint(stage.name)">{{ initials(contact) }}</span>
+                  <span class="pl-who"><strong>{{ displayName(contact) }}</strong><small>{{ contact.company?.name || 'No company listed' }}</small></span>
                 </button>
-                <button type="button" class="pipeline-card__move" [attr.aria-expanded]="movePickerFor === contact.id"
-                        [attr.aria-label]="'Move ' + displayName(contact) + ' to another stage'"
-                        (click)="toggleMove($event, contact)" data-cy="pipeline-move">
-                  Move <i class="fa-solid fa-chevron-right" [class.is-open]="movePickerFor === contact.id" aria-hidden="true"></i>
+                <button type="button" class="pl-move" [attr.aria-expanded]="movePickerFor === contact.id" [attr.aria-label]="'Move ' + displayName(contact) + ' to another stage'" (click)="toggleMove($event, contact)" data-cy="pipeline-move">
+                  Move <svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true" [class.is-open]="movePickerFor === contact.id"><path d="m9 18 6-6-6-6"/></svg>
                 </button>
               </div>
-              <div class="pipeline-card__picker" *ngIf="movePickerFor === contact.id" data-cy="pipeline-move-picker">
-                <app-status-flow mode="input" [listOnly]="true" [currentStatus]="contact.status || ''"
-                                 (statusChange)="moveContact(contact, $event)"></app-status-flow>
+              <div class="pl-picker" *ngIf="movePickerFor === contact.id" data-cy="pipeline-move-picker">
+                <app-status-flow mode="input" [listOnly]="true" [currentStatus]="contact.status || ''" (statusChange)="moveContact(contact, $event)"></app-status-flow>
               </div>
-              <span class="pipeline-card__moved" *ngIf="movedFor === contact.id" role="status">Moved</span>
-              <span class="pipeline-card__error" *ngIf="moveErrorFor === contact.id" role="alert">Couldn't move</span>
+              <span class="pl-note" *ngIf="movedFor === contact.id" role="status">Moved</span>
+              <span class="pl-note pl-note--error" *ngIf="moveErrorFor === contact.id" role="alert">Couldn't move</span>
             </div>
-            <div class="pipeline-column__empty" *ngIf="stage.contacts.length === 0">No contacts</div>
+            <p class="pl-none" *ngIf="stage.contacts.length === 0">No contacts</p>
           </div>
-        </div>
+        </section>
       </div>
-    </section>
+    </ng-container>
   </ng-container>
-</div>
+</main>

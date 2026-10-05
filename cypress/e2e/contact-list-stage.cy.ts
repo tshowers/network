@@ -26,38 +26,38 @@ describe( 'Contact list - Set stage', () => {
     seedAndVisit( '/contact-list?setStage=1' );
 
     cy.get( '[data-cy="set-stage-hint"]' ).should( 'be.visible' );
-    cy.get( '.contact-list-row:not(.contact-list-row--head) .contact-list-name' ).last().should( 'contain.text', 'Aaron Adams' );
+    cy.get( '.cl-row:not(.cl-row--head) .cl-name strong' ).last().should( 'contain.text', 'Aaron Adams' );
 
-    cy.contains( '.contact-list-row', 'Zoe Zhang' ).within( () => {
+    cy.contains( '.cl-row', 'Zoe Zhang' ).within( () => {
       cy.get( '[data-cy="set-stage-button"]' ).should( 'contain.text', 'Set stage' ).click();
       cy.get( '[data-cy="stage-picker"]' ).should( 'be.visible' );
       cy.contains( '[data-cy="choice-option"]', 'Proposal' ).click();
       cy.get( '[data-cy="stage-picker"]' ).should( 'not.exist' );
       cy.get( '[data-cy="set-stage-button"]' ).should( 'contain.text', 'Proposal' );
-      cy.contains( '.contact-stage-saved', 'Saved' );
+      cy.contains( '.cl-saved', 'Saved' );
     } );
     cy.location( 'pathname' ).should( 'eq', '/contact-list' );
 
     // Persisted: reload and it's still there.
     cy.reload();
-    cy.contains( '.contact-list-row', 'Zoe Zhang' ).find( '[data-cy="set-stage-button"]' ).should( 'contain.text', 'Proposal' );
+    cy.contains( '.cl-row', 'Zoe Zhang' ).find( '[data-cy="set-stage-button"]' ).should( 'contain.text', 'Proposal' );
   } );
 
   it( 'tags the signed-in user\'s own contact with (You)', () => {
     stubEntitlement();
     seedAndVisit( '/contact-list' );
-    cy.contains( '.contact-list-row', 'Booker Showers' ).find( '[data-cy="contact-self-tag"]' ).should( 'contain.text', '(You)' );
-    cy.contains( '.contact-list-row', 'Zoe Zhang' ).find( '[data-cy="contact-self-tag"]' ).should( 'not.exist' );
+    cy.contains( '.cl-row', 'Booker Showers' ).find( '[data-cy="contact-self-tag"]' ).should( 'contain.text', '(You)' );
+    cy.contains( '.cl-row', 'Zoe Zhang' ).find( '[data-cy="contact-self-tag"]' ).should( 'not.exist' );
     // Their own record is their profile, not a relationship - no stage.
-    cy.contains( '.contact-list-row', 'Booker Showers' ).find( '[data-cy="set-stage-button"]' ).should( 'not.exist' );
+    cy.contains( '.cl-row', 'Booker Showers' ).find( '[data-cy="set-stage-button"]' ).should( 'not.exist' );
   } );
 
   it( 'renders as cards on a phone', () => {
     stubEntitlement();
     cy.viewport( 390, 844 );
     seedAndVisit( '/contact-list?setStage=1' );
-    cy.contains( '.contact-list-row', 'Zoe Zhang' ).should( 'be.visible' );
-    cy.contains( '.contact-list-row', 'Zoe Zhang' ).find( '[data-cy="set-stage-button"]' ).click();
+    cy.contains( '.cl-row', 'Zoe Zhang' ).should( 'be.visible' );
+    cy.contains( '.cl-row', 'Zoe Zhang' ).find( '[data-cy="set-stage-button"]' ).click();
     cy.document().then( ( doc ) => expect( doc.documentElement.scrollWidth ).to.be.at.most( 390 ) );
     cy.screenshot( 'contact-list-phone', { capture: 'viewport' } );
   } );

@@ -1,34 +1,9 @@
-:host {
-  display: block;
-}
-
-.sign-in-shell {
-  min-height: 70vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.5rem;
-}
-
-.sign-in-card {
-  width: 100%;
-  max-width: 380px;
-  background: #fff;
-  /* Explicit, not inherited: this card is always white regardless of
-     system color scheme, so its text needs to be always-dark too rather
-     than inheriting the theme-aware global body color, which would put
-     light dark-mode text on this light card. */
-  color: #0d1117;
-  border: 1px solid rgba(15, 15, 15, 0.08);
-  border-radius: 1rem;
-  padding: 2rem;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.06);
-  text-align: center;
-}
-
-.sign-in-logo {
-  display: block;
-  width: 56px;
-  height: 56px;
-  margin: 0 auto 1.25rem;
-}
+:host { display: block; }
+.si { display: grid; place-items: start center; padding: 40px 16px 64px; }
+.si-card { display: grid; justify-items: center; gap: 12px; width: min(440px, 100%); padding: 36px 32px; border-radius: 28px; background: var(--surface); text-align: center; }
+.si-logo { width: 56px; height: 56px; border-radius: 16px; }
+.si-card h1 { margin: 6px 0 0; font-size: 36px; font-weight: 700; letter-spacing: -0.035em; }
+.si-card p { margin: 0; font-size: 16px; color: var(--muted); }
+.si-btn { width: 100%; height: 52px; margin-top: 10px; font-size: 17px; }
+.si-new { margin-top: 4px; font-size: 15px; font-weight: 600; color: var(--muted); text-decoration: none; }
+.si-new:hover { color: var(--text); }

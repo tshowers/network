@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subscription, combineLatest } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { NetworkAuthService } from '../../services/network-auth.service';
@@ -44,12 +44,13 @@ import { PreloaderComponent } from '../../shared/preloader/preloader.component';
     FormsModule,
     ReadComponent,
     BackToTopComponent,
-    PreloaderComponent,
-  ],
+    PreloaderComponent, RouterLink],
   templateUrl: './view.component.html',
   styleUrl: './view.component.css',
 } )
 export class ViewComponent implements OnInit, OnDestroy {
+  activeTab: 'read' | 'json' = 'read';
+
   contact: Contact | null = null;
   contactId: string | null = null;
   errorMessage: string | null = null;

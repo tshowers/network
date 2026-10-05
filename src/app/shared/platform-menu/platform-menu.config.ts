@@ -4,7 +4,6 @@ import { MenuAppConfig } from '@taliferro/ui/platform/universal-menu.model';
 export const PLATFORM_MENU_CONFIG: MenuAppConfig = {
   app: 'network',
   name: 'Network',
-  logo: 'assets/find/entities/network/logo.png',
   items: [
     { label: 'Home', icon: 'home', route: '/' },
     { label: 'Relationships', icon: 'users', route: '/app' },

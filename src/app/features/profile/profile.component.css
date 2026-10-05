@@ -1,16 +1,15 @@
 :host { display: block; }
 
 .pf-shell {
-  --pf-accent: #123d8b;
-  --pf-accent-ink: #ffffff;
-  --pf-danger: #b42318;
+  --pf-accent: var(--text);
+  --pf-accent-ink: var(--bg);
+  --pf-danger: var(--red);
   min-height: 100vh;
   background: var(--network-paper);
   color: var(--network-ink);
-  font-family: 'Manrope', sans-serif;
+  font-family: var(--font);
   padding: 88px 16px 120px;
 }
-:host-context(html[data-theme='dark']) .pf-shell { --pf-accent: var(--tl-blue); --pf-accent-ink: #04121f; --pf-danger: #ff8a80; }
 .pf-shell * { box-sizing: border-box; }
 
 .pf-inner { max-width: 760px; margin: 0 auto; }
@@ -21,7 +20,7 @@
 .pf-error { padding: 12px 16px; border-radius: 12px; background: color-mix(in srgb, var(--pf-danger) 14%, transparent); color: var(--pf-danger); font-weight: 600; }
 .pf-loading { color: var(--network-muted); }
 
-.pf-card { margin-bottom: 16px; padding: 22px clamp(16px, 4vw, 28px); border: 1px solid var(--network-line); border-radius: 20px; background: var(--network-surface); }
+.pf-card { margin-bottom: 16px; padding: 22px clamp(16px, 4vw, 28px); border: 0; border-radius: 24px; background: var(--surface); }
 .pf-card h2 { margin: 0 0 16px; font-size: 1.1rem; font-weight: 800; }
 .pf-card--danger { border-color: color-mix(in srgb, var(--pf-danger) 35%, var(--network-line)); }
 
@@ -30,7 +29,7 @@
 .pf-field > span { display: block; margin-bottom: 8px; font-size: .9rem; font-weight: 700; }
 .pf-field small { font-weight: 500; color: var(--network-muted); }
 
-.pf-input { display: block; width: 100%; padding: 11px 14px; border: 1px solid var(--network-line); border-radius: 12px; background: var(--network-paper); color: var(--network-ink); font: inherit; }
+.pf-input { display: block; width: 100%; padding: 11px 14px; border: 0; border-radius: 999px; background: var(--bg); color: var(--network-ink); font: inherit; }
 .pf-input:focus { outline: 2px solid var(--pf-accent); outline-offset: 1px; }
 textarea.pf-input { resize: vertical; }
 .pf-chips + .pf-input { margin-top: 10px; }
@@ -67,6 +66,6 @@ textarea.pf-input { resize: vertical; }
 .pf-completion__head span { font-weight: 800; color: var(--pf-accent); }
 .pf-completion__meter { height: 8px; border-radius: 999px; background: var(--network-line); overflow: hidden; margin-bottom: 12px; }
 .pf-completion__meter span { display: block; height: 100%; border-radius: inherit; background: var(--pf-accent); transition: width .35s ease; }
-.pf-completion__meter span.is-complete { background: #1f9d55; }
+.pf-completion__meter span.is-complete { background: var(--green); }
 .pf-completion .pf-note { margin-bottom: 0; }
 .pf-link { border: 0; background: none; padding: 0; color: var(--pf-accent); font: inherit; font-weight: 700; cursor: pointer; }

@@ -1,0 +1,31 @@
+<header class="ah">
+  <a class="ah-brand" [routerLink]="isLoggedIn ? '/app' : '/'">
+    <img class="ah-logo" src="assets/seo/network-icon.png" alt="" width="36" height="36" />
+    <span class="ah-name"><span class="ah-wide">Network</span><span class="ah-phone">{{ section || 'Network' }}</span></span>
+  </a>
+
+  @if (isLoggedIn) {
+    <nav class="ah-nav" aria-label="Network">
+      @for (s of sections; track s.route) {
+        <a [routerLink]="s.route" [class.is-active]="isActive(s)" [attr.aria-current]="isActive(s) ? 'page' : null">{{ s.label }}</a>
+      }
+    </nav>
+  }
+
+  <div class="ah-actions">
+    @if (!isLoggedIn) {
+      <a class="ah-pill ah-pill--wide" routerLink="/pricing">Pricing</a>
+      <a class="ah-pill ah-pill--wide" routerLink="/get-started">Sign in</a>
+    }
+    <button type="button" class="ah-pill ah-theme" (click)="toggleTheme()" [attr.aria-label]="theme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'">
+      @if (theme() === 'dark') {
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        <span>Light</span>
+      } @else {
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        <span>Dark</span>
+      }
+    </button>
+    <app-platform-menu [isAdmin]="isAdmin" [isLoggedIn]="isLoggedIn" [userName]="userName" [userEmail]="userEmail" (signOut)="signOut.emit()" />
+  </div>
+</header>

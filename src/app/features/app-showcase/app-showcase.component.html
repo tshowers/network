@@ -1,57 +1,35 @@
-<div class="fl-page" data-cy="app-showcase-shell">
-  <section class="fl-hero">
-    <div class="fl-hero__inner">
-      <div class="fl-hero__copy">
-        <div class="fl-eyebrow"><a href="https://todd.taliferro.tech">Home</a> · <a routerLink="/">Network</a> · iOS</div>
-        <h1 class="fl-hero__headline">Relationships in your pocket</h1>
-        <p class="fl-hero__lead">Your relationships don’t wait until you’re back at your desk.<br>Network for iOS puts your contacts, TODD signals, and relationship context in your pocket — so you can capture what happened and know what should happen next.</p>
-        <div class="fl-hero__actions">
-          <span class="fl-badge">Coming soon on the App Store</span>
-        </div>
-      </div>
-      <div class="fl-hero__visual">
-        <img class="fl-ios__shot" src="assets/todd-network.png" alt="Network relationship graph on iOS">
-      </div>
+<!-- iOS page (design_handoff_music_leadvault_network 15h). -->
+<main class="nw-page io" data-cy="app-showcase-shell">
+  <section class="io-hero">
+    <div>
+      <p class="io-crumbs"><a href="https://todd.taliferro.tech">Home</a> · <a routerLink="/">Network</a> · <span>iOS</span></p>
+      <h1>Relationships in your pocket</h1>
+      <p class="io-lead">Your relationships don’t wait until you’re back at your desk. Network for iOS puts your contacts, TODD signals, and relationship context in your pocket — so you can capture what happened and know what should happen next.</p>
+      <span class="io-soon"><svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M12 18h.01"/></svg>Coming soon on the App Store</span>
+    </div>
+    <img class="io-shot" src="assets/todd-network-analysis.png" alt="Network relationship analysis on iOS" />
+  </section>
+
+  <section class="io-section">
+    <p class="nw-eyebrow nw-eyebrow--blue">Built for the moment relationships happen</p>
+    <h2>What happens when the graph travels with you?</h2>
+    <p class="io-lead">Network for iOS isn't a separate app to keep in sync — it reads and writes the exact same contact graph TODD watches everywhere else.</p>
+    <img class="io-composite" src="assets/network-ios1.png" alt="The complete Network for iOS relationship experience" />
+    <div class="io-features">
+      <article *ngFor="let h of highlights"><h3>{{ h.heading }}</h3><p>{{ h.copy }}</p></article>
     </div>
   </section>
-  <section class="fl-solution">
-    <div class="fl-section__inner">
-      <div class="fl-section__heading">
-        <div class="fl-eyebrow">Built for the moment relationships happen</div>
-        <h2>What happens when the graph travels with you?</h2>
-        <p class="fl-section__sub">Network for iOS isn't a separate app to keep in sync — it reads and writes the exact same contact graph TODD watches everywhere else.</p>
-      </div>
-      <img class="fl-ios-composite" src="assets/network-ios1.png" alt="The complete Network for iOS relationship experience">
-      <div class="fl-features">
-        <article class="fl-feature" *ngFor="let h of highlights">
-          <div class="fl-feature__copy">
-            <h3>{{ h.heading }}</h3>
-            <p>{{ h.copy }}</p>
-          </div>
-        </article>
-      </div>
-    </div>
+
+  <section class="io-stats">
+    <div *ngFor="let s of stats"><strong>{{ s.value }}</strong><span>{{ s.label }}</span></div>
   </section>
-  <section class="fl-stats">
-    <div class="fl-stats__inner">
-      <div class="fl-stat" *ngFor="let s of stats">
-        <div class="fl-stat__value">{{ s.value }}</div>
-        <div class="fl-stat__label">{{ s.label }}</div>
-      </div>
+
+  <section class="io-cta">
+    <div>
+      <p class="nw-eyebrow nw-eyebrow--blue">Coming soon</p>
+      <h2>Network for iOS is coming soon.</h2>
+      <p>Your contacts, relationship history, and TODD's recommendations will be available on your iPhone — so you can prepare for conversations, capture new contacts, and know who to follow up with wherever you are.</p>
     </div>
+    <a class="nw-btn nw-btn--on-surface" href="https://todd.taliferro.tech">Back to TODD</a>
   </section>
-  <section class="fl-cta">
-    <div class="fl-section__inner">
-      <div class="fl-cta__shell">
-        <div class="fl-cta__copy">
-          <div class="fl-eyebrow fl-eyebrow--light">Coming soon</div>
-          <h2>Network for iOS is coming soon.</h2>
-          <p>Your contacts, relationship history, and TODD's recommendations will be available on your iPhone — so you can prepare for conversations, capture new contacts, and know who to follow up with wherever you are.</p>
-        </div>
-        <div class="fl-cta__actions">
-          <a class="fl-btn fl-btn--ghost" href="https://todd.taliferro.tech">Back to TODD</a>
-        </div>
-      </div>
-    </div>
-  </section>
-</div>
+</main>

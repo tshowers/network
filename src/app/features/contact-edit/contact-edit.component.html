@@ -1,258 +1,135 @@
+<!-- Contact editor: five sections and a live preview (design_handoff_music_leadvault_network 15d; 15n on iPhone). -->
 <app-preloader [isLoading]="isLoading"></app-preloader>
 <app-back-to-top></app-back-to-top>
 
-<div class="contact-edit-shell" data-cy="contact-edit-shell" *ngIf="!isLoading">
-  <div class="wizard-header">
-    <h1 class="mb-1">Network</h1>
-    <p class="text-muted mb-3">Add or edit contact details with a live preview on the right.</p>
-
-    <div class="stepper">
-      <button type="button" class="btn-step-nav" *ngIf="currentStep > 0" (click)="previousStep()">
-        <i class="fa-solid fa-chevron-left"></i>
-      </button>
-      <div class="step" *ngFor="let step of steps.slice(currentStep, currentStep + 4); let i = index" [class.active]="true">
-        <div class="circle">{{ currentStep + i + 1 }}</div>
-        <div class="label">{{ step.label }}</div>
-      </div>
-      <button type="button" class="btn-step-nav" *ngIf="!isLastStep" (click)="nextStep()">
-        <i class="fa-solid fa-chevron-right"></i>
-      </button>
+<main class="nw-page ce" data-cy="contact-edit-shell" *ngIf="!isLoading">
+  <header class="ce-top">
+    <div>
+      <a class="nw-link" routerLink="/contact-list"><svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Contacts</a>
+      <h1>{{ contact.id ? (previewName || 'Edit contact') : 'New contact' }}</h1>
     </div>
-  </div>
-
-  <app-cockpit-browse-mode-banner
-    *ngIf="!isSignedIn"
-    surfaceLabel="this form"
-    customTitle="You can try this out, but you won't be able to save"
-    customCopy="You are not signed in, so feel free to explore this form and see the live preview. Sign in before you submit — guest sessions can't save new contacts."
-  ></app-cockpit-browse-mode-banner>
-
-  <div class="alert alert-info" *ngIf="isSignedIn && limitMessage">{{ limitMessage }}</div>
-  <div class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</div>
-  <div class="alert alert-danger" *ngIf="missingMessage && isLastStep">
-    <h4 class="alert-heading">Missing Information</h4>
-    <hr />
-    {{ missingMessage }}
-  </div>
-
-  <ul class="nav nav-tabs mt-3">
-    <li class="nav-item">
-      <button type="button" class="nav-link" [class.active]="activeTab === 'read'" (click)="activeTab = 'read'">Regular View</button>
-    </li>
-    <li class="nav-item">
-      <button type="button" class="nav-link" [class.active]="activeTab === 'json'" (click)="activeTab = 'json'">Raw JSON</button>
-    </li>
-  </ul>
-
-  <div class="wizard-tab-content" *ngIf="activeTab === 'read'">
-    <div class="wizard-columns">
-      <form class="wizard-form" (keydown.enter)="$event.preventDefault()">
-
-        <div class="wizard-step-card" *ngIf="currentStepKey === 'firstName'">
-          <h5>{{ steps[0].heading }}</h5>
-          <div class="form-group full-width">
-            <label class="contact-field-label">First Name</label>
-            <input type="text" class="form-control" name="firstName" [(ngModel)]="contact.firstName" required />
-            <div class="alert alert-danger mt-2" *ngIf="!isFirstStepValid">First Name is required</div>
-          </div>
-          <div class="wizard-step-actions">
-            <button type="button" class="btn-todd" disabled><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
-            <button type="button" class="btn-todd" data-cy="contact-wizard-next" [disabled]="!isFirstStepValid" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
-          </div>
-        </div>
-
-        <div class="wizard-step-card" *ngIf="currentStepKey === 'middleName'">
-          <h5>{{ steps[1].heading }}</h5>
-          <div class="form-group full-width">
-            <label class="contact-field-label">Middle Name</label>
-            <input type="text" class="form-control" name="middleName" [(ngModel)]="contact.middleName" />
-          </div>
-          <div class="wizard-step-actions">
-            <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
-            <button type="button" class="btn-todd" data-cy="contact-wizard-next" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
-          </div>
-        </div>
-
-        <div class="wizard-step-card" *ngIf="currentStepKey === 'lastName'">
-          <h5>{{ steps[2].heading }}</h5>
-          <div class="form-group full-width">
-            <label class="contact-field-label">Last Name</label>
-            <input type="text" class="form-control" name="lastName" [(ngModel)]="contact.lastName" required />
-            <div class="alert alert-danger mt-2" *ngIf="!isLastNameStepValid">Last Name is required</div>
-          </div>
-          <div class="wizard-step-actions">
-            <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
-            <button type="button" class="btn-todd" data-cy="contact-wizard-next" [disabled]="!isLastNameStepValid" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
-          </div>
-        </div>
-
-        <div class="wizard-step-card" *ngIf="currentStepKey === 'company' && contact.company">
-          <h5>{{ steps[3].heading }}</h5>
-          <div class="wizard-step-grid">
-            <div class="form-group">
-              <label class="contact-field-label">Company Name</label>
-              <input type="text" class="form-control" name="companyName" [(ngModel)]="contact.company!.name" />
-            </div>
-            <div class="form-group">
-              <label class="contact-field-label">Company Website</label>
-              <input type="text" class="form-control" name="companyUrl" [(ngModel)]="contact.company!.url" placeholder="https://" />
-            </div>
-          </div>
-          <div class="wizard-step-actions">
-            <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
-            <button type="button" class="btn-todd" data-cy="contact-wizard-next" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
-          </div>
-        </div>
-
-        <div class="wizard-step-card" *ngIf="currentStepKey === 'category'">
-          <h5>{{ steps[4].heading }}</h5>
-          <app-choice-field label="Category" [options]="categoryOptions" allowOther="Other" otherPlaceholder="Your own category"
-                            [value]="$any(contact.category) || ''" (valueChange)="contact.category = $event"></app-choice-field>
-          <div class="contact-edit-toggle">
-            <span class="contact-field-label">Priority</span>
-            <button type="button" class="choice-toggle" [class.is-on]="contact.important" [attr.aria-pressed]="!!contact.important"
-                    (click)="contact.important = !contact.important" data-cy="contact-important-toggle">
-              <span aria-hidden="true">{{ contact.important ? '★' : '☆' }}</span> Important / VIP
-            </button>
-          </div>
-          <div class="wizard-step-actions">
-            <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
-            <button type="button" class="btn-todd" data-cy="contact-wizard-next" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
-          </div>
-        </div>
-
-        <div class="wizard-step-card" *ngIf="currentStepKey === 'status'">
-          <h5>{{ steps[5].heading }}</h5>
-          <app-status-flow mode="input" viewMode="flow" [currentStatus]="contact.status || ''" (statusChange)="onStatusChange($event)"></app-status-flow>
-          <div class="wizard-step-actions">
-            <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
-            <button type="button" class="btn-todd" data-cy="contact-wizard-next" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
-          </div>
-        </div>
-
-        <div class="wizard-step-card" *ngIf="currentStepKey === 'profession'">
-          <h5>{{ steps[6].heading }}</h5>
-          <div class="form-group full-width">
-            <label class="contact-field-label">Title or Profession</label>
-            <input type="text" class="form-control" name="profession" [(ngModel)]="contact.profession" />
-          </div>
-          <div class="wizard-step-actions">
-            <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
-            <button type="button" class="btn-todd" data-cy="contact-wizard-next" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
-          </div>
-        </div>
-
-        <div class="wizard-step-card" *ngIf="currentStepKey === 'email'">
-          <h5>{{ steps[7].heading }}</h5>
-          <div class="edit-row" *ngFor="let email of contact.emailAddresses; let i = index">
-            <input type="email" class="form-control" name="email{{i}}" [(ngModel)]="email.emailAddress" placeholder="name@company.com" />
-            <app-choice-field class="edit-row__type" [options]="emailTypeOptions" [value]="email.emailAddressType || 'Work'"
-                              (valueChange)="email.emailAddressType = $event"></app-choice-field>
-            <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeEmail(i)"><i class="fa-solid fa-trash"></i></button>
-          </div>
-          <button type="button" class="btn btn-outline-secondary btn-sm mb-3" (click)="addEmail()">+ Add Email</button>
-          <div class="wizard-step-actions">
-            <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
-            <button type="button" class="btn-todd" data-cy="contact-wizard-next" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
-          </div>
-        </div>
-
-        <div class="wizard-step-card" *ngIf="currentStepKey === 'phone'">
-          <h5>{{ steps[8].heading }}</h5>
-          <div class="edit-row" *ngFor="let phone of contact.phoneNumbers; let i = index">
-            <input type="tel" class="form-control" name="phone{{i}}" [(ngModel)]="phone.phoneNumber" placeholder="(555) 555-5555" />
-            <app-choice-field class="edit-row__type" [options]="phoneTypeOptions" [value]="phone.phoneNumberType || 'Mobile'"
-                              (valueChange)="phone.phoneNumberType = $event"></app-choice-field>
-            <button type="button" class="btn btn-outline-danger btn-sm" (click)="removePhone(i)"><i class="fa-solid fa-trash"></i></button>
-          </div>
-          <button type="button" class="btn btn-outline-secondary btn-sm mb-3" (click)="addPhone()">+ Add Phone</button>
-          <div class="wizard-step-actions">
-            <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
-            <button type="button" class="btn-todd" data-cy="contact-wizard-next" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
-          </div>
-        </div>
-
-        <div class="wizard-step-card" *ngIf="currentStepKey === 'address' && contact.addresses?.length">
-          <h5>{{ steps[9].heading }}</h5>
-          <div class="wizard-step-grid">
-            <div class="form-group full-width">
-              <label class="contact-field-label">Street</label>
-              <input type="text" class="form-control" name="street" [(ngModel)]="contact.addresses![0].streetAddress" />
-            </div>
-            <div class="form-group">
-              <label class="contact-field-label">City</label>
-              <input type="text" class="form-control" name="city" [(ngModel)]="contact.addresses![0].city" />
-            </div>
-            <div class="form-group">
-              <label class="contact-field-label">State</label>
-              <input type="text" class="form-control" name="state" [(ngModel)]="contact.addresses![0].state" />
-            </div>
-            <div class="form-group">
-              <label class="contact-field-label">Zip</label>
-              <input type="text" class="form-control" name="zip" [(ngModel)]="contact.addresses![0].zip" />
-            </div>
-          </div>
-          <div class="wizard-step-actions">
-            <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
-            <button type="button" class="btn-todd" data-cy="contact-wizard-next" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
-          </div>
-        </div>
-
-        <div class="wizard-step-card" *ngIf="currentStepKey === 'nickname'">
-          <h5>{{ steps[10].heading }}</h5>
-          <div class="form-group full-width">
-            <label class="contact-field-label">Nickname</label>
-            <input type="text" class="form-control" name="nickname" [(ngModel)]="contact.nickname" />
-          </div>
-          <div class="wizard-step-actions">
-            <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
-            <button type="button" class="btn-todd" data-cy="contact-wizard-next" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
-          </div>
-        </div>
-
-        <div class="wizard-step-card" *ngIf="currentStepKey === 'birthday'">
-          <h5>{{ steps[11].heading }}</h5>
-          <div class="form-group full-width">
-            <label class="contact-field-label">Birthday</label>
-            <input type="date" class="form-control" name="birthday" [(ngModel)]="contact.birthday" />
-          </div>
-          <div class="wizard-step-actions">
-            <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
-            <button type="button" class="btn-todd" data-cy="contact-wizard-next" (click)="nextStep()">Next&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
-          </div>
-        </div>
-
-        <div class="wizard-step-card" *ngIf="currentStepKey === 'gender'">
-          <h5>{{ steps[12].heading }}</h5>
-          <app-choice-field label="Gender" [options]="genderOptions" [value]="$any(contact.gender) || ''"
-                            (valueChange)="contact.gender = $event"></app-choice-field>
-          <div class="wizard-step-actions">
-            <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
-            <button type="button" class="btn-todd" data-cy="contact-wizard-submit" [disabled]="isSaving" (click)="onSubmit()">
-              {{ isSaving ? 'Saving...' : (contact.id ? 'Save Changes' : 'Add') }}
-            </button>
-          </div>
-      </div>
-
-        <div class="wizard-save-bar" *ngIf="contact.id && isDirty">
-          <span>Unsaved changes</span>
-          <button type="button" class="btn-todd btn-todd--save" [disabled]="isSaving" (click)="onSubmit()">
-            {{ isSaving ? 'Updating…' : 'Update contact' }}
-          </button>
-        </div>
-
-        <div class="wizard-cancel">
-          <button type="button" class="wizard-cancel-button" (click)="onCancel()">Discard changes</button>
-        </div>
-      </form>
-
-      <div class="wizard-preview">
-        <app-read [contact]="contact" [isPublicProfile]="false" [showAdditionalInfo]="false" [userId]="userId"></app-read>
-      </div>
+    <div class="nw-seg" role="tablist" aria-label="Editor view">
+      <button type="button" role="tab" [class.is-on]="activeTab === 'read'" [attr.aria-selected]="activeTab === 'read'" (click)="activeTab = 'read'">Form</button>
+      <button type="button" role="tab" [class.is-on]="activeTab === 'json'" [attr.aria-selected]="activeTab === 'json'" (click)="activeTab = 'json'">Raw JSON</button>
     </div>
+  </header>
+
+  <p class="nw-banner" *ngIf="!isSignedIn" role="status"><strong>You can try this out, but you won't be able to save.</strong> Explore the form and the live preview; sign in before you save — guest sessions can't add contacts. <a routerLink="/get-started">Sign in</a></p>
+  <p class="nw-banner" *ngIf="isSignedIn && limitMessage">{{ limitMessage }}</p>
+  <p class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <div class="ce-grid" *ngIf="activeTab === 'read'">
+    <!-- Section rail (chips on iPhone) -->
+    <nav class="ce-rail" aria-label="Sections">
+      <button type="button" *ngFor="let s of sections; let i = index" [class.is-on]="currentSection === s.id" [class.has-error]="sectionHasError(s.id)" [attr.aria-current]="currentSection === s.id ? 'step' : null" (click)="goToSection(s.id)">
+        <span class="ce-num">{{ i + 1 }}</span>{{ s.label }}
+      </button>
+    </nav>
+
+    <form class="ce-form" (keydown.enter)="$event.preventDefault()">
+      <section class="ce-card" id="ce-name" (focusin)="currentSection = 'name'">
+        <h2>Name</h2>
+        <div class="ce-fields ce-fields--3">
+          <label class="ce-field" [class.has-error]="firstNameError">
+            <span>First name</span>
+            <input type="text" class="nw-input nw-input--on-surface" name="firstName" [(ngModel)]="contact.firstName" (blur)="firstNameTouched = true" autocomplete="given-name" [attr.aria-invalid]="!!firstNameError" aria-describedby="ce-first-error" />
+            <small class="ce-error" id="ce-first-error" *ngIf="firstNameError"><svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>{{ firstNameError }}</small>
+          </label>
+          <label class="ce-field"><span>Middle name</span><input type="text" class="nw-input nw-input--on-surface" name="middleName" [(ngModel)]="contact.middleName" placeholder="Optional" autocomplete="additional-name" /></label>
+          <label class="ce-field"><span>Last name</span><input type="text" class="nw-input nw-input--on-surface" name="lastName" [(ngModel)]="contact.lastName" autocomplete="family-name" /></label>
+        </div>
+        <div class="ce-fields ce-fields--3">
+          <label class="ce-field"><span>Nickname</span><input type="text" class="nw-input nw-input--on-surface" name="nickname" [(ngModel)]="contact.nickname" placeholder="Optional" /></label>
+        </div>
+      </section>
+
+      <section class="ce-card" id="ce-company" (focusin)="currentSection = 'company'">
+        <h2>Company</h2>
+        <div class="ce-fields ce-fields--2" *ngIf="contact.company">
+          <label class="ce-field"><span>Company</span><input type="text" class="nw-input nw-input--on-surface" name="companyName" [(ngModel)]="contact.company!.name" autocomplete="organization" /></label>
+          <label class="ce-field"><span>Profession</span><input type="text" class="nw-input nw-input--on-surface" name="profession" [(ngModel)]="contact.profession" autocomplete="organization-title" /></label>
+          <label class="ce-field ce-span"><span>Company website</span><input type="text" class="nw-input nw-input--on-surface" name="companyUrl" [(ngModel)]="contact.company!.url" placeholder="https://" /></label>
+        </div>
+      </section>
+
+      <section class="ce-card" id="ce-contact" (focusin)="currentSection = 'contact'">
+        <h2>Contact</h2>
+        <div class="ce-sub">Email</div>
+        <div class="ce-repeat" *ngFor="let email of contact.emailAddresses; let i = index">
+          <input type="email" class="nw-input nw-input--on-surface" name="email{{i}}" [(ngModel)]="email.emailAddress" placeholder="name@company.com" aria-label="Email address" />
+          <app-choice-field class="ce-type" [options]="emailTypeOptions" [value]="email.emailAddressType || 'Work'" (valueChange)="email.emailAddressType = $event"></app-choice-field>
+          <button type="button" class="ce-remove" (click)="removeEmail(i)" aria-label="Remove email"><svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+        </div>
+        <button type="button" class="nw-btn nw-btn--on-surface ce-add" (click)="addEmail()"><svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add email</button>
+
+        <div class="ce-sub">Phone</div>
+        <div class="ce-repeat" *ngFor="let phone of contact.phoneNumbers; let i = index">
+          <input type="tel" class="nw-input nw-input--on-surface" name="phone{{i}}" [(ngModel)]="phone.phoneNumber" placeholder="(555) 555-5555" aria-label="Phone number" />
+          <app-choice-field class="ce-type" [options]="phoneTypeOptions" [value]="phone.phoneNumberType || 'Mobile'" (valueChange)="phone.phoneNumberType = $event"></app-choice-field>
+          <button type="button" class="ce-remove" (click)="removePhone(i)" aria-label="Remove phone"><svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+        </div>
+        <button type="button" class="nw-btn nw-btn--on-surface ce-add" (click)="addPhone()"><svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add phone</button>
+
+        <ng-container *ngIf="contact.addresses?.length">
+          <div class="ce-sub">Address</div>
+          <div class="ce-fields ce-fields--3">
+            <label class="ce-field ce-span"><span>Street</span><input type="text" class="nw-input nw-input--on-surface" name="street" [(ngModel)]="contact.addresses![0].streetAddress" autocomplete="street-address" /></label>
+            <label class="ce-field"><span>City</span><input type="text" class="nw-input nw-input--on-surface" name="city" [(ngModel)]="contact.addresses![0].city" /></label>
+            <label class="ce-field"><span>State</span><input type="text" class="nw-input nw-input--on-surface" name="state" [(ngModel)]="contact.addresses![0].state" /></label>
+            <label class="ce-field"><span>Zip</span><input type="text" class="nw-input nw-input--on-surface" name="zip" [(ngModel)]="contact.addresses![0].zip" /></label>
+          </div>
+        </ng-container>
+      </section>
+
+      <section class="ce-card" id="ce-status" (focusin)="currentSection = 'status'" (click)="currentSection = 'status'">
+        <h2>Status</h2>
+        <div class="ce-sub">Stage</div>
+        <app-status-flow mode="input" viewMode="flow" [currentStatus]="contact.status || ''" (statusChange)="onStatusChange($event)"></app-status-flow>
+        <app-choice-field label="Category" [options]="categoryOptions" allowOther="Other" otherPlaceholder="Your own category" [value]="$any(contact.category) || ''" (valueChange)="contact.category = $event"></app-choice-field>
+        <button type="button" class="nw-pill ce-vip" [attr.data-tint]="contact.important ? 'yellow' : null" [attr.aria-pressed]="!!contact.important" (click)="contact.important = !contact.important" data-cy="contact-important-toggle">
+          <span aria-hidden="true">{{ contact.important ? '★' : '☆' }}</span> Important / VIP
+        </button>
+      </section>
+
+      <section class="ce-card" id="ce-notes" (focusin)="currentSection = 'notes'">
+        <h2>Notes</h2>
+        <label class="ce-field"><span>Note</span><textarea class="nw-input nw-input--on-surface" name="note" rows="4" [(ngModel)]="noteBody" placeholder="What happened last, and what should happen next?"></textarea></label>
+        <div class="ce-fields ce-fields--2">
+          <label class="ce-field"><span>Birthday</span><input type="date" class="nw-input nw-input--on-surface" name="birthday" [(ngModel)]="contact.birthday" /></label>
+          <app-choice-field label="Gender" [options]="genderOptions" [value]="$any(contact.gender) || ''" (valueChange)="contact.gender = $event"></app-choice-field>
+        </div>
+      </section>
+
+      <footer class="ce-foot">
+        <button type="button" class="ce-discard" (click)="onCancel()">Discard<span class="ce-hide-m"> changes</span></button>
+        <button type="button" class="nw-btn" *ngIf="nextSection" (click)="goToSection(nextSection.id)" data-cy="contact-wizard-next">Next: {{ nextSection.label }}</button>
+        <button type="button" class="nw-btn nw-btn--primary ce-save" [class.is-blocked]="!canSave" [attr.aria-disabled]="!canSave" (click)="save()" data-cy="contact-wizard-submit">
+          {{ isSaving ? 'Saving…' : (contact.id ? 'Save changes' : 'Save contact') }}
+        </button>
+      </footer>
+    </form>
+
+    <!-- Live preview -->
+    <aside class="ce-preview" aria-label="Live preview">
+      <p class="nw-eyebrow">Live preview</p>
+      <div class="ce-pcard">
+        <div class="ce-pcard__who">
+          <span class="nw-avatar">{{ initialsOf(previewName) }}</span>
+          <div>
+            <strong>{{ previewName || 'New contact' }}</strong>
+            <span *ngIf="previewRole">{{ previewRole }}</span>
+          </div>
+        </div>
+        <span class="nw-pill" [attr.data-tint]="contact.status ? stageTint(contact.status) : null">{{ contact.status || 'No status yet' }}</span>
+        <ul>
+          <li *ngIf="!hasEmail"><svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-10 6L2 7"/></svg>Add an email in Contact</li>
+          <li *ngIf="hasEmail"><svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-10 6L2 7"/></svg>{{ contact.emailAddresses![0].emailAddress }}</li>
+          <li *ngIf="!hasPhone"><svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></svg>Add a phone in Contact</li>
+          <li *ngIf="hasPhone"><svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></svg>{{ contact.phoneNumbers![0].phoneNumber }}</li>
+        </ul>
+      </div>
+    </aside>
   </div>
 
-  <div class="wizard-tab-content" *ngIf="activeTab === 'json'">
-    <pre><code>{{ contact | json }}</code></pre>
-  </div>
-</div>
+  <pre class="ce-json" *ngIf="activeTab === 'json'"><code>{{ contact | json }}</code></pre>
+</main>

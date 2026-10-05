@@ -10,13 +10,14 @@ describe( 'Network routes - signed out', () => {
   it( 'renders the landing page at /', () => {
     cy.visit( '/' );
     cy.get( '[data-cy="landing-shell"]' ).should( 'be.visible' );
-    cy.contains( '.nx-hero__title', 'Relationships → Attention → Opportunities → Revenue' ).should( 'be.visible' );
+    cy.get( '.nl-flow' ).should( 'be.visible' ).and( 'contain', 'Relationships' ).and( 'contain', 'Revenue' );
+    cy.contains( 'h1', "You can't grow every relationship" ).should( 'be.visible' );
   } );
 
   it( 'renders the iOS showcase at /ios', () => {
     cy.visit( '/ios' );
     cy.get( '[data-cy="app-showcase-shell"]' ).should( 'be.visible' );
-    cy.contains( '.fl-hero__headline', 'Relationships in your pocket' ).should( 'be.visible' );
+    cy.contains( '.io-hero h1', 'Relationships in your pocket' ).should( 'be.visible' );
   } );
 
   it( 'renders the pricing page signed out at /pricing', () => {
@@ -57,32 +58,32 @@ describe( 'Network routes - signed out', () => {
   it( 'renders the guest experience at /app', () => {
     cy.visit( '/app' );
     cy.get( '[data-cy="contact-home-shell"]' ).should( 'be.visible' );
-    cy.contains( '.diagnosis-board__title', 'Symptom, treatment, relief, and proof' ).should( 'be.visible' );
+    cy.contains( '#rel-care-title', 'Symptom, treatment, relief, and proof' ).should( 'be.visible' );
   } );
 
   it( 'renders only the browse-mode banner at /contact-list', () => {
     cy.visit( '/contact-list' );
     cy.get( '[data-cy="contact-list-shell"]' ).should( 'be.visible' );
-    cy.get( '.browse-mode-banner__title' ).should( 'be.visible' );
-    cy.get( '.contact-list-table' ).should( 'not.exist' );
+    cy.get( '.nw-banner' ).should( 'be.visible' );
+    cy.get( '.cl-table' ).should( 'not.exist' );
   } );
 
   it( 'renders only the browse-mode banner at /contact-deal-flow', () => {
     cy.visit( '/contact-deal-flow' );
     cy.get( '[data-cy="pipeline-shell"]' ).should( 'be.visible' );
-    cy.get( '.browse-mode-banner__title' ).should( 'be.visible' );
+    cy.get( '.nw-banner' ).should( 'be.visible' );
   } );
 
   it( 'renders the guest progress view at /contact-deal-flow-dashboard', () => {
     cy.visit( '/contact-deal-flow-dashboard' );
     cy.get( '[data-cy="deal-flow-dashboard-shell"]' ).should( 'be.visible' );
-    cy.contains( '.browse-mode-banner__title', 'Sign in to see your progress' ).should( 'be.visible' );
+    cy.contains( '.nw-banner', 'Sign in to see your progress' ).should( 'be.visible' );
   } );
 
   it( 'renders the upload step signed out at /contact-import', () => {
     cy.visit( '/contact-import' );
     cy.get( '[data-cy="csv-import-shell"]' ).should( 'be.visible' );
-    cy.get( '.browse-mode-banner__title' ).should( 'be.visible' );
-    cy.contains( '.upload-dropzone__title', 'Drag a CSV here, or choose a file' ).should( 'be.visible' );
+    cy.get( '.ci-guest' ).should( 'be.visible' );
+    cy.contains( '.ci-drop h2', 'Drag a CSV here, or choose a file' ).should( 'be.visible' );
   } );
 } );

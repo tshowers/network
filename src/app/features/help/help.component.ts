@@ -41,7 +41,7 @@ interface HelpRoutineStep {
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './help.component.html',
-  styleUrl: './help.component.css',
+  styleUrl: '../about/about.component.css',
 })
 export class HelpComponent implements OnInit {
   /** Signed-in only: the Getting Started checklist, checked off from real data. */
@@ -77,6 +77,9 @@ export class HelpComponent implements OnInit {
     this.meta.updateTag({ name: 'twitter:description', content: description });
     this.seo.setCanonical('https://network.taliferro.tech/help');
   }
+
+  /** Stage number tints, in order (15i). */
+  readonly stageTints = ['cyan', 'violet', 'blue', 'yellow', 'green'];
 
   readonly outcomes: HelpOutcome[] = [
     {

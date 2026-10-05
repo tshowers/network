@@ -7,13 +7,13 @@ import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { NetworkAuthService } from './services/network-auth.service';
 import { ToastComponent } from './shared/toast/toast.component';
-import { PlatformMenuComponent } from './shared/platform-menu/platform-menu.component';
 import { NetworkAssistantLauncherComponent } from './shared/page/assistant-box/network-assistant-launcher.component';
-import { ThemeToggleComponent } from './shared/theme-toggle/theme-toggle.component';
+import { AppHeaderComponent } from './shared/app-header/app-header.component';
+import { initTheme } from '@taliferro/ui/platform/theme';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ToastComponent, PlatformMenuComponent, NetworkAssistantLauncherComponent, ThemeToggleComponent, AsyncPipe, NgIf],
+  imports: [RouterOutlet, ToastComponent, NetworkAssistantLauncherComponent, AppHeaderComponent, AsyncPipe, NgIf],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -51,6 +51,8 @@ export class AppComponent implements OnInit {
     // unlike showUpdateNoticeAfterReload's own try/catch, the calls below
     // aren't wrapped, so they'd throw and fail the prerender build.
     if ( !this.isBrowser ) return;
+    this.migrateThemeChoice();
+    initTheme();
     this.showUpdateNoticeAfterReload();
     if ( !environment.production ) return;
     window.addEventListener( 'error', this.handleWindowError, true );
@@ -116,6 +118,15 @@ export class AppComponent implements OnInit {
       sessionStorage.removeItem( this.updateReloadStorageKey );
     } catch { }
     window.location.reload();
+  }
+
+  /** Network stored Light/Dark under its own key before the shared one. */
+  private migrateThemeChoice (): void {
+    try {
+      const old = localStorage.getItem( 'platform-theme' );
+      if ( old && !localStorage.getItem( 'tt-theme' ) ) localStorage.setItem( 'tt-theme', old );
+      localStorage.removeItem( 'platform-theme' );
+    } catch { /* storage blocked */ }
   }
 
   dismissUpdateNotice (): void {

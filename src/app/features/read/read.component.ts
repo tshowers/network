@@ -4,12 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { LinkPreviewService } from '../../services/link-preview.service';
 import { Contact } from '../../models/contact.model';
-import { StatusFlowComponent } from '../../shared/status-flow/status-flow.component';
-import { EmailStageProgressComponent } from '../../shared/email-stage-progress/email-stage-progress.component';
+import { EmailStages } from '../../shared/email-stage-progress/email-stage-progress.component';
 import { FormatCategoryPipe } from '../../pipes/format-category.pipe';
 import { TruncatePipe } from '../../pipes/truncate.pipe';
 import { PreloaderComponent } from '../../shared/preloader/preloader.component';
-import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.component';
+import { stageTint } from '../../shared/stage-tint';
 
 /**
  * Ported from features/contact/read/read.component.ts, trimmed to the
@@ -36,12 +35,9 @@ import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.compone
   imports: [
     CommonModule,
     FormsModule,
-    StatusFlowComponent,
-    EmailStageProgressComponent,
     FormatCategoryPipe,
     TruncatePipe,
     PreloaderComponent,
-    BackToTopComponent,
   ],
   templateUrl: './read.component.html',
   styleUrl: './read.component.css',
@@ -96,6 +92,41 @@ export class ReadComponent implements OnInit, OnChanges {
     ];
 
     return textFields.some( value => String( value || '' ).trim().length > 0 );
+  }
+
+  readonly stages = EmailStages;
+
+  /** 1–8 from contact.emailStage, 0 when unknown. */
+  get stageIndex (): number {
+    return this.stages.find( ( s ) => s.stage === this.contact?.emailStage )?.number || 0;
+  }
+
+  /** The next stage's name, or '' at Won/Lost. */
+  get nextStage (): string {
+    const i = this.stageIndex;
+    if ( !i || i >= 6 ) return i === 6 ? 'Won or Lost' : '';
+    return this.stages[i].emailType;
+  }
+
+  get fullName (): string {
+    return [this.contact?.firstName, this.contact?.middleName, this.contact?.lastName].filter( ( p ) => p?.trim() ).join( ' ' );
+  }
+
+  get statusTint (): string {
+    return stageTint( this.contact?.status );
+  }
+
+  get firstEmail (): string {
+    return this.contact?.emailAddresses?.find( ( e ) => e.emailAddress?.trim() )?.emailAddress?.trim() || '';
+  }
+
+  get firstPhone (): string {
+    return this.contact?.phoneNumbers?.find( ( p ) => p.phoneNumber?.trim() )?.phoneNumber?.trim() || '';
+  }
+
+  /** Digits and a leading + only, for tel: and sms: links. */
+  dialable ( phone: string | undefined ): string {
+    return ( phone || '' ).replace( /[^\d+]/g, '' );
   }
 
   get contactInitials (): string {

@@ -1,176 +1,134 @@
+<!-- Contact detail, read view (design_handoff_network_contact_detail 15t; 15u/15v on iPhone). -->
 <app-preloader [isLoading]="isLoading"></app-preloader>
-<app-back-to-top></app-back-to-top>
-<div class="contact-read-shell" *ngIf="contact && ((contact.firstName || contact.lastName) || (contact.company && contact.company.name))">
-    <section class="contact-hero-card">
-        <div class="contact-hero-main">
-            <div class="contact-hero-identity">
-                <div class="contact-hero-avatar-wrap">
-                    <img *ngIf="previewData && previewData.image" [src]="previewData.image" class="logo img-fluid business-card-image" alt="Company Image">
-                    <div *ngIf="!(previewData && previewData.image)" class="contact-hero-avatar-initials" aria-hidden="true">{{ contactInitials }}</div>
-                </div>
-                <div class="contact-hero-copy">
-                    <div class="contact-hero-company" *ngIf="contact.company?.name">
-                        <a *ngIf="(contact.company?.url && showAdditionalInfo); else nolink" [href]="contact.company?.url" target="_blank">
-                            {{ contact.company?.name }}
-                        </a>
-                        <ng-template #nolink>
-                            <span>{{ contact.company?.name }}</span>
-                        </ng-template>
-                    </div>
-                    <h2 class="contact-hero-name">
-                        {{ contact.firstName }} {{ contact.middleName }} {{ contact.lastName }}
-                        <span *ngIf="userId && contact.id === userId" class="contact-self-tag" data-cy="contact-self-tag">(You)</span>
-                    </h2>
-                    <div class="contact-hero-badges" *ngIf="showAdditionalInfo">
-                        <span *ngIf="isPublicProfile" class="badge rounded-pill text-bg-secondary" title="Limited fields are shown on public profiles"> Public Profile </span>
-                        <span class="badge bg-light text-dark text-capitalize" *ngIf="contact.category">
-                            {{ contact.category | formatCategory }}
-                        </span>
-                    </div>
-                    <p class="contact-hero-title" *ngIf="contact.profession">{{ contact.profession }}</p>
-                    <p class="contact-hero-location" *ngIf="contact.addresses && contact.addresses.length > 0">
-                        <ng-container *ngIf="!isPublicProfile && contact.addresses[0].streetAddress as street; else publicCityState">
-                            {{ street }}<br>
-                            {{ contact.addresses[0].city }} {{ contact.addresses[0].state }} {{ contact.addresses[0].zip }}
-                        </ng-container>
-                        <ng-template #publicCityState>
-                            {{ contact.addresses[0].city }} {{ contact.addresses[0].state }} {{ contact.addresses[0].zip }}
-                        </ng-template>
-                    </p>
-                </div>
-            </div>
-            <div class="contact-hero-side" *ngIf="showAdditionalInfo">
-                <div class="contact-status-card" *ngIf="!isPublicProfile">
-                    <h3>Status</h3>
-                    <app-status-flow mode="view" [viewMode]="'single'" [currentStatus]="contact.status || ''">
-                    </app-status-flow>
-                </div>
-                <div class="contact-stage-card d-none d-sm-block" *ngIf="contact && contact.emailStage && showAdditionalInfo">
-                    <h3>Communication Stage</h3>
-                    <app-email-stage-progress [currentStage]="contact.emailStage"></app-email-stage-progress>
-                </div>
-            </div>
+<div class="rd" *ngIf="contact && ((contact.firstName || contact.lastName) || (contact.company && contact.company.name))">
+  <section class="rd-hero">
+    <div class="rd-id">
+      <div class="rd-avatar">
+        <img *ngIf="previewData && previewData.image" [src]="previewData.image" alt="Company image" />
+        <span *ngIf="!(previewData && previewData.image)" aria-hidden="true">{{ contactInitials }}</span>
+      </div>
+      <div class="rd-id__copy">
+        <div class="rd-company" *ngIf="contact.company?.name">
+          <a *ngIf="(contact.company?.url && showAdditionalInfo); else nolink" [href]="contact.company?.url" target="_blank" rel="noopener">{{ contact.company?.name }}</a>
+          <ng-template #nolink><span>{{ contact.company?.name }}</span></ng-template>
         </div>
+        <h2 class="rd-name">
+          {{ fullName }}
+          <span *ngIf="userId && contact.id === userId" class="rd-self" data-cy="contact-self-tag">(You)</span>
+        </h2>
+        <div class="rd-pills" *ngIf="showAdditionalInfo && (contact.category || isPublicProfile || (contact.status && !isPublicProfile))">
+          <span *ngIf="isPublicProfile" class="rd-pill" title="Limited fields are shown on public profiles">Public profile</span>
+          <span class="rd-pill" *ngIf="contact.category">{{ contact.category | formatCategory }}</span>
+          <span class="rd-pill rd-pill--status nw-tint" *ngIf="contact.status && !isPublicProfile" [attr.data-tint]="statusTint">{{ contact.status }}</span>
+        </div>
+        <p class="rd-profession" *ngIf="contact.profession">{{ contact.profession }}</p>
+        <p class="rd-address" *ngIf="contact.addresses && contact.addresses.length > 0">
+          <ng-container *ngIf="!isPublicProfile && contact.addresses[0].streetAddress as street; else publicCityState">
+            {{ street }}<span class="rd-sep"></span>{{ contact.addresses[0].city }} {{ contact.addresses[0].state }} {{ contact.addresses[0].zip }}
+          </ng-container>
+          <ng-template #publicCityState>{{ contact.addresses[0].city }} {{ contact.addresses[0].state }} {{ contact.addresses[0].zip }}</ng-template>
+        </p>
+      </div>
+    </div>
+
+    <!-- iPhone quick actions (15u) -->
+    <div class="rd-quick" *ngIf="!isPublicProfile && (firstEmail || firstPhone)">
+      <a *ngIf="firstEmail" class="rd-quick__btn nw-tint" data-tint="blue" [href]="'mailto:' + firstEmail"><svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-10 6L2 7"/></svg>Email</a>
+      <a *ngIf="firstPhone" class="rd-quick__btn nw-tint" data-tint="green" [href]="'tel:' + dialable(firstPhone)"><svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></svg>Call</a>
+      <a *ngIf="firstPhone" class="rd-quick__btn nw-tint" data-tint="violet" [href]="'sms:' + dialable(firstPhone)"><svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>Message</a>
+    </div>
+
+    <aside class="rd-side" *ngIf="showAdditionalInfo">
+      <div class="rd-status" *ngIf="!isPublicProfile && contact.status">
+        <span class="rd-eyebrow">Status</span>
+        <span class="nw-pill nw-tint" [attr.data-tint]="statusTint">{{ contact.status }}</span>
+      </div>
+      <div class="rd-stage" *ngIf="contact.emailStage && stageIndex > 0">
+        <div class="rd-stage__head"><span class="rd-eyebrow">Communication stage</span><span>{{ stageIndex }} of {{ stages.length }}</span></div>
+        <ol class="rd-stage__track">
+          <li *ngFor="let s of stages" [class.is-done]="s.number <= stageIndex" [class.is-current]="s.number === stageIndex" [attr.data-end]="s.stage === 'won' ? 'won' : s.stage === 'lost' ? 'lost' : null">
+            <i aria-hidden="true"></i>
+            <small>{{ s.number }}</small>
+            <span>{{ s.emailType }}</span>
+          </li>
+        </ol>
+        <div class="rd-stage__phone">
+          <strong>{{ stages[stageIndex - 1].emailType }}</strong>
+          <span *ngIf="nextStage">Next: {{ nextStage }}</span>
+        </div>
+        <p class="rd-next" *ngIf="nextStage"><svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg><b>Next:</b> {{ nextStage }}</p>
+      </div>
+    </aside>
+  </section>
+
+  <section class="rd-card" *ngIf="!isPublicProfile && contact.notes && contact.notes?.length && (contact.notes.length > 0)">
+    <header><h3>Notes</h3><p>Recent notes and observations captured for this contact.</p></header>
+    <div class="rd-panels">
+      <div *ngFor="let note of contact.notes" class="rd-panel rd-note">
+        <div *ngIf="note.lastUpdated" class="rd-note__head"><strong>{{ note.subject }}</strong><small>{{ getFormattedDate(note.lastUpdated) }}</small></div>
+        <p [innerHTML]="(note.body || '') | truncate:150"></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="rd-card" *ngIf="contact.company">
+    <header><h3>Company</h3><p>Organization details, public information, addresses, and business attributes.</p></header>
+    <div class="rd-company-grid">
+      <div class="rd-panel" *ngIf="contact.company && contact.company.publicInfo && showAdditionalInfo">
+        <h4 class="rd-eyebrow">Public info</h4>
+        <p class="rd-body">{{ contact.company.publicInfo }}</p>
+      </div>
+      <div class="rd-panel" *ngIf="contact.company?.dba || contact.company?.numberOfEmployees || contact.company?.sicCode">
+        <h4 class="rd-eyebrow">Business details</h4>
+        <div class="rd-facts">
+          <div *ngIf="contact.company?.dba"><small>DBA</small><strong>{{ contact.company.dba }}</strong></div>
+          <div *ngIf="contact.company?.numberOfEmployees"><small>Employees</small><strong>{{ contact.company.numberOfEmployees }}</strong></div>
+          <div *ngIf="contact.company?.sicCode"><small>SIC code</small><strong>{{ contact.company.sicCode }}</strong></div>
+        </div>
+      </div>
+      <div class="rd-panel" *ngIf="contact.company && contact.company.capabilities && (contact.company.capabilities.length > 0)">
+        <h4 class="rd-eyebrow">Capabilities</h4>
+        <div class="rd-chips"><span class="rd-chip nw-tint" data-tint="blue" *ngFor="let capability of contact.company.capabilities">{{ capability }}</span></div>
+      </div>
+      <div class="rd-panel" *ngIf="visibleCompanyAddresses.length > 0">
+        <h4 class="rd-eyebrow">Addresses</h4>
+        <div class="rd-addr" *ngFor="let ba of visibleCompanyAddresses">
+          <small *ngIf="ba.addressType">{{ ba.addressType }}</small>
+          <p>{{ ba.streetAddress }}<br>{{ ba.city }} {{ ba.state }} {{ ba.zip }} {{ ba.county }} {{ ba.country }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="rd-bottom" [class.rd-bottom--single]="!(!isPublicProfile && contact.profileTypes?.length) || !(!isPublicProfile && (contact.emailAddresses?.length || contact.phoneNumbers?.length))">
+    <section class="rd-card rd-types" *ngIf="!isPublicProfile && contact.profileTypes && (contact.profileTypes.length > 0)">
+      <header><h3>Profile types</h3></header>
+      <div class="rd-chips"><span class="rd-chip nw-tint" data-tint="violet" *ngFor="let type of contact.profileTypes">{{ type }}</span></div>
     </section>
-    <section class="contact-section-card" *ngIf="!isPublicProfile && contact.notes && contact.notes?.length && (contact.notes.length > 0)">
-        <div class="contact-section-header">
-            <div>
-                <h3>Notes</h3>
-                <p>Recent notes and observations captured for this contact.</p>
-            </div>
+
+    <section class="rd-card" *ngIf="!isPublicProfile && (contact.emailAddresses?.length || contact.phoneNumbers?.length)">
+      <header><h3>Communication</h3><p>Email and phone details available for this contact.</p></header>
+      <div class="rd-comms">
+        <div class="rd-comm" *ngFor="let email of contact.emailAddresses">
+          <span class="rd-tile nw-tint" data-tint="blue"><svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-10 6L2 7"/></svg></span>
+          <div><small>{{ email.emailAddressType || 'Email' }}</small><a [href]="'mailto:' + email.emailAddress">{{ email.emailAddress }}</a></div>
         </div>
-        <div class="contact-note-list">
-            <div *ngFor="let note of contact.notes" class="contact-note-item">
-                <div *ngIf="note.lastUpdated" class="contact-note-head">
-                    <strong>{{ note.subject }}</strong>
-                    <small class="text-muted">{{ getFormattedDate(note.lastUpdated) }}</small>
-                </div>
-                <p [innerHTML]="(note.body || '') | truncate:150"></p>
-            </div>
+        <div class="rd-comm" *ngFor="let phone of contact.phoneNumbers">
+          <span class="rd-tile nw-tint" data-tint="green"><svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></svg></span>
+          <div><small>{{ phone.phoneNumberType || 'Phone' }}</small><a class="rd-plain" [href]="'tel:' + dialable(phone.phoneNumber)">{{ phone.phoneNumber }}</a></div>
+          <a class="rd-msg" [href]="'sms:' + dialable(phone.phoneNumber)" [attr.aria-label]="'Message ' + phone.phoneNumber + ' in Messages'" title="Open in Messages"><svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg></a>
         </div>
+      </div>
     </section>
-    <section class="contact-section-card" *ngIf="contact.company">
-        <div class="contact-section-header">
-            <div>
-                <h3>Company</h3>
-                <p>Organization details, public information, addresses, and business attributes.</p>
-            </div>
-        </div>
-        <div class="contact-detail-grid two-up">
-            <div class="contact-detail-panel" *ngIf="contact.company && contact.company.publicInfo && showAdditionalInfo">
-                <h4>Public Info</h4>
-                <p>{{ contact.company.publicInfo }}</p>
-            </div>
-            <div class="contact-detail-panel" *ngIf="contact.company?.dba || contact.company?.numberOfEmployees || contact.company?.sicCode">
-                <h4>Business Details</h4>
-                <p *ngIf="contact.company?.dba"><strong>DBA:</strong> {{ contact.company.dba }}</p>
-                <p *ngIf="contact.company?.numberOfEmployees"><strong>Employees:</strong> {{ contact.company.numberOfEmployees }}</p>
-                <p *ngIf="contact.company?.sicCode"><strong>SIC Code:</strong> {{ contact.company.sicCode }}</p>
-            </div>
-            <div class="contact-detail-panel full-width" *ngIf="contact.company && contact.company.capabilities && (contact.company.capabilities.length > 0)">
-                <h4>Capabilities</h4>
-                <div class="contact-pill-list">
-                    <span class="contact-pill" *ngFor="let capability of contact.company.capabilities">
-                        {{ capability }}
-                    </span>
-                </div>
-            </div>
-            <div class="contact-detail-panel full-width" *ngIf="visibleCompanyAddresses.length > 0">
-                <h4>Addresses</h4>
-                <div class="contact-address-list">
-                    <p *ngFor="let ba of visibleCompanyAddresses; let i = index" class="mb-2">
-                        <span *ngIf="ba.addressType"><i>({{ba.addressType}})</i></span>
-                        {{ba.streetAddress}}<br>
-                        {{ba.city}} {{ba.state}} {{ba.zip}} {{ba.county}} {{ba.country}}
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="contact-section-card" *ngIf="!isPublicProfile && contact.profileTypes && (contact.profileTypes.length > 0)">
-        <div class="contact-section-header compact">
-            <div>
-                <h3>Profile Types</h3>
-            </div>
-        </div>
-        <div class="contact-pill-list">
-            <span class="contact-pill" *ngFor="let type of contact.profileTypes">
-                {{ type }}
-            </span>
-        </div>
-    </section>
-    <section class="contact-section-card" *ngIf="!isPublicProfile && contact.emailAddresses?.length">
-        <div class="contact-section-header">
-            <div>
-                <h3>Communication</h3>
-                <p>Email and phone details available for this contact.</p>
-            </div>
-        </div>
-        <div class="contact-detail-grid two-up">
-            <div class="contact-detail-panel">
-                <h4>Email</h4>
-                <div class="contact-list-block">
-                    <p *ngFor="let email of contact.emailAddresses" class="contact-list-item">
-                        <span *ngIf="email.emailAddressType" class="contact-item-label">{{ email.emailAddressType }}:</span>
-                        <a [href]="'mailto:' + email.emailAddress">{{ email.emailAddress }}</a>
-                    </p>
-                </div>
-            </div>
-            <div class="contact-detail-panel" *ngIf="contact.phoneNumbers?.length">
-                <h4>Phone Numbers</h4>
-                <div class="contact-list-block">
-                    <p *ngFor="let phone of contact.phoneNumbers" class="contact-list-item">
-                        <span *ngIf="phone.phoneNumberType" class="contact-item-label">{{ phone.phoneNumberType }}:</span>
-                        {{ phone.phoneNumber }}
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="contact-section-card images-section" *ngIf="showAdditionalInfo && !isPublicProfile && visibleImages.length > 0">
-        <div class="contact-section-header">
-            <div>
-                <h3>Images</h3>
-                <p>Visual assets connected to this contact.</p>
-            </div>
-        </div>
-        <div class="doc-grid">
-            <ng-container *ngFor="let img of visibleImages">
-                <div class="doc-card">
-                    <div class="doc-preview">
-                        <img [src]="img.src" [alt]="img.alt || (contact.firstName + ' ' + contact.lastName)" class="doc-image" (error)="onImageError(img)" />
-                    </div>
-                    <div class="doc-meta">
-                        <div class="doc-name text-truncate" [title]="img.alt || img.src">
-                            {{ img.alt || 'Image' }}
-                        </div>
-                        <div class="doc-actions">
-                            <span class="doc-kind-label">Image</span>
-                            <button type="button" class="btn btn-sm btn-link px-0" (click)="onView(img.src)">Open</button>
-                        </div>
-                    </div>
-                </div>
-            </ng-container>
-        </div>
-    </section>
+  </div>
+
+  <section class="rd-card" *ngIf="showAdditionalInfo && !isPublicProfile && visibleImages.length > 0">
+    <header><h3>Images</h3><p>Visual assets connected to this contact.</p></header>
+    <div class="rd-images">
+      <div class="rd-image" *ngFor="let img of visibleImages">
+        <img [src]="img.src" [alt]="img.alt || fullName" (error)="onImageError(img)" />
+        <div><span [title]="img.alt || img.src">{{ img.alt || 'Image' }}</span><button type="button" (click)="onView(img.src)">Open</button></div>
+      </div>
+    </div>
+  </section>
 </div>

@@ -100,7 +100,7 @@ describe( 'Profile page', () => {
   it( 'links Profile in the menu to the in-app page, not TODD', () => {
     signIn( '/app' );
     cy.get( '.platform-menu-trigger, [aria-label*="menu" i]' ).first().click( { force: true } );
-    cy.get( '[data-cy="platform-menu-profile"]' ).should( 'have.attr', 'href', '/profile' );
+    cy.contains( '.um-row', 'Profile' ).should( 'have.attr', 'href', '/profile' );
     cy.get( 'a[href*="todd.taliferro.tech/update-profile"]' ).should( 'not.exist' );
   } );
 

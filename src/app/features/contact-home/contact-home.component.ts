@@ -8,11 +8,10 @@ import { NetworkContactStateService } from '../../services/network-contact-state
 import { NetworkPageActionsService } from '../../services/network-page-actions.service';
 import { NetworkAssistantSignalService } from '../../services/network-assistant-signal.service';
 import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.component';
-import { ArcGaugeComponent, ArcGaugeTone } from '../../shared/arc-gauge/arc-gauge.component';
-import { StatusLedComponent, StatusLedTone } from '../../shared/status-led/status-led.component';
+import type { ArcGaugeTone } from '../../shared/arc-gauge/arc-gauge.component';
+import type { StatusLedTone } from '../../shared/status-led/status-led.component';
 import { PageAction } from '../../models/page-actions.models';
-import { CockpitCommandDeckComponent, CockpitCommandDeckLink } from '../../shared/cockpit-command-deck/cockpit-command-deck.component';
-import { CockpitBrowseModeBannerComponent } from '../../shared/cockpit-browse-mode-banner/cockpit-browse-mode-banner.component';
+import type { CockpitCommandDeckLink } from '../../shared/cockpit-command-deck/cockpit-command-deck.component';
 import { ReliefStatus, SeverityLevel } from '../../models/business-symptom.model';
 
 interface NetworkLimitState {
@@ -82,7 +81,7 @@ interface NetworkDiagnosisRow {
 @Component( {
   selector: 'app-contact-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, BackToTopComponent, ArcGaugeComponent, StatusLedComponent, CockpitCommandDeckComponent, CockpitBrowseModeBannerComponent],
+  imports: [CommonModule, RouterModule, BackToTopComponent],
   templateUrl: './contact-home.component.html',
   styleUrl: './contact-home.component.css'
 } )
@@ -683,6 +682,41 @@ export class ContactHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.isAtContactLimit = effectiveLimit > 0 && remaining <= 0;
+  }
+
+  /** Percent of max, 0–100, for the rings. */
+  pct ( value: number, max: number ): number {
+    if ( !max ) return Math.max( 0, Math.min( 100, Math.round( value || 0 ) ) );
+    return Math.max( 0, Math.min( 100, Math.round( ( ( value || 0 ) / max ) * 100 ) ) );
+  }
+
+  share ( part: number, total: number ): number {
+    return total > 0 ? ( part / total ) * 100 : 0;
+  }
+
+  /** Network ring colours: green ≥70, amber 40–69, red below 40. */
+  tier ( percent: number ): 'high' | 'mid' | 'low' {
+    return percent >= 70 ? 'high' : percent >= 40 ? 'mid' : 'low';
+  }
+
+  /** LED: green improving, blue TODD working, red needs relief, grey for guests. */
+  ledTone ( status: ReliefStatus ): 'green' | 'blue' | 'red' | 'idle' {
+    if ( !this.isLoggedIn ) return 'idle';
+    if ( status === 'improving' || status === 'relief-delivered' ) return 'green';
+    if ( status === 'needs-relief' || status === 'needs-user-decision' ) return 'red';
+    return 'blue';
+  }
+
+  severityTint ( severity: SeverityLevel ): string {
+    if ( severity === 'critical' || severity === 'high' ) return 'red';
+    if ( severity === 'medium' ) return 'yellow';
+    if ( severity === 'low' ) return 'green';
+    return 'grey';
+  }
+
+  statusTint ( status: ReliefStatus ): string {
+    const tone = this.ledTone( status );
+    return tone === 'idle' ? 'grey' : tone;
   }
 
   statusTone ( status: ReliefStatus ): StatusLedTone {

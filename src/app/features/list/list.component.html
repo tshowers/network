@@ -1,131 +1,89 @@
+<!-- Contacts (design_handoff_music_leadvault_network 15c; 15m on iPhone). -->
 <app-preloader [isLoading]="isSignedIn === null" message="Loading your contacts…"></app-preloader>
 <app-back-to-top></app-back-to-top>
 
-<div class="contact-list-shell" data-cy="contact-list-shell">
-  <div class="contact-list-header">
-    <div>
-      <h1 class="mb-1">Contacts</h1>
-      <p class="text-muted mb-0" *ngIf="isSignedIn">{{ filteredContacts.length }} of {{ contacts.length }} contacts</p>
+<main class="nw-page cl" data-cy="contact-list-shell">
+  <header class="cl-top">
+    <div class="cl-title">
+      <h1>Contacts</h1>
+      <p *ngIf="isSignedIn">{{ filteredContacts.length | number }} of {{ contacts.length | number }} contacts</p>
     </div>
-    <button type="button" class="btn btn-dark" *ngIf="isSignedIn" (click)="addContact()">
-      <i class="fa-solid fa-plus"></i>
-      Add
-    </button>
-  </div>
+    <label class="cl-search" *ngIf="isSignedIn">
+      <svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="search" placeholder="Search by name, company, or email" aria-label="Search contacts" [(ngModel)]="searchText" (ngModelChange)="applyFilter()" />
+    </label>
+    <div class="cl-actions" *ngIf="isSignedIn">
+      <a class="nw-btn" routerLink="/contact-import">
+        <svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>Import CSV
+      </a>
+      <button type="button" class="nw-btn nw-btn--primary cl-add" (click)="addContact()">
+        <svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span class="cl-add__long">Add contact</span><span class="cl-add__short">Add</span>
+      </button>
+    </div>
+  </header>
 
-  <app-cockpit-browse-mode-banner
-    *ngIf="isSignedIn === false"
-    surfaceLabel="your Contacts"
-    customTitle="Sign in to view your Contacts"
-    customCopy="Once you sign in, TODD will show your network here so you can browse, filter, and keep momentum moving."
-  ></app-cockpit-browse-mode-banner>
+  <p class="nw-banner" *ngIf="isSignedIn === false" role="status">
+    <strong>Sign in to view your Contacts.</strong> Once you sign in, TODD will show your network here so you can browse, filter, and keep momentum moving. <a routerLink="/get-started">Sign in</a>
+  </p>
 
   <ng-container *ngIf="isSignedIn">
-    <div class="contact-list-search">
-      <input
-        type="text"
-        class="form-control"
-        placeholder="Search by name, company, or email..."
-        [(ngModel)]="searchText"
-        (ngModelChange)="applyFilter()"
-      />
-    </div>
+    <p class="cl-hint" *ngIf="setStageMode" role="note" data-cy="set-stage-hint">
+      Tap <strong>Set stage</strong> on a contact to choose where the relationship stands. Contacts without a stage are listed first.
+    </p>
 
-    <div class="contact-list-hint" *ngIf="setStageMode" role="note" data-cy="set-stage-hint">
-      <i class="fa-solid fa-lightbulb" aria-hidden="true"></i>
-      <span>Tap <strong>Set stage</strong> on a contact to choose where the relationship stands. Contacts without a stage are listed first.</span>
-    </div>
-
-    <div class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</div>
+    <p class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</p>
 
     <app-preloader [isLoading]="isLoading" message="Loading your contacts…"></app-preloader>
 
-    <div class="contact-list-empty" *ngIf="!isLoading && filteredContacts.length === 0 && !errorMessage">
-      <p class="text-muted">{{ contacts.length === 0 ? 'No contacts yet.' : 'No contacts match your search.' }}</p>
-    </div>
+    <p class="cl-empty" *ngIf="!isLoading && filteredContacts.length === 0 && !errorMessage">{{ contacts.length === 0 ? 'No contacts yet.' : 'No contacts match your search.' }}</p>
 
-    <div class="contact-list-table" *ngIf="filteredContacts.length > 0">
-      <div class="contact-list-row contact-list-row--head">
-        <div class="col-name"><button type="button" class="contact-list-sort" (click)="sortBy('name')">Name <span>{{ sortIndicator('name') }}</span></button></div>
-        <div class="col-company"><button type="button" class="contact-list-sort" (click)="sortBy('company')">Company <span>{{ sortIndicator('company') }}</span></button></div>
-        <div class="col-email"><button type="button" class="contact-list-sort" (click)="sortBy('email')">Email <span>{{ sortIndicator('email') }}</span></button></div>
-        <div class="col-phone"><button type="button" class="contact-list-sort" (click)="sortBy('phone')">Phone <span>{{ sortIndicator('phone') }}</span></button></div>
-        <div class="col-status"><button type="button" class="contact-list-sort" (click)="sortBy('status')">Status <span>{{ sortIndicator('status') }}</span></button></div>
-        <div class="col-actions"></div>
+    <div class="cl-table" *ngIf="filteredContacts.length > 0" role="table" aria-label="Contacts">
+      <div class="cl-row cl-row--head" role="row">
+        <button type="button" role="columnheader" (click)="sortBy('name')">Name <span>{{ sortIndicator('name') }}</span></button>
+        <button type="button" role="columnheader" class="cl-hide-m" (click)="sortBy('company')">Company <span>{{ sortIndicator('company') }}</span></button>
+        <button type="button" role="columnheader" class="cl-hide-m" (click)="sortBy('email')">Email <span>{{ sortIndicator('email') }}</span></button>
+        <button type="button" role="columnheader" class="cl-hide-m" (click)="sortBy('phone')">Phone <span>{{ sortIndicator('phone') }}</span></button>
+        <button type="button" role="columnheader" (click)="sortBy('status')">Status <span>{{ sortIndicator('status') }}</span></button>
+        <span></span>
       </div>
 
-      <div
-        class="contact-list-row"
-        *ngFor="let contact of filteredContacts"
-        (click)="openContact(contact)"
-        (keydown.enter)="openContact(contact)"
-        tabindex="0"
-      >
-        <div class="col-name">
-          <div class="contact-list-avatar contact-list-avatar--initials" aria-hidden="true">{{ displayName(contact).slice(0, 1) }}</div>
-          <span class="contact-list-name">{{ displayName(contact) }}<span *ngIf="isSelf(contact)" class="contact-self-tag" data-cy="contact-self-tag"> (You)</span></span>
-          <span class="contact-list-profession" *ngIf="contact.profession">{{ contact.profession }}</span>
+      <div class="cl-row" role="row" *ngFor="let contact of filteredContacts" (click)="openContact(contact)" (keydown.enter)="openContact(contact)" tabindex="0">
+        <div class="cl-name" role="cell">
+          <span class="nw-avatar" aria-hidden="true">{{ displayName(contact).slice(0, 1).toUpperCase() }}</span>
+          <div>
+            <strong>{{ displayName(contact) }}<span *ngIf="isSelf(contact)" class="cl-self" data-cy="contact-self-tag"> (You)</span></strong>
+            <small *ngIf="contact.profession" class="cl-hide-m">{{ contact.profession }}</small>
+            <small class="cl-show-m">{{ contact.company?.name || contact.profession || '' }}</small>
+          </div>
         </div>
-        <div class="col-company" [class.is-empty]="!contact.company?.name">{{ contact.company?.name || '—' }}</div>
-        <div class="col-email" [class.is-empty]="!primaryEmail(contact)">{{ primaryEmail(contact) || '—' }}</div>
-        <div class="col-phone" [class.is-empty]="!primaryPhone(contact)">{{ primaryPhone(contact) || '—' }}</div>
-        <div class="col-status">
+        <div class="cl-cell cl-hide-m" role="cell" [class.is-empty]="!contact.company?.name">{{ contact.company?.name || '—' }}</div>
+        <div class="cl-cell cl-hide-m" role="cell" [class.is-empty]="!primaryEmail(contact)">{{ primaryEmail(contact) || '—' }}</div>
+        <div class="cl-cell cl-hide-m" role="cell" [class.is-empty]="!primaryPhone(contact)">{{ primaryPhone(contact) || '—' }}</div>
+        <div class="cl-status" role="cell">
           <!-- Not on the user's own record: that's their profile, not a relationship. -->
-          <button *ngIf="!isSelf(contact)" type="button" class="contact-stage-button" [class.is-empty]="!contact.status"
+          <button *ngIf="!isSelf(contact)" type="button" class="nw-pill" [attr.data-tint]="contact.status ? tint(contact.status) : null" [class.is-empty]="!contact.status"
                   [attr.aria-expanded]="stagePickerFor === $any(contact).id" (click)="toggleStagePicker($event, contact)"
                   (keydown.enter)="$event.stopPropagation()" data-cy="set-stage-button">
-            <span>{{ contact.status || 'Set stage' }}</span>
-            <i class="fa-solid fa-chevron-right" [class.is-open]="stagePickerFor === $any(contact).id" aria-hidden="true"></i>
+            {{ contact.status || 'Set stage' }}
+            <svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true" [class.is-open]="stagePickerFor === $any(contact).id"><path d="m9 18 6-6-6-6"/></svg>
           </button>
-          <span class="contact-stage-saved" *ngIf="stageSavedFor === $any(contact).id" role="status">Saved</span>
-          <span class="contact-stage-error" *ngIf="stageErrorFor === $any(contact).id" role="alert">Couldn't save</span>
+          <span class="cl-saved" *ngIf="stageSavedFor === $any(contact).id" role="status">Saved</span>
+          <span class="cl-error" *ngIf="stageErrorFor === $any(contact).id" role="alert">Couldn't save</span>
         </div>
-        <div class="col-actions">
+        <div class="cl-del" role="cell">
           <!-- Never delete the user's own record from here - it's their profile. -->
-          <button *ngIf="!isSelf(contact)" type="button" class="contact-delete" (click)="deleteContact($event, contact)"
-                  [attr.aria-label]="'Delete ' + displayName(contact)">
-            <i class="fa-solid fa-trash"></i>
+          <button *ngIf="!isSelf(contact)" type="button" (click)="deleteContact($event, contact)" [attr.aria-label]="'Delete ' + displayName(contact)">
+            <svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
           </button>
         </div>
-        <div class="contact-stage-picker" *ngIf="stagePickerFor === $any(contact).id"
-             (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()" data-cy="stage-picker">
-          <app-status-flow mode="input" [listOnly]="true" [currentStatus]="contact.status || ''"
-                           (statusChange)="saveStage(contact, $event)"></app-status-flow>
+        <div class="cl-picker" *ngIf="stagePickerFor === $any(contact).id" (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()" data-cy="stage-picker">
+          <app-status-flow mode="input" [listOnly]="true" [currentStatus]="contact.status || ''" (statusChange)="saveStage(contact, $event)"></app-status-flow>
         </div>
-        <aside class="contact-list-hover-card" aria-label="Contact preview" *ngIf="stagePickerFor !== $any(contact).id">
-          <div class="contact-list-hover-card__topline">
-            <div class="contact-list-hover-card__avatar">
-              <span aria-hidden="true">{{ displayName(contact).slice(0, 1) }}</span>
-            </div>
-            <div>
-              <strong>{{ displayName(contact) }}<span *ngIf="isSelf(contact)" class="contact-self-tag"> (You)</span></strong>
-              <span *ngIf="contact.profession">{{ contact.profession }}</span>
-            </div>
-          </div>
-          <div class="contact-list-hover-card__company" *ngIf="contact.company?.name">
-            <i class="fa-solid fa-building" aria-hidden="true"></i>
-            <span>{{ contact.company?.name }}</span>
-          </div>
-          <div class="contact-list-hover-card__details">
-            <a *ngIf="primaryEmail(contact)" [href]="'mailto:' + primaryEmail(contact)" (click)="$event.stopPropagation()">
-              <i class="fa-solid fa-envelope" aria-hidden="true"></i>{{ primaryEmail(contact) }}
-            </a>
-            <a *ngIf="primaryPhone(contact)" [href]="'tel:' + primaryPhone(contact)" (click)="$event.stopPropagation()">
-              <i class="fa-solid fa-phone" aria-hidden="true"></i>{{ primaryPhone(contact) }}
-            </a>
-            <a *ngIf="contact.company?.url" [href]="contact.company?.url" target="_blank" rel="noopener" (click)="$event.stopPropagation()">
-              <i class="fa-solid fa-link" aria-hidden="true"></i>Company website
-            </a>
-          </div>
-          <p class="contact-list-hover-card__note" *ngIf="contact.notes?.[0]?.body">
-            {{ contact.notes?.[0]?.body }}
-          </p>
-          <div class="contact-list-hover-card__footer">
-            <span *ngIf="contact.status" class="contact-list-status">{{ contact.status }}</span>
-            <span>Open contact <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
-          </div>
-        </aside>
       </div>
     </div>
+
+    <button type="button" class="nw-btn nw-btn--primary cl-fab" (click)="addContact()" aria-label="Add contact">
+      <svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add
+    </button>
   </ng-container>
-</div>
+</main>

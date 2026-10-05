@@ -14,11 +14,11 @@ import { NetworkContactPackService } from '../../services/network-contact-pack.s
 import { NetworkNotificationService } from '../../services/network-notification.service';
 import { NetworkAssistantSignalService } from '../../services/network-assistant-signal.service';
 import { Contact, EmailAddress, PhoneNumber } from '../../models/contact.model';
+import { stageTint, initialsOf } from '../../shared/stage-tint';
+import { RouterLink } from '@angular/router';
 import { StatusFlowComponent } from '../../shared/status-flow/status-flow.component';
 import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.component';
 import { PreloaderComponent } from '../../shared/preloader/preloader.component';
-import { CockpitBrowseModeBannerComponent } from '../../shared/cockpit-browse-mode-banner/cockpit-browse-mode-banner.component';
-import { ReadComponent } from '../read/read.component';
 
 interface WizardStep {
   key: string;
@@ -55,8 +55,7 @@ interface WizardStep {
     StatusFlowComponent,
     BackToTopComponent,
     PreloaderComponent,
-    CockpitBrowseModeBannerComponent,
-    ReadComponent,
+    RouterLink,
   ],
   templateUrl: './contact-edit.component.html',
   styleUrl: './contact-edit.component.css',
@@ -235,6 +234,78 @@ export class ContactEditComponent implements OnInit, OnDestroy {
 
   get isLastNameStepValid (): boolean {
     return this.currentStepKey !== 'lastName' || !!this.contact.lastName?.trim();
+  }
+
+  /** The five editor sections (design_handoff_music_leadvault_network 15d). */
+  readonly sections = [
+    { id: 'name', label: 'Name' },
+    { id: 'company', label: 'Company' },
+    { id: 'contact', label: 'Contact' },
+    { id: 'status', label: 'Status' },
+    { id: 'notes', label: 'Notes' },
+  ];
+  currentSection = 'name';
+  /** Errors show once a field has been left or Save was tried. */
+  firstNameTouched = false;
+  readonly stageTint = stageTint;
+  readonly initialsOf = initialsOf;
+
+  get firstNameError (): string {
+    return this.firstNameTouched && !this.contact.firstName?.trim() ? 'First name is required' : '';
+  }
+
+  sectionHasError ( id: string ): boolean {
+    return id === 'name' && !!this.firstNameError;
+  }
+
+  /** Only the required fields block Save. */
+  get canSave (): boolean {
+    return !!this.contact.firstName?.trim() && !this.isSaving;
+  }
+
+  get nextSection (): { id: string; label: string } | null {
+    const i = this.sections.findIndex( ( s ) => s.id === this.currentSection );
+    return this.sections[i + 1] || null;
+  }
+
+  goToSection ( id: string ): void {
+    this.currentSection = id;
+    if ( typeof document === 'undefined' ) return;
+    document.getElementById( 'ce-' + id )?.scrollIntoView( { behavior: 'smooth', block: 'start' } );
+  }
+
+  get previewName (): string {
+    return [this.contact.firstName, this.contact.middleName, this.contact.lastName].filter( ( p ) => p?.trim() ).join( ' ' );
+  }
+
+  get previewRole (): string {
+    return [this.contact.profession, this.contact.company?.name].filter( ( p ) => p?.trim() ).join( ', ' );
+  }
+
+  get hasEmail (): boolean {
+    return !!this.contact.emailAddresses?.some( ( e ) => e.emailAddress?.trim() );
+  }
+
+  get hasPhone (): boolean {
+    return !!this.contact.phoneNumbers?.some( ( p ) => p.phoneNumber?.trim() );
+  }
+
+  /** Section 5 edits the first note. */
+  get noteBody (): string {
+    return this.contact.notes?.[0]?.body || '';
+  }
+
+  set noteBody ( body: string ) {
+    const notes = this.contact.notes ? [...this.contact.notes] : [];
+    if ( !notes.length && !body ) return;
+    notes[0] = { ...( notes[0] || {} ), body, lastUpdated: new Date().toISOString() };
+    this.contact.notes = notes;
+  }
+
+  save (): void {
+    this.firstNameTouched = true;
+    if ( !this.canSave ) { this.goToSection( 'name' ); return; }
+    void this.onSubmit();
   }
 
   get canAdvance (): boolean {

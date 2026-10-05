@@ -1,106 +1,84 @@
+<!-- Import CSV (design_handoff_music_leadvault_network 15e; 15o on iPhone). -->
 <app-preloader [isLoading]="isLoading"></app-preloader>
 <app-back-to-top></app-back-to-top>
 
-<div class="csv-import-shell" data-cy="csv-import-shell" *ngIf="!isLoading">
-  <div class="wizard-header">
-    <h1 class="mb-1">Import</h1>
-    <p class="text-muted mb-3">Upload a CSV, map its columns, and bring your contacts into Network.</p>
+<main class="ci" data-cy="csv-import-shell" *ngIf="!isLoading">
+  <a class="nw-link" routerLink="/contact-list"><svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Contacts</a>
+  <h1>Import</h1>
+  <p class="nw-sub ci-sub">Upload a CSV, map its columns, and bring your contacts into Network.</p>
 
-    <div class="stepper">
-      <div class="step" *ngFor="let step of steps; let i = index" [class.is-current]="i === currentStep" [class.is-done]="i < currentStep">
-        <div class="circle">{{ i + 1 }}</div>
-        <div class="label">{{ step.label }}</div>
-      </div>
-    </div>
+  <ol class="ci-steps" aria-label="Import steps">
+    <li *ngFor="let step of steps; let i = index; let last = last" [class.is-current]="i === currentStep" [class.is-done]="i < currentStep" [attr.aria-current]="i === currentStep ? 'step' : null">
+      <span class="ci-num">{{ i + 1 }}</span>{{ step.label }}
+    </li>
+  </ol>
+  <div class="ci-progress" aria-hidden="true">
+    <div class="ci-dots"><span *ngFor="let step of steps; let i = index" [class.is-on]="i <= currentStep"></span></div>
+    <span>{{ currentStep + 1 }} of {{ steps.length }} · {{ steps[currentStep].label }}</span>
   </div>
 
-  <app-cockpit-browse-mode-banner
-    *ngIf="!isSignedIn"
-    surfaceLabel="contact import"
-    customTitle="You can try this out, but you won't be able to save"
-    customCopy="You are not signed in, so feel free to upload a file and see how mapping works. Sign in before you finish the import — guest sessions can't write new contacts."
-  ></app-cockpit-browse-mode-banner>
+  <p class="ci-guest" *ngIf="!isSignedIn" role="status"><strong>You can try this out, but you won't be able to save.</strong> Upload a file and see how mapping works; sign in before you finish — guest sessions can't write new contacts. <a routerLink="/get-started">Sign in</a></p>
 
-  <!-- Step 1: Upload -->
-  <div class="import-step-card" *ngIf="currentStepKey === 'upload'">
-    <div
-      class="upload-dropzone"
-      [class.is-busy]="processing"
-      (drop)="onDrop($event)"
-      (dragover)="onDragOver($event)"
-    >
-      <i class="fa-solid fa-file-csv upload-dropzone__icon"></i>
-      <p class="upload-dropzone__title">Drag a CSV here, or choose a file</p>
-      <p class="upload-dropzone__hint">{{ processing ? message : 'Header row required - first name, last name, email, and phone are the most useful columns.' }}</p>
-      <label class="btn-todd upload-dropzone__browse">
-        Choose File
-        <input type="file" accept=".csv" hidden (change)="onFileSelect($event)" />
-      </label>
-      <button type="button" class="btn btn-link btn-sm" (click)="importSample()">Or try it with sample data</button>
+  <!-- 1 Upload -->
+  <section class="ci-drop" *ngIf="currentStepKey === 'upload'" [class.is-busy]="processing" (drop)="onDrop($event)" (dragover)="onDragOver($event)">
+    <span class="ci-file" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4M8 13h2M14 13h2M8 17h2M14 17h2"/></svg></span>
+    <h2>Drag a CSV here, or choose a file</h2>
+    <p>{{ processing ? message : 'Header row required - first name, last name, email, and phone are the most useful columns.' }}</p>
+    <div class="ci-drop__actions">
+      <label class="nw-btn nw-btn--primary">Choose file<input type="file" accept=".csv" hidden (change)="onFileSelect($event)" /></label>
+      <button type="button" class="ci-sample" (click)="importSample()">Or try it with sample data</button>
     </div>
-  </div>
+  </section>
 
-  <!-- Step 2: Map fields -->
-  <div class="import-step-card" *ngIf="currentStepKey === 'map'">
+  <!-- 2 Map fields -->
+  <section class="ci-card" *ngIf="currentStepKey === 'map'">
     <app-field-match [csvHeaders]="csvHeaders" (fieldMapping)="updateFieldMapping($event)" (cancel)="onCancel()"></app-field-match>
-  </div>
+  </section>
 
-  <!-- Step 3: Review mapped rows -->
-  <div class="import-step-card" *ngIf="currentStepKey === 'review'">
-    <h5>Review Mapped Data</h5>
-    <p class="text-muted">Showing {{ previewRows.length }} of {{ mappedData.length }} rows as they will be read.</p>
-    <div class="preview-table-wrap">
-      <table class="preview-table">
-        <thead>
-          <tr>
-            <th *ngFor="let header of previewHeaders">{{ header }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let row of previewRows">
-            <td *ngFor="let header of previewHeaders">{{ row[header] }}</td>
-          </tr>
-        </tbody>
+  <!-- 3 Review -->
+  <section class="ci-card" *ngIf="currentStepKey === 'review'">
+    <h2>Review mapped data</h2>
+    <p class="ci-muted">Showing {{ previewRows.length }} of {{ mappedData.length }} rows as they will be read.</p>
+    <div class="ci-table">
+      <table>
+        <thead><tr><th *ngFor="let header of previewHeaders">{{ header }}</th></tr></thead>
+        <tbody><tr *ngFor="let row of previewRows"><td *ngFor="let header of previewHeaders">{{ row[header] }}</td></tr></tbody>
       </table>
     </div>
-    <div class="import-step-actions">
-      <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
-      <button type="button" class="btn-todd" (click)="confirmMappedData()">Continue&nbsp;<i class="fa-solid fa-circle-chevron-right"></i></button>
+    <div class="ci-actions">
+      <button type="button" class="nw-btn nw-btn--on-surface" (click)="previousStep()">Back</button>
+      <button type="button" class="nw-btn nw-btn--primary" (click)="confirmMappedData()">Continue</button>
     </div>
-  </div>
+  </section>
 
-  <!-- Step 4: Confirm -->
-  <div class="import-step-card" *ngIf="currentStepKey === 'confirm'">
-    <h5>Confirm Import</h5>
-    <p class="confirm-count">{{ contacts.length }} contact{{ contacts.length === 1 ? '' : 's' }} ready to import.</p>
-    <div class="alert" [class.alert-info]="canStartImport()" [class.alert-warning]="!canStartImport()">{{ getImportAccessNote() }}</div>
-    <div class="import-step-actions">
-      <button type="button" class="btn-todd" (click)="previousStep()"><i class="fa-solid fa-circle-chevron-left"></i>&nbsp;Previous</button>
-      <button type="button" class="btn-todd btn-todd--primary" [disabled]="processing" (click)="submitImport()">
-        {{ getImportButtonLabel() }}
-      </button>
+  <!-- 4 Confirm -->
+  <section class="ci-card" *ngIf="currentStepKey === 'confirm'">
+    <h2>Confirm import</h2>
+    <p class="ci-count">{{ contacts.length }} contact{{ contacts.length === 1 ? '' : 's' }} ready to import.</p>
+    <p class="ci-note" [class.ci-note--warn]="!canStartImport()">{{ getImportAccessNote() }}</p>
+    <div class="ci-actions">
+      <button type="button" class="nw-btn nw-btn--on-surface" (click)="previousStep()">Back</button>
+      <button type="button" class="nw-btn nw-btn--primary" [disabled]="processing" (click)="submitImport()">{{ getImportButtonLabel() }}</button>
     </div>
-  </div>
+  </section>
 
-  <!-- Step 5: Result -->
-  <div class="import-step-card import-step-card--result" *ngIf="currentStepKey === 'result'">
+  <!-- 5 Result -->
+  <section class="ci-card ci-card--center" *ngIf="currentStepKey === 'result'">
     <app-preloader [isLoading]="processing" [message]="message"></app-preloader>
-    <div *ngIf="!processing && importCompleted" class="result-summary">
-      <i class="fa-solid fa-circle-check result-summary__icon"></i>
-      <h5>Import complete</h5>
+    <ng-container *ngIf="!processing && importCompleted">
+      <span class="ci-result" data-tone="ok" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>
+      <h2>Import complete</h2>
       <p>{{ lastImportSuccessCount }} contact{{ lastImportSuccessCount === 1 ? '' : 's' }} added<span *ngIf="lastImportFailureCount"> - {{ lastImportFailureCount }} failed</span>.</p>
-      <div class="import-step-actions import-step-actions--center">
-        <button type="button" class="btn-todd" (click)="startAnotherImport()">Import Another File</button>
-        <button type="button" class="btn-todd btn-todd--primary" (click)="goToContacts()">View Contacts</button>
+      <div class="ci-actions">
+        <button type="button" class="nw-btn nw-btn--on-surface" (click)="startAnotherImport()">Import another file</button>
+        <button type="button" class="nw-btn nw-btn--primary" (click)="goToContacts()">View contacts</button>
       </div>
-    </div>
-    <div *ngIf="!processing && !importCompleted" class="result-summary">
-      <i class="fa-solid fa-circle-exclamation result-summary__icon result-summary__icon--error"></i>
-      <h5>Import didn't finish</h5>
+    </ng-container>
+    <ng-container *ngIf="!processing && !importCompleted">
+      <span class="ci-result" data-tone="error" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 8v5M12 16.5v.01"/></svg></span>
+      <h2>Import didn't finish</h2>
       <p>{{ message }}</p>
-      <div class="import-step-actions import-step-actions--center">
-        <button type="button" class="btn-todd" (click)="previousStep()">Back</button>
-      </div>
-    </div>
-  </div>
-</div>
+      <div class="ci-actions"><button type="button" class="nw-btn nw-btn--on-surface" (click)="previousStep()">Back</button></div>
+    </ng-container>
+  </section>
+</main>

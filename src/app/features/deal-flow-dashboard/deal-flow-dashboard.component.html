@@ -1,85 +1,169 @@
+<!-- Networking Progress (design_handoff_music_leadvault_network 15g; 15q on iPhone). -->
 <app-preloader [isLoading]="isLoading" message="Reading your relationship progress…"></app-preloader>
 <app-back-to-top></app-back-to-top>
 
-<div class="deal-flow-page" data-cy="deal-flow-dashboard-shell" *ngIf="!isLoading">
-  <header class="deal-flow-header" *ngIf="isSignedIn">
+<main class="nw-page pg" data-cy="deal-flow-dashboard-shell" *ngIf="!isLoading">
+  <header class="pg-top">
     <div>
-      <h1>Networking Progress</h1>
-      <p class="deal-flow-intro">See how your relationships are moving. Network tracks every stage so you can spot momentum, bottlenecks, and opportunities at a glance.</p>
+      <h1 class="nw-title">Networking Progress</h1>
+      <p class="nw-sub">{{ isSignedIn
+        ? 'See how your relationships are moving. Network tracks every stage so you can spot momentum, bottlenecks, and opportunities at a glance.'
+        : 'Preview how Network tracks relationship momentum, bottlenecks, and opportunities as your network moves.' }}</p>
     </div>
-    <div class="deal-flow-tip">
-      <i class="fa-solid fa-lightbulb" aria-hidden="true"></i>
+    <aside class="pg-tip">
+      <svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5M9 18h6M10 22h4"/></svg>
       <div><strong>Tip</strong><p>Think in relationships, not leads. A smaller list of well-understood contacts usually beats a big, anonymous database.</p></div>
-    </div>
+    </aside>
   </header>
 
-  <div class="deal-flow-tabs" role="tablist" aria-label="Relationship progress views" *ngIf="isSignedIn">
-    <button type="button" [class.active]="selectedTab === 'flow'" (click)="selectTab('flow')"><i class="fa-solid fa-filter"></i> Pipeline Flow</button>
-    <button type="button" [class.active]="selectedTab === 'status'" (click)="selectTab('status')"><i class="fa-solid fa-gears"></i> Pipeline Status</button>
-    <button type="button" [class.active]="selectedTab === 'lanes'" (click)="selectTab('lanes')"><i class="fa-solid fa-table-columns"></i> Lane View</button>
-  </div>
+  <p class="nw-banner" *ngIf="!isSignedIn" role="status"><strong>Sign in to see your progress.</strong> Once you sign in, Network will show how your relationships are moving and where the next opportunity needs attention. <a routerLink="/get-started">Sign in</a></p>
 
-  <div class="deal-flow-alert" *ngIf="isSignedIn && errorMessage">{{ errorMessage }}</div>
-  <ng-container *ngIf="isSignedIn; else guestView">
-    <section class="flow-view" *ngIf="selectedTab === 'flow'">
-      <section class="momentum-strip" *ngIf="todayMomentumLoaded">
-        <strong>TODAY'S MOMENTUM</strong>
-        <div class="momentum-trend"><b><i class="fa-solid" [ngClass]="todayMomentum.trend === 'up' ? 'fa-arrow-up' : todayMomentum.trend === 'down' ? 'fa-arrow-down' : 'fa-minus'"></i></b><span>MOMENTUM</span></div>
-        <div><b>{{ todayMomentum.sent }}</b><span>SENT</span></div><div><b>{{ todayMomentum.opens }}</b><span>OPENS</span></div><div><b>{{ todayMomentum.clicks }}</b><span>CLICKS</span></div><div><b>{{ todayMomentum.visits }}</b><span>VISITS</span></div><div><b>{{ todayMomentum.socialPosts }}</b><span>SOCIAL POSTS</span></div><div><b>{{ todayMomentum.likes }}</b><span>LIKES</span></div><div><b>{{ todayMomentum.comments }}</b><span>COMMENTS</span></div>
-      </section>
-      <div class="flow-view-heading">
-        <div><h2>Customer Acquisition Pipeline</h2><p>From first contact to closed relationship</p></div>
-        <span>{{ mappedStatusCount }} of {{ contacts.length }} contacts have a mapped status</span>
+  <ng-container *ngIf="isSignedIn">
+    <div class="pg-tabbar">
+      <div class="nw-seg" role="tablist" aria-label="Relationship progress views">
+        <button type="button" role="tab" [class.is-on]="selectedTab === 'flow'" [attr.aria-selected]="selectedTab === 'flow'" (click)="selectTab('flow')">
+          <svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 3H2l8 9.5V19l4 2v-8.5Z"/></svg><span><span class="pg-long">Pipeline </span>Flow</span>
+        </button>
+        <button type="button" role="tab" [class.is-on]="selectedTab === 'status'" [attr.aria-selected]="selectedTab === 'status'" (click)="selectTab('status')">
+          <svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 14 4-4M3.3 19a10 10 0 1 1 17.4 0"/></svg><span><span class="pg-long">Pipeline </span>Status</span>
+        </button>
+        <button type="button" role="tab" [class.is-on]="selectedTab === 'lanes'" [attr.aria-selected]="selectedTab === 'lanes'" (click)="selectTab('lanes')">
+          <svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M12 3v18"/></svg>Lane View
+        </button>
       </div>
-      <div class="flow-zones"><span>ATTRACT<small>Bring people in</small></span><span>CONVERT<small>Turn interest into conversations</small></span><span>CLOSE<small>Win more business</small></span></div>
-      <div class="flow-track">
-        <article class="flow-stage" *ngFor="let stage of stages; let i = index" [ngClass]="'flow-stage--' + stage.accent">
-          <div class="flow-stage-index">{{ i + 1 }}</div>
-          <div class="flow-stage-icon"><i class="fa-solid fa-{{ stage.icon }}" aria-hidden="true"></i></div>
-          <div class="flow-stage-number">{{ stage.count }}</div>
-          <h3>{{ stage.label }}</h3>
-          <p>{{ stage.description }}</p>
-          <span class="flow-stage-count-label">{{ stage.countLabel }}</span>
-          <span class="flow-stage-detail">{{ stage.detail }}</span>
-        </article>
-      </div>
-      <div class="funnel-reserve-row" *ngIf="unassignedCount > 0"><div class="funnel-reserve"><div class="funnel-reserve__icon"><i class="fa-solid fa-box-archive" aria-hidden="true"></i></div><div><strong class="funnel-reserve__value">{{ unassignedCount }} &nbsp;&nbsp; Cold Reserve</strong><p class="funnel-reserve__copy">Not a priority right now, but kept warm for future opportunities</p></div></div></div>
-      <section class="funnel-priorities"><div class="funnel-priorities__header"><h2 class="funnel-priorities__title">TODD Action Priorities</h2><p class="funnel-priorities__subtitle">Who needs your attention right now</p></div><div class="funnel-priorities__grid"><button type="button" *ngFor="let priority of priorityStages" [class]="'priority-card priority-card--' + priority.accent" (click)="selectTab('lanes')"><div class="priority-card__icon"><i class="fa-solid fa-{{ priority.icon }}" aria-hidden="true"></i></div><div><div class="priority-card__value">{{ priority.count }}</div><div class="priority-card__label">{{ priority.label }}</div><p class="priority-card__description">{{ priority.description }}</p></div><i class="fa-solid fa-chevron-right priority-card__chevron" aria-hidden="true"></i></button></div></section>
-      <section class="funnel-how-it-works" aria-label="How the pipeline works"><div class="funnel-how-it-works__copy"><i class="fa-solid fa-lightbulb" aria-hidden="true"></i><strong>How it works:</strong><span>Network organizes relationships by what should happen next.</span><span>You focus on the opportunities that need you most.</span></div><div class="funnel-how-it-works__legend"><span class="pipeline-legend pipeline-legend--attract"><i>➜</i><span>Attract<small>(Automated)</small></span></span><span class="pipeline-legend pipeline-legend--convert"><i>➜</i><span>Convert<small>(Network)</small></span></span><span class="pipeline-legend pipeline-legend--nurture"><i>➜</i><span>Nurture<small>(Network)</small></span></span><span class="pipeline-legend pipeline-legend--attention"><i>➜</i><span>Needs Your<small>Attention</small></span></span><span class="pipeline-legend pipeline-legend--close"><i>➜</i><span>Close<small>(You)</small></span></span></div></section>
-    </section>
+      <span class="pg-mapped">{{ mappedStatusCount | number }} of {{ contacts.length | number }} contacts have a mapped status</span>
+    </div>
 
-    <section class="status-view" *ngIf="selectedTab === 'status'">
-      <section class="status-handoff">
-        <div><p class="status-eyebrow">APPROVAL HANDOFF</p><h2>{{ opportunityCount }} relationship{{ opportunityCount === 1 ? '' : 's' }} need a closer look.</h2><p>Network has identified the relationships already marked as opportunity-stage. Review the saved context before deciding what should happen next.</p></div>
-        <button type="button" class="status-action" (click)="selectTab('lanes')">Review Relationships</button>
-      </section>
-      <div class="status-snapshot"><span aria-hidden="true">⌛</span><strong>Snapshot from Network data</strong><span>Counts below reflect saved contacts and statuses, not simulated activity.</span></div>
-      <section class="status-controls"><button type="button" class="status-action status-action--secondary" [disabled]="customerMomentumLoading" (click)="runPipelineStatusStep()">{{ customerMomentumLoading ? 'Running Step…' : 'Run Next Step' }}</button><button type="button" class="status-action status-action--secondary" [disabled]="customerMomentumLoading" (click)="restartPipelineStatus()">Restart Test Run</button></section>
-      <p class="status-run-message" *ngIf="customerMomentumRunStatus">{{ customerMomentumRunStatus }}</p><p class="status-run-message status-run-message--error" *ngIf="customerMomentumError">{{ customerMomentumError }}</p>
-      <section class="status-steps">
-        <article class="status-step" *ngFor="let step of pipelineStatusSteps" [attr.data-status]="step.statusLabel.toLowerCase()">
-          <button type="button" class="status-step-toggle" (click)="toggleStatusStep(step.key)">
-            <div class="status-step-main"><span class="status-step-light"></span><div><div class="status-step-topline"><span>{{ step.windowLabel }}</span><span>{{ step.owner }}</span></div><h3>{{ step.title }}</h3><p>{{ step.objective }}</p></div></div>
-            <div class="status-step-meta"><span class="status-pill">{{ step.statusLabel }}</span><span>{{ isStatusStepExpanded(step.key) ? 'Hide Output' : 'Show Output' }}</span></div>
+    <p class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <!-- Pipeline Flow -->
+    <section class="pg-flow" *ngIf="selectedTab === 'flow'">
+      <div class="pg-momentum" *ngIf="todayMomentumLoaded">
+        <strong class="nw-eyebrow">Today's momentum</strong>
+        <span><b>{{ todayMomentum.trend === 'up' ? '↑' : todayMomentum.trend === 'down' ? '↓' : '–' }}</b>Momentum</span>
+        <span><b>{{ todayMomentum.sent }}</b>Sent</span>
+        <span><b>{{ todayMomentum.opens }}</b>Opens</span>
+        <span><b>{{ todayMomentum.clicks }}</b>Clicks</span>
+        <span><b>{{ todayMomentum.visits }}</b>Visits</span>
+        <span><b>{{ todayMomentum.socialPosts }}</b>Social posts</span>
+        <span><b>{{ todayMomentum.likes }}</b>Likes</span>
+        <span><b>{{ todayMomentum.comments }}</b>Comments</span>
+      </div>
+
+      <div class="pg-zones">
+        <section class="pg-zone" *ngFor="let zone of zones" [attr.aria-label]="zone.label">
+          <p class="pg-zone__label"><b>{{ zone.label }}</b>{{ zone.hint }}</p>
+          <div class="pg-zone__tiles">
+            <article class="pg-stage" *ngFor="let i of zone.stages">
+              <div class="pg-stage__top">
+                <span class="pg-chip nw-tint" [attr.data-tint]="stageTints[stages[i].label]"><i class="fa-solid fa-{{ stages[i].icon }}" aria-hidden="true"></i></span>
+                <span class="pg-stage__index">{{ i + 1 }}</span>
+              </div>
+              <strong class="pg-stage__count">{{ stages[i].count | number }}</strong>
+              <h3>{{ stages[i].label }}</h3>
+              <p>{{ stages[i].description }}</p>
+              <small>{{ stages[i].countLabel === 'visitors' || stages[i].countLabel === 'customers' ? stages[i].detail : stages[i].countLabel + ' · ' + stages[i].detail }}</small>
+            </article>
+          </div>
+        </section>
+      </div>
+
+      <div class="pg-reserve" *ngIf="unassignedCount > 0">
+        <span class="pg-chip nw-tint" data-tint="grey"><i class="fa-solid fa-box-archive" aria-hidden="true"></i></span>
+        <strong>{{ unassignedCount | number }}</strong>
+        <b>Cold Reserve</b>
+        <span>Not a priority right now, but kept warm for future opportunities</span>
+      </div>
+
+      <section class="pg-priorities" aria-labelledby="pg-pri-title">
+        <h2 id="pg-pri-title">TODD Action Priorities <span>Who needs your attention right now</span></h2>
+        <div class="pg-pri-grid">
+          <button type="button" class="pg-pri nw-tint" *ngFor="let priority of priorityStages" [attr.data-tint]="priorityTints[priority.label] || 'grey'" (click)="selectTab('lanes')">
+            <span class="pg-pri__top"><i class="fa-solid fa-{{ priority.icon }}" aria-hidden="true"></i><svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span>
+            <strong>{{ priority.count | number }}</strong>
+            <b>{{ priority.label }}</b>
+            <span>{{ priority.description }}</span>
           </button>
-          <div class="status-step-summary"><strong>{{ step.count }}</strong> · {{ step.summary }}</div>
-          <section class="status-step-detail" *ngIf="isStatusStepExpanded(step.key)">
-            <div class="status-detail-label">EXECUTION LOG</div>
-            <div class="status-log-table" *ngIf="step.logs.length; else noStatusLog"><div class="status-log-row status-log-row--head"><span>TIME</span><span>EVENT</span><span>STATUS</span><span>MESSAGE</span><span>DETAIL</span><span>SOURCE</span></div><div class="status-log-row" *ngFor="let log of step.logs"><span>{{ log.timeLabel }}</span><strong>{{ log.event }}</strong><span>{{ log.status }}</span><span>{{ log.message }}</span><span>{{ log.detail || '—' }}</span><span>{{ log.source }}</span></div></div>
-            <ng-template #noStatusLog><div class="status-log-empty">No execution log has been recorded for this step yet.</div></ng-template>
-            <div class="status-detail-label status-generated-label" *ngIf="step.generatedItems.length">GENERATED ITEMS</div><div class="status-generated-items"><div class="status-generated-item" *ngFor="let item of step.generatedItems" [attr.data-tone]="item.tone"><strong>{{ item.label }}</strong><span>{{ item.status }}</span><p>{{ item.detail }}</p></div></div>
-          </section>
-        </article>
+        </div>
       </section>
+
+      <footer class="pg-how">
+        <p><strong>How it works:</strong> Network organizes relationships by what should happen next. You focus on the opportunities that need you most.</p>
+        <ul>
+          <li data-tint="cyan"><b>Attract</b> (Automated)</li>
+          <li data-tint="blue"><b>Convert</b> (Network)</li>
+          <li data-tint="violet"><b>Nurture</b> (Network)</li>
+          <li data-tint="pink"><b>Needs your attention</b></li>
+          <li data-tint="green"><b>Close</b> (You)</li>
+        </ul>
+      </footer>
     </section>
 
-    <section class="lanes-view" *ngIf="selectedTab === 'lanes'">
-      <div class="status-view-heading"><p class="deal-flow-kicker">CONTACT LANES</p><h2>See the relationships behind each stage.</h2><p>Select a person to open their full contact record.</p></div>
-      <div class="lane-grid"><article class="lane" *ngFor="let stage of stages"><header><h3>{{ stage.label }}</h3><span>{{ stage.count }}</span></header><button type="button" *ngFor="let item of laneContactsByStage[stage.label]" (click)="openContact(item.contact)">{{ item.name }}<small>{{ item.contact.company?.name || 'No company listed' }}</small></button><p *ngIf="stage.count === 0">No contacts here yet.</p></article></div>
+    <!-- Pipeline Status -->
+    <section class="pg-status" *ngIf="selectedTab === 'status'">
+      <section class="pg-handoff">
+        <div>
+          <p class="nw-eyebrow nw-eyebrow--blue">Approval handoff</p>
+          <h2>{{ opportunityCount }} relationship{{ opportunityCount === 1 ? '' : 's' }} need a closer look.</h2>
+          <p>Network has identified the relationships already marked as opportunity-stage. Review the saved context before deciding what should happen next.</p>
+        </div>
+        <button type="button" class="nw-btn nw-btn--primary" (click)="selectTab('lanes')">Review relationships</button>
+      </section>
+      <p class="pg-snapshot"><strong>Snapshot from Network data.</strong> Counts below reflect saved contacts and statuses, not simulated activity.</p>
+      <div class="pg-controls">
+        <button type="button" class="nw-btn" [disabled]="customerMomentumLoading" (click)="runPipelineStatusStep()">{{ customerMomentumLoading ? 'Running step…' : 'Run next step' }}</button>
+        <button type="button" class="nw-btn" [disabled]="customerMomentumLoading" (click)="restartPipelineStatus()">Restart test run</button>
+      </div>
+      <p class="pg-run" *ngIf="customerMomentumRunStatus">{{ customerMomentumRunStatus }}</p>
+      <p class="pg-run pg-run--error" *ngIf="customerMomentumError">{{ customerMomentumError }}</p>
+
+      <article class="pg-step" *ngFor="let step of pipelineStatusSteps" [attr.data-status]="step.statusLabel.toLowerCase()">
+        <button type="button" class="pg-step__toggle" (click)="toggleStatusStep(step.key)" [attr.aria-expanded]="isStatusStepExpanded(step.key)">
+          <span class="pg-step__light" aria-hidden="true"></span>
+          <span class="pg-step__main">
+            <small>{{ step.windowLabel }} · {{ step.owner }}</small>
+            <strong>{{ step.title }}</strong>
+            <span>{{ step.objective }}</span>
+          </span>
+          <span class="pg-step__meta">
+            <span class="nw-pill pg-step__pill">{{ step.statusLabel }}</span>
+            <small>{{ isStatusStepExpanded(step.key) ? 'Hide output' : 'Show output' }}</small>
+          </span>
+        </button>
+        <p class="pg-step__summary"><strong>{{ step.count }}</strong> · {{ step.summary }}</p>
+        <div class="pg-step__detail" *ngIf="isStatusStepExpanded(step.key)">
+          <p class="nw-eyebrow">Execution log</p>
+          <div class="pg-log" *ngIf="step.logs.length; else noStatusLog">
+            <div class="pg-log__row pg-log__row--head"><span>Time</span><span>Event</span><span>Status</span><span>Message</span><span>Detail</span><span>Source</span></div>
+            <div class="pg-log__row" *ngFor="let log of step.logs"><span>{{ log.timeLabel }}</span><strong>{{ log.event }}</strong><span>{{ log.status }}</span><span>{{ log.message }}</span><span>{{ log.detail || '—' }}</span><span>{{ log.source }}</span></div>
+          </div>
+          <ng-template #noStatusLog><p class="pg-muted">No execution log has been recorded for this step yet.</p></ng-template>
+          <ng-container *ngIf="step.generatedItems.length">
+            <p class="nw-eyebrow">Generated items</p>
+            <div class="pg-items">
+              <div class="pg-item" *ngFor="let item of step.generatedItems" [attr.data-tone]="item.tone"><strong>{{ item.label }}</strong><span>{{ item.status }}</span><p>{{ item.detail }}</p></div>
+            </div>
+          </ng-container>
+        </div>
+      </article>
+    </section>
+
+    <!-- Lane View -->
+    <section class="pg-lanes" *ngIf="selectedTab === 'lanes'">
+      <div>
+        <p class="nw-eyebrow nw-eyebrow--blue">Contact lanes</p>
+        <h2>See the relationships behind each stage.</h2>
+        <p class="pg-muted">Select a person to open their full contact record.</p>
+      </div>
+      <div class="pg-lane-grid">
+        <article class="pg-lane" *ngFor="let stage of stages" [attr.data-tint]="stageTints[stage.label]">
+          <header><h3>{{ stage.label }}</h3><span class="pg-count">{{ stage.count | number }}</span></header>
+          <button type="button" *ngFor="let item of laneContactsByStage[stage.label]" (click)="openContact(item.contact)">
+            <strong>{{ item.name }}</strong><small>{{ item.contact.company?.name || 'No company listed' }}</small>
+          </button>
+          <p *ngIf="stage.count === 0">No contacts here yet.</p>
+        </article>
+      </div>
     </section>
   </ng-container>
-  <ng-template #guestView>
-    <app-cockpit-command-deck eyebrow="TODD Command Deck" context="Progress · Network" title="Networking Progress" iconSrc="assets/find/entities/network/logo.png" iconAlt="Network" subtitle="Preview how Network tracks relationship momentum, bottlenecks, and opportunities as your network moves." scoreLabel="Preview momentum" scoreValue="0%"></app-cockpit-command-deck>
-    <app-cockpit-browse-mode-banner surfaceLabel="your Network progress" customTitle="Sign in to see your progress" customCopy="Once you sign in, Network will show how your relationships are moving and where the next opportunity needs attention."></app-cockpit-browse-mode-banner>
-  </ng-template>
-</div>
+</main>

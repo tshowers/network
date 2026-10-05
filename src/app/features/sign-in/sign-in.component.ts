@@ -1,3 +1,4 @@
+import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -14,7 +15,7 @@ import { NetworkAuthService } from '../../services/network-auth.service';
 @Component( {
   selector: 'app-sign-in',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './sign-in.component.html',
   styleUrl: './sign-in.component.css',
 } )

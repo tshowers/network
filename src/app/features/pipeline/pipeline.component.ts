@@ -11,9 +11,8 @@ import { NetworkAssistantSignalService } from '../../services/network-assistant-
 import { Contact } from '../../models/contact.model';
 import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.component';
 import { PreloaderComponent } from '../../shared/preloader/preloader.component';
-import { CockpitBrowseModeBannerComponent } from '../../shared/cockpit-browse-mode-banner/cockpit-browse-mode-banner.component';
-import { CockpitCommandDeckComponent } from '../../shared/cockpit-command-deck/cockpit-command-deck.component';
-import { ArcGaugeComponent, ArcGaugeTone } from '../../shared/arc-gauge/arc-gauge.component';
+import type { ArcGaugeTone } from '../../shared/arc-gauge/arc-gauge.component';
+import { stageTint } from '../../shared/stage-tint';
 import { StatusFlowComponent } from '../../shared/status-flow/status-flow.component';
 import { ChoiceFieldComponent, ChoiceOption } from '../../shared/choice-field/choice-field.component';
 
@@ -69,9 +68,6 @@ const LATE_STAGES = ['Negotiation', 'Closing', 'Post-Sale', 'Closed Won'];
     RouterModule,
     BackToTopComponent,
     PreloaderComponent,
-    CockpitBrowseModeBannerComponent,
-    CockpitCommandDeckComponent,
-    ArcGaugeComponent,
     StatusFlowComponent,
     ChoiceFieldComponent,
   ],
@@ -212,7 +208,7 @@ export class PipelineComponent implements OnInit, OnDestroy {
   /** Scroll the board sideways (and the page if needed) so a card is in view. */
   private revealCard ( id: string ): void {
     const card = document.querySelector<HTMLElement>( `[data-contact-id="${id}"]` );
-    const board = card?.closest<HTMLElement>( '.pipeline-board' );
+    const board = card?.closest<HTMLElement>( '.pl-board' );
     if ( !card || !board ) return;
     const cardRect = card.getBoundingClientRect();
     const boardRect = board.getBoundingClientRect();
@@ -253,19 +249,19 @@ export class PipelineComponent implements OnInit, OnDestroy {
 
     this.healthMeters = [
       {
-        label: 'Late-Stage Momentum',
+        label: 'Late-stage momentum',
         value: lateStagePct,
         tone: lateStagePct >= 40 ? 'positive' : lateStagePct >= 15 ? 'info' : 'attention',
         detail: `${lateStageCount} contact${lateStageCount === 1 ? '' : 's'} in Negotiation or later`,
       },
       {
-        label: 'Closed Won',
+        label: 'Closed won',
         value: closedWonPct,
         tone: 'positive',
         detail: `${closedWonCount} contact${closedWonCount === 1 ? '' : 's'} closed won`,
       },
       {
-        label: 'Early-Stage Volume',
+        label: 'Early-stage volume',
         value: earlyStagePct,
         tone: 'info',
         detail: `${earlyStageCount} contact${earlyStageCount === 1 ? '' : 's'} in Lead Generation or Qualification`,
@@ -276,6 +272,18 @@ export class PipelineComponent implements OnInit, OnDestroy {
   displayName ( contact: Contact ): string {
     const name = `${contact.firstName || ''} ${contact.lastName || ''}`.trim();
     return name || contact.company?.name || 'Unnamed contact';
+  }
+
+  readonly tint = stageTint;
+
+  /** Ring colour: TODD's info meters are blue; the rest follow green/amber/red. */
+  ringTier ( meter: PipelineHealthMeter ): string {
+    if ( meter.tone === 'info' ) return 'blue';
+    return meter.value >= 70 ? 'high' : meter.value >= 40 ? 'mid' : 'low';
+  }
+
+  formatPct ( value: number ): string {
+    return value > 0 && value < 1 ? value.toFixed( 2 ) : String( Math.round( value ) );
   }
 
   initials ( contact: Contact ): string {

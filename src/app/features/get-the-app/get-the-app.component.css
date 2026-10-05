@@ -2,42 +2,42 @@
  * whatever that site's global stylesheet defines. */
 :host {
   display: block;
-  --gta-bg: #f6f8fa;
-  --gta-card: #ffffff;
-  --gta-ink: #0f172a;
-  --gta-muted: #5b6b7d;
-  --gta-line: rgba(15, 23, 42, .1);
-  --gta-accent: #0a6ccf;
-  --gta-accent-ink: #ffffff;
-  --gta-ok: #1f9d55;
+  --gta-bg: var(--bg);
+  --gta-card: var(--surface);
+  --gta-ink: var(--text);
+  --gta-muted: var(--muted);
+  --gta-line: transparent;
+  --gta-accent: var(--t-blue-fg);
+  --gta-accent-ink: var(--bg);
+  --gta-ok: var(--t-green-fg);
 }
 /* Dark mode: follows the site's Light/Dark toggle (data-theme on <html>)
  * where there is one, and the system setting where there isn't. */
 @media (prefers-color-scheme: dark) {
   :host-context(html:not([data-theme='light'])) {
-    --gta-bg: #0d1117;
-    --gta-card: #151f2b;
-    --gta-ink: #f0f6ff;
-    --gta-muted: #9aadc1;
-    --gta-line: rgba(0, 191, 255, .16);
-    --gta-accent: #38bdf8;
-    --gta-accent-ink: #04121f;
-    --gta-ok: #4ade80;
+    --gta-bg: var(--bg);
+    --gta-card: var(--surface);
+    --gta-ink: var(--text);
+    --gta-muted: var(--muted);
+    --gta-line: transparent;
+    --gta-accent: var(--t-blue-fg);
+    --gta-accent-ink: var(--bg);
+    --gta-ok: var(--t-green-fg);
   }
 }
 :host-context(html[data-theme='dark']) {
-    --gta-bg: #0d1117;
-    --gta-card: #151f2b;
-    --gta-ink: #f0f6ff;
-    --gta-muted: #9aadc1;
-    --gta-line: rgba(0, 191, 255, .16);
-    --gta-accent: #38bdf8;
-    --gta-accent-ink: #04121f;
-    --gta-ok: #4ade80;
+    --gta-bg: var(--bg);
+    --gta-card: var(--surface);
+    --gta-ink: var(--text);
+    --gta-muted: var(--muted);
+    --gta-line: transparent;
+    --gta-accent: var(--t-blue-fg);
+    --gta-accent-ink: var(--bg);
+    --gta-ok: var(--t-green-fg);
   }
 
 
-.gta { min-height: 100vh; background: var(--gta-bg); color: var(--gta-ink); padding: 96px 16px 120px; font-family: 'Manrope', system-ui, sans-serif; }
+.gta { min-height: 100vh; background: var(--gta-bg); color: var(--gta-ink); padding: 40px 16px 120px; font-family: var(--font); }
 .gta > section { max-width: 880px; margin: 0 auto 48px; }
 .gta-eyebrow { margin: 0 0 10px; color: var(--gta-accent); font-size: .78rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
 .gta h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.08; letter-spacing: -.02em; }
@@ -65,7 +65,7 @@
 .gta-steps ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
 .gta-steps li { display: flex; gap: 12px; padding: 16px; border: 1px solid var(--gta-line); border-radius: 16px; background: var(--gta-card); }
 .gta-steps p { margin: 4px 0 0; color: var(--gta-muted); }
-.gta-step-number { flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--gta-accent); color: var(--gta-accent-ink); font-weight: 800; }
+.gta-step-number { flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--t-blue); color: var(--t-blue-fg); font-weight: 800; }
 
 .gta-faq__item { padding: 14px 16px; border: 1px solid var(--gta-line); border-radius: 14px; background: var(--gta-card); margin-bottom: 10px; }
 .gta-faq__item summary { cursor: pointer; font-weight: 700; }

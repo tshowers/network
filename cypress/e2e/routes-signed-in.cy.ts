@@ -39,7 +39,7 @@ describe( 'Network routes - signed in', () => {
     } );
 
     cy.get( '[data-cy="contact-home-shell"]' ).should( 'be.visible' );
-    cy.contains( '.diagnosis-board__title', 'Symptom, treatment, relief, and proof' ).should( 'be.visible' );
+    cy.contains( '#rel-care-title', 'Symptom, treatment, relief, and proof' ).should( 'be.visible' );
   } );
 
   it( 'lists a seeded contact at /contact-list', () => {
@@ -52,7 +52,7 @@ describe( 'Network routes - signed in', () => {
     } );
 
     cy.get( '[data-cy="contact-list-shell"]' ).should( 'be.visible' );
-    cy.contains( '.contact-list-name', 'Priya Nair' ).should( 'be.visible' );
+    cy.contains( '.cl-name strong', 'Priya Nair' ).should( 'be.visible' );
   } );
 
   it( 'shows a seeded contact on the /contact-deal-flow board', () => {
@@ -65,8 +65,8 @@ describe( 'Network routes - signed in', () => {
     } );
 
     cy.get( '[data-cy="pipeline-shell"]' ).should( 'be.visible' );
-    cy.contains( '.pipeline-column__title', 'Lead Generation' ).should( 'be.visible' );
-    cy.contains( '.pipeline-card__name', 'Marcus Webb' ).should( 'be.visible' );
+    cy.contains( '.pl-lane h2', 'Lead Generation' ).should( 'be.visible' );
+    cy.contains( '.pl-who strong', 'Marcus Webb' ).should( 'be.visible' );
   } );
 
   it( 'counts a seeded contact at /contact-deal-flow-dashboard', () => {
@@ -103,15 +103,15 @@ describe( 'Network routes - signed in', () => {
     cy.contains( '.field-mapping-toolbar__actions button', 'Next' ).click();
 
     // Step 3: Review the mapped rows.
-    cy.contains( '.import-step-actions button', 'Continue' ).click();
+    cy.contains( '.ci-actions button', 'Continue' ).click();
 
     // Step 4: Confirm + import. Target the button's unique class rather than
     // its exact label text (getImportButtonLabel()'s "Import" is whitespace-
     // padded by the template interpolation, which made an exact-text regex
     // match unreliable).
-    cy.get( '.import-step-actions .btn-todd--primary' ).should( 'contain.text', 'Import' ).click();
+    cy.get( '.ci-actions .nw-btn--primary' ).should( 'contain.text', 'Import' ).click();
 
-    cy.contains( '.result-summary h5', 'Import complete', { timeout: 15000 } ).should( 'be.visible' );
+    cy.contains( '.ci-card--center h2', 'Import complete', { timeout: 15000 } ).should( 'be.visible' );
   } );
 
   it( 'confirms a checkout session at /success', () => {

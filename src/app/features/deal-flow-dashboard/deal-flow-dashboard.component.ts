@@ -11,8 +11,6 @@ import { NetworkAuthService } from '../../services/network-auth.service';
 import { NetworkDataService } from '../../services/network-data.service';
 import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.component';
 import { PreloaderComponent } from '../../shared/preloader/preloader.component';
-import { CockpitBrowseModeBannerComponent } from '../../shared/cockpit-browse-mode-banner/cockpit-browse-mode-banner.component';
-import { CockpitCommandDeckComponent } from '../../shared/cockpit-command-deck/cockpit-command-deck.component';
 
 type DashboardTab = 'flow' | 'status' | 'lanes';
 
@@ -44,7 +42,7 @@ interface PipelineStatusStep {
 @Component( {
   selector: 'app-deal-flow-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, BackToTopComponent, PreloaderComponent, CockpitBrowseModeBannerComponent, CockpitCommandDeckComponent],
+  imports: [CommonModule, RouterModule, BackToTopComponent, PreloaderComponent],
   templateUrl: './deal-flow-dashboard.component.html',
   styleUrl: './deal-flow-dashboard.component.css',
 } )
@@ -114,6 +112,22 @@ export class DealFlowDashboardComponent implements OnInit {
   }
 
   selectTab ( tab: DashboardTab ): void { this.selectedTab = tab; }
+
+  /** Stage and priority tints (design_handoff_music_leadvault_network 15g). */
+  readonly stageTints: Record<string, string> = {
+    Visitor: 'grey', Contacted: 'cyan', Engaged: 'violet', Qualified: 'blue', Opportunity: 'yellow', Customer: 'green',
+  };
+
+  readonly priorityTints: Record<string, string> = {
+    'High Intent': 'pink', 'Warm Follow-up': 'blue', 'First Touch': 'cyan', 'Needs You': 'violet', 'Cold Reserve': 'grey',
+  };
+
+  /** The six stages in their three zones. */
+  readonly zones = [
+    { label: 'Attract', hint: 'Bring people in', stages: [0, 1] },
+    { label: 'Convert', hint: 'Turn interest into conversations', stages: [2, 3] },
+    { label: 'Close', hint: 'Win more business', stages: [4, 5] },
+  ];
 
   toggleStatusStep ( stepKey: string ): void {
     this.expandedStatusStepKey = this.expandedStatusStepKey === stepKey ? '' : stepKey;

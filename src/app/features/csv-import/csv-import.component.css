@@ -1,277 +1,165 @@
-:host {
-  display: block;
-  --import-bg: #f6f8fa;
-  --import-surface: #ffffff;
-  --import-surface-soft: #f8fafc;
-  --import-text: #0d1117;
-  --import-muted: #68727d;
-  --import-border: rgba(15, 23, 42, 0.10);
-  --import-accent: #0095cc;
-}
+/* 15e Import (laptop), 15o (iPhone). */
+:host { display: block; }
 
-@media (prefers-color-scheme: dark) {
-  :host {
-    --import-bg: #111820;
-    --import-surface: #19232c;
-    --import-surface-soft: #202d37;
-    --import-text: #edf6fb;
-    --import-muted: #9aafbc;
-    --import-border: rgba(151, 198, 220, 0.16);
-    --import-accent: #00bfff;
-  }
-}
-
-.csv-import-shell {
-  background: var(--import-bg);
-  color: var(--import-text);
-  min-height: 100%;
-  max-width: 1400px;
+.ci {
+  display: grid;
+  gap: 14px;
+  width: min(960px, 100% - 40px);
   margin: 0 auto;
-  padding: 1.5rem;
+  padding: 16px 0 64px;
 }
 
-.wizard-header h1 {
-  color: var(--import-text);
-  letter-spacing: -0.03em;
-}
+.ci > .nw-link { justify-self: start; }
+.ci h1 { margin: 0; font-size: 52px; font-weight: 700; line-height: 1; letter-spacing: -0.045em; }
+.ci-sub { margin-top: -6px; }
 
-.wizard-header .text-muted {
-  color: var(--import-muted) !important;
-}
-
-/* Stepper */
-
-.stepper {
+.ci-steps {
   display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-}
-
-.step {
-  display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 0.3rem;
-  flex: 1;
-  min-width: 0;
+  gap: 0;
+  margin: 10px 0 6px;
+  padding: 0;
+  list-style: none;
 }
 
-.step .circle {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+.ci-steps li {
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 0.85rem;
-  background: color-mix(in srgb, var(--import-accent) 10%, transparent);
-  color: var(--import-accent);
-  border: 2px solid color-mix(in srgb, var(--import-accent) 25%, transparent);
-}
-
-.step.is-current .circle {
-  background: var(--import-accent);
-  color: #06131a;
-  border-color: var(--import-accent);
-}
-
-.step.is-done .circle {
-  background: color-mix(in srgb, var(--import-accent) 55%, transparent);
-  color: #06131a;
-  border-color: transparent;
-}
-
-.step .label {
-  font-size: 0.72rem;
-  color: var(--import-muted);
-  text-align: center;
-  white-space: nowrap;
-}
-
-.step.is-current .label {
-  color: var(--import-accent);
-  font-weight: 700;
-}
-
-/* Step cards */
-
-.import-step-card {
-  background: var(--import-surface);
-  border: 1px solid var(--import-border);
-  border-radius: 0.9rem;
-  padding: 1.5rem;
-  margin-top: 1.25rem;
-}
-
-.import-step-card h5 {
-  font-size: 0.95rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: var(--import-muted);
-  margin-bottom: 0.75rem;
-}
-
-.import-step-actions {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.75rem;
-  margin-top: 1.5rem;
-}
-
-.import-step-actions--center {
-  justify-content: center;
-}
-
-/* btn-todd stand-in - see contact-edit.component.css notes on why this
-   isn't TODD's real design-system button. */
-.btn-todd {
-  padding: 0.5rem 1.1rem;
+  gap: 8px;
+  height: 40px;
+  padding: 0 14px 0 6px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--import-accent) 30%, transparent);
-  background: var(--import-surface);
-  color: var(--import-accent);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 15px;
   font-weight: 600;
-  font-size: 0.9rem;
 }
 
-.btn-todd:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--import-accent) 8%, var(--import-surface));
+.ci-steps li + li { margin-left: 40px; position: relative; }
+.ci-steps li + li::before {
+  content: "";
+  position: absolute;
+  left: -32px;
+  width: 24px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--surface2);
 }
 
-.btn-todd:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
+.ci-num {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--bg);
+  font-size: 13px;
+  font-weight: 700;
 }
 
-.btn-todd--primary {
-  background: var(--import-accent);
-  color: #06131a;
-  border-color: var(--import-accent);
+.ci-steps li.is-current { background: var(--t-blue); color: var(--t-blue-fg); font-weight: 700; }
+.ci-steps li.is-current .ci-num { background: var(--blue); color: #fff; }
+.ci-steps li.is-done { color: var(--text); }
+
+.ci-progress { display: none; }
+
+.ci-guest {
+  margin: 0;
+  padding: 14px 18px;
+  border-radius: 18px;
+  background: var(--t-yellow);
+  color: var(--t-yellow-fg);
+  font-size: 15px;
+  line-height: 1.45;
 }
 
-.btn-todd--primary:hover:not(:disabled) {
-  opacity: 0.88;
-}
+.ci-guest a { color: inherit; font-weight: 700; }
 
-/* Upload */
-
-.upload-dropzone {
-  border: 2px dashed color-mix(in srgb, var(--import-accent) 30%, transparent);
-  border-radius: 1rem;
-  padding: 2.5rem 1.5rem;
+.ci-drop {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  padding: 100px 32px;
+  border: 2px dashed var(--surface2);
+  border-radius: 32px;
+  background: var(--surface);
   text-align: center;
-  background: color-mix(in srgb, var(--import-accent) 3%, transparent);
 }
 
-.upload-dropzone.is-busy {
-  opacity: 0.65;
-  pointer-events: none;
+.ci-drop.is-busy { opacity: .7; }
+
+.ci-file {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  margin-bottom: 8px;
+  border-radius: 20px;
+  background: var(--t-blue);
+  color: var(--t-blue-fg);
 }
 
-.upload-dropzone__icon {
-  font-size: 2rem;
-  color: var(--import-accent);
-  margin-bottom: 0.75rem;
+.ci-file svg { width: 32px; height: 32px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+.ci-drop h2 { margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
+.ci-drop p { max-width: 500px; margin: 0; font-size: 16px; line-height: 1.5; color: var(--muted); }
+.ci-drop__actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px; margin-top: 10px; }
+.ci-drop__actions label { margin: 0; }
+
+.ci-sample {
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--t-blue-fg);
+  font: 700 15px/1.2 var(--font);
+  box-shadow: none;
 }
 
-.upload-dropzone__title {
-  font-weight: 700;
-  color: var(--import-text);
-  margin-bottom: 0.3rem;
+.ci-sample:hover { text-decoration: underline; transform: none; }
+
+.ci-card {
+  display: grid;
+  gap: 14px;
+  padding: 28px;
+  border-radius: 32px;
+  background: var(--surface);
 }
 
-.upload-dropzone__hint {
-  font-size: 0.85rem;
-  color: var(--import-muted);
-  margin-bottom: 1.1rem;
-}
+.ci-card--center { justify-items: center; text-align: center; padding: 64px 28px; }
+.ci-card h2 { margin: 0; font-size: 24px; font-weight: 700; }
+.ci-card p { margin: 0; }
+.ci-muted { color: var(--muted); }
+.ci-count { font-size: 20px; font-weight: 700; }
 
-.upload-dropzone__browse {
-  cursor: pointer;
-  display: inline-flex;
-  margin-bottom: 0.6rem;
-}
+.ci-note { padding: 14px 18px; border-radius: 18px; background: var(--t-blue); color: var(--t-blue-fg); }
+.ci-note--warn { background: var(--t-amber); color: var(--t-amber-fg); }
 
-/* Preview table */
+.ci-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; }
+.ci-card--center .ci-actions { justify-content: center; }
 
-.preview-table-wrap {
-  overflow-x: auto;
-  border: 1px solid var(--import-border);
-  border-radius: 0.6rem;
-  max-height: 420px;
-  overflow-y: auto;
-}
+.ci-table { overflow: auto; border-radius: 18px; background: var(--bg); }
+.ci-table table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.ci-table th { padding: 12px 14px; text-align: left; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.ci-table td { padding: 10px 14px; border-top: 1px solid var(--surface2); white-space: nowrap; }
 
-.preview-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.82rem;
-  white-space: nowrap;
-  color: var(--import-text);
-}
+.ci-result { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: var(--green); }
+.ci-result[data-tone="error"] { background: var(--red); }
+.ci-result svg { width: 26px; height: 26px; fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
 
-.preview-table th,
-.preview-table td {
-  padding: 0.5rem 0.75rem;
-  border-bottom: 1px solid var(--import-border);
-  text-align: left;
-}
-
-.preview-table th {
-  background: var(--import-surface-soft);
-  position: sticky;
-  top: 0;
-  font-weight: 700;
-}
-
-/* Confirm */
-
-.confirm-count {
-  font-size: 1.15rem;
-  font-weight: 700;
-  margin-bottom: 0.75rem;
-}
-
-/* Result */
-
-.import-step-card--result {
-  text-align: center;
-  padding: 3rem 1.5rem;
-}
-
-.result-processing i {
-  font-size: 2rem;
-  color: var(--import-accent);
-  margin-bottom: 1rem;
-}
-
-.result-summary__icon {
-  font-size: 2.5rem;
-  color: #16a34a;
-  margin-bottom: 0.75rem;
-}
-
-.result-summary__icon--error {
-  color: #dc2626;
-}
-
-.result-summary h5 {
-  font-size: 1.1rem;
-  font-weight: 700;
-  text-transform: none;
-  color: var(--import-text);
-  margin-bottom: 0.4rem;
-}
-
-.result-summary p {
-  color: var(--import-muted);
-  margin-bottom: 0;
-}
-
-@media (max-width: 640px) {
-  .step .label {
-    display: none;
-  }
+/* iPhone (15o): dot progress instead of the pill stepper. */
+@media (max-width: 760px) {
+  .ci { width: calc(100% - 32px); padding-top: 8px; }
+  .ci h1 { font-size: 36px; }
+  .ci-steps { display: none; }
+  .ci-progress { display: grid; gap: 8px; font-size: 14px; font-weight: 600; color: var(--muted); }
+  .ci-dots { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .ci-dots span { height: 6px; border-radius: 999px; background: var(--surface2); }
+  .ci-dots span.is-on { background: var(--blue); }
+  .ci-drop { padding: 48px 20px; border-radius: 28px; }
+  .ci-drop h2 { font-size: 20px; }
+  .ci-drop__actions { flex-direction: column; align-items: stretch; width: 100%; }
+  .ci-card { padding: 20px; border-radius: 24px; }
+  .ci-actions .nw-btn { flex: 1; }
 }

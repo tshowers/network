@@ -1,24 +1,81 @@
+/* Tap, don't type: chips for a few choices, an expanding list for many. On the shared tokens. */
 :host { display: block; }
 
-.choice-field { --choice-accent: #123d8b; --choice-accent-ink: #ffffff; }
-:host-context(html[data-theme='dark']) .choice-field { --choice-accent: var(--tl-blue); --choice-accent-ink: #04121f; }
-
-.choice-field__label { display: block; margin-bottom: 8px; font-size: .9rem; font-weight: 700; }
+.choice-field__label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 700; }
 
 .choice-field__chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.choice-chip { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 8px 14px; border: 1px solid var(--network-line); border-radius: 999px; background: var(--network-paper); color: var(--network-ink); font: inherit; font-size: .92rem; font-weight: 700; cursor: pointer; }
-.choice-chip:hover { border-color: var(--choice-accent); }
-.choice-chip.is-selected { border-color: var(--choice-accent); background: var(--choice-accent); color: var(--choice-accent-ink); }
 
-.choice-row { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 48px; padding: 10px 14px; border: 1px solid var(--network-line); border-radius: 12px; background: var(--network-paper); color: var(--network-ink); font: inherit; font-weight: 700; text-align: left; cursor: pointer; }
-.choice-row__value.is-placeholder { color: var(--network-muted); font-weight: 600; }
-.choice-row__chevron { color: var(--network-muted); transition: transform .2s ease; }
+.choice-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  min-height: 0;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--text);
+  font: 600 14px/1 var(--font);
+  box-shadow: inset 0 0 0 1px var(--surface2);
+  cursor: pointer;
+}
+
+.choice-chip:hover { background: var(--surface2); transform: none; }
+.choice-chip.is-selected { background: var(--text); color: var(--bg); box-shadow: none; font-weight: 700; }
+
+.choice-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 50px;
+  min-height: 0;
+  padding: 0 18px 0 20px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--text);
+  font: 600 16px/1 var(--font);
+  text-align: left;
+  box-shadow: inset 0 0 0 1px var(--surface2);
+  cursor: pointer;
+}
+
+.choice-row:hover { transform: none; }
+.choice-row__value.is-placeholder { color: var(--muted); }
+.choice-row__chevron { color: var(--muted); transition: transform .2s ease; }
 .choice-row__chevron.is-open { transform: rotate(90deg); }
 
-.choice-list { list-style: none; margin: 6px 0 0; padding: 4px; border: 1px solid var(--network-line); border-radius: 12px; background: var(--network-surface); }
-.choice-list__item { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 44px; padding: 10px 12px; border: 0; border-radius: 8px; background: transparent; color: var(--network-ink); font: inherit; text-align: left; cursor: pointer; }
-.choice-list__item:hover { background: color-mix(in srgb, var(--choice-accent) 8%, transparent); }
-.choice-list__item.is-selected { font-weight: 800; color: var(--choice-accent); }
+.choice-list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 6px;
+  border-radius: 20px;
+  background: var(--bg);
+  box-shadow: inset 0 0 0 1px var(--surface2);
+}
+
+.choice-list__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 44px;
+  min-height: 0;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  color: var(--text);
+  font: 500 15px/1 var(--font);
+  text-align: left;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.choice-list__item:hover { background: var(--surface); transform: none; }
+.choice-list__item.is-selected { font-weight: 700; color: var(--t-blue-fg); background: var(--t-blue); }
 
 .choice-field__other { margin-top: 10px; }
 

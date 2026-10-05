@@ -17,7 +17,7 @@ import { SoundService } from '../../services/sound.service';
 import { Contact, PhoneNumber, EmailAddress } from '../../models/contact.model';
 import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.component';
 import { PreloaderComponent } from '../../shared/preloader/preloader.component';
-import { CockpitBrowseModeBannerComponent } from '../../shared/cockpit-browse-mode-banner/cockpit-browse-mode-banner.component';
+import { RouterLink } from '@angular/router';
 import { FieldMatchComponent } from '../../shared/field-match/field-match.component';
 
 interface ImportStep {
@@ -49,8 +49,8 @@ interface ImportStep {
     FormsModule,
     BackToTopComponent,
     PreloaderComponent,
-    CockpitBrowseModeBannerComponent,
     FieldMatchComponent,
+    RouterLink,
   ],
   templateUrl: './csv-import.component.html',
   styleUrl: './csv-import.component.css',
@@ -58,7 +58,7 @@ interface ImportStep {
 export class CsvImportComponent implements OnInit, OnDestroy {
   readonly steps: ImportStep[] = [
     { key: 'upload', label: 'Upload' },
-    { key: 'map', label: 'Map Fields' },
+    { key: 'map', label: 'Map fields' },
     { key: 'review', label: 'Review' },
     { key: 'confirm', label: 'Confirm' },
     { key: 'result', label: 'Import' },
