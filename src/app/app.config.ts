@@ -10,6 +10,7 @@ import { routes } from './app.routes';
 import { environment } from '../environments/environment';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { idTokenInterceptor } from './core/interceptors/id-token.interceptor';
+import { provideCanonicalUrl } from './shared/canonical-url';
 
 initializeApp( environment.firebaseConfig );
 
@@ -53,6 +54,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
+    provideCanonicalUrl(),
     provideHttpClient(withFetch(), withInterceptors([idTokenInterceptor])),
     provideServiceWorker('ngsw-worker.js', {
       enabled: environment.production,
