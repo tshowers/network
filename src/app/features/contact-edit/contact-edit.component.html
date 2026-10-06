@@ -103,7 +103,7 @@
       <footer class="ce-foot">
         <button type="button" class="ce-discard" (click)="onCancel()">Discard<span class="ce-hide-m"> changes</span></button>
         <button type="button" class="nw-btn" *ngIf="nextSection" (click)="goToSection(nextSection.id)" data-cy="contact-wizard-next">Next: {{ nextSection.label }}</button>
-        <button type="button" class="nw-btn nw-btn--primary ce-save" [class.is-blocked]="!canSave" [attr.aria-disabled]="!canSave" (click)="save()" data-cy="contact-wizard-submit">
+        <button type="button" class="nw-btn nw-btn--primary ce-save" [class.is-blocked]="!canSave" [attr.aria-disabled]="!canSave" appWriteAction="save this contact" (click)="save()" data-cy="contact-wizard-submit">
           {{ isSaving ? 'Saving…' : (contact.id ? 'Save changes' : 'Save contact') }}
         </button>
       </footer>

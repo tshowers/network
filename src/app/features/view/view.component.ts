@@ -14,6 +14,8 @@ import { Contact } from '../../models/contact.model';
 import { ReadComponent } from '../read/read.component';
 import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.component';
 import { PreloaderComponent } from '../../shared/preloader/preloader.component';
+import { WriteActionDirective } from '../../shared/write-access/write-action.directive';
+import { BrowseNoticeComponent } from '../../shared/write-access/browse-notice.component';
 
 /**
  * Ported from features/contact/view/view.component.ts (1,260 lines),
@@ -39,7 +41,7 @@ import { PreloaderComponent } from '../../shared/preloader/preloader.component';
 @Component( {
   selector: 'app-view',
   standalone: true,
-  imports: [
+  imports: [BrowseNoticeComponent, WriteActionDirective, 
     CommonModule,
     FormsModule,
     ReadComponent,

@@ -10,10 +10,11 @@ import { ToastComponent } from './shared/toast/toast.component';
 import { NetworkAssistantLauncherComponent } from './shared/page/assistant-box/network-assistant-launcher.component';
 import { AppHeaderComponent } from './shared/app-header/app-header.component';
 import { initTheme } from '@taliferro/ui/platform/theme';
+import { WriteAccessPromptComponent } from './shared/write-access/write-access-prompt.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ToastComponent, NetworkAssistantLauncherComponent, AppHeaderComponent, AsyncPipe, NgIf],
+  imports: [WriteAccessPromptComponent, RouterOutlet, ToastComponent, NetworkAssistantLauncherComponent, AppHeaderComponent, AsyncPipe, NgIf],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

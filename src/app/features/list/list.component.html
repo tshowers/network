@@ -13,10 +13,10 @@
       <input type="search" placeholder="Search by name, company, or email" aria-label="Search contacts" [(ngModel)]="searchText" (ngModelChange)="applyFilter()" />
     </label>
     <div class="cl-actions" *ngIf="isSignedIn">
-      <a class="nw-btn" routerLink="/contact-import">
+      <a class="nw-btn" routerLink="/contact-import" appWriteAction="import contacts">
         <svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>Import CSV
       </a>
-      <button type="button" class="nw-btn nw-btn--primary cl-add" (click)="addContact()">
+      <button type="button" class="nw-btn nw-btn--primary cl-add" appWriteAction="add a contact" (click)="addContact()">
         <svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span class="cl-add__long">Add contact</span><span class="cl-add__short">Add</span>
       </button>
     </div>
@@ -82,7 +82,7 @@
       </div>
     </div>
 
-    <button type="button" class="nw-btn nw-btn--primary cl-fab" (click)="addContact()" aria-label="Add contact">
+    <button type="button" class="nw-btn nw-btn--primary cl-fab" appWriteAction="add a contact" (click)="addContact()" aria-label="Add contact">
       <svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add
     </button>
   </ng-container>

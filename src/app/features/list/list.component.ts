@@ -14,6 +14,7 @@ import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.compone
 import { PreloaderComponent } from '../../shared/preloader/preloader.component';
 import { StatusFlowComponent } from '../../shared/status-flow/status-flow.component';
 import { stageTint } from '../../shared/stage-tint';
+import { WriteActionDirective } from '../../shared/write-access/write-action.directive';
 
 type ContactSortKey = 'name' | 'company' | 'email' | 'phone' | 'status';
 type SortDirection = 'asc' | 'desc';
@@ -38,7 +39,7 @@ type SortDirection = 'asc' | 'desc';
 @Component( {
   selector: 'app-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, BackToTopComponent, PreloaderComponent, StatusFlowComponent],
+  imports: [WriteActionDirective, CommonModule, FormsModule, RouterModule, BackToTopComponent, PreloaderComponent, StatusFlowComponent],
   templateUrl: './list.component.html',
   styleUrl: './list.component.css',
 } )

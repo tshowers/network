@@ -7,6 +7,13 @@ describe( 'Network contact creation wizard', () => {
       statusCode: 200,
       body: { success: true, hasNetwork: false, effectiveLimit: 0, currentCount: 0 },
     } ).as( 'entitlement' );
+    // Save carries appWriteAction, which stops the click and opens the
+    // "get the app" prompt unless /account/summary grants Network write
+    // access - so these runs need a user who has it.
+    cy.intercept( 'GET', '**/account/summary', {
+      statusCode: 200,
+      body: { success: true, data: { writeAccess: { network: true } } },
+    } ).as( 'accountSummary' );
   };
 
   it( 'fills the five sections and creates a contact', () => {

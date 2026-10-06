@@ -19,6 +19,7 @@ import { RouterLink } from '@angular/router';
 import { StatusFlowComponent } from '../../shared/status-flow/status-flow.component';
 import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.component';
 import { PreloaderComponent } from '../../shared/preloader/preloader.component';
+import { WriteActionDirective } from '../../shared/write-access/write-action.directive';
 
 interface WizardStep {
   key: string;
@@ -49,7 +50,7 @@ interface WizardStep {
 @Component( {
   selector: 'app-contact-edit',
   standalone: true,
-  imports: [ChoiceFieldComponent, 
+  imports: [WriteActionDirective, ChoiceFieldComponent, 
     CommonModule,
     FormsModule,
     StatusFlowComponent,

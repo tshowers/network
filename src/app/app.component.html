@@ -4,6 +4,7 @@
 <router-outlet></router-outlet>
 <app-network-assistant-launcher *ngIf="!isEmbedded"></app-network-assistant-launcher>
 <app-toast></app-toast>
+<app-write-access-prompt />
 <div *ngIf="updateNotice" class="network-update-notice" role="status" aria-live="polite">
   <span>{{ updateNotice }}</span>
   <button *ngIf="chunkRecoveryNeedsManualRefresh" type="button" (click)="refreshAfterChunkError()">Refresh</button>
