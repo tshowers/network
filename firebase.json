@@ -2,6 +2,7 @@
   "hosting": {
     "site": "todd-network",
     "public": "dist/network/browser",
+    "trailingSlash": false,
     "ignore": [
       "firebase.json",
       "**/.*",
