@@ -47,6 +47,15 @@ export interface ContactImage {
   _loadError?: boolean;
 }
 
+/** A file attached to a contact (same shape TODD's upload page writes). */
+export interface ContactDocument {
+  src: string;
+  name: string;
+  type?: string;
+  uploadDate?: string;
+  contactId?: string;
+}
+
 export interface Company {
   name?: string;
   url?: string;
@@ -76,6 +85,7 @@ export interface Contact {
   addresses?: Address[];
   notes?: Note[];
   images?: ContactImage[];
+  documents?: ContactDocument[];
   lastUpdated?: string;
   important?: boolean;
   status?: string;

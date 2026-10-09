@@ -1,0 +1,37 @@
+<section class="upload-page">
+  <header class="upload-header">
+    <h1>Attach files</h1>
+    <p *ngIf="contact() as c">For <a [routerLink]="['/contact', c.id]">{{ c.firstName }} {{ c.lastName }}</a>. Images become the contact's pictures; other files are kept with the contact.</p>
+  </header>
+
+  <p class="upload-note" *ngIf="!contactId">Open a contact first, then choose Attach files. <a routerLink="/contact-list">Go to contacts</a></p>
+  <p class="upload-note" *ngIf="contactId && loading()">Loading contact…</p>
+  <p class="upload-error" *ngIf="error()">{{ error() }}</p>
+
+  <ng-container *ngIf="contact() as c">
+    <div class="drop-zone" (drop)="onDrop($event)" (dragover)="onDragOver($event)">
+      <p>Drag a file here or <button type="button" class="link-button" (click)="fileInput.click()" [disabled]="uploading()">browse</button></p>
+      <input #fileInput type="file" hidden (change)="onFileSelect($event)" />
+      <div class="upload-progress" *ngIf="progress() !== null">
+        <div class="upload-progress__bar" [style.width.%]="progress()"></div>
+      </div>
+    </div>
+    <p class="upload-status" *ngIf="status()">{{ status() }}</p>
+
+    <h2 *ngIf="c.documents?.length">Files</h2>
+    <ul class="upload-list" *ngIf="c.documents?.length">
+      <li *ngFor="let document of c.documents; let i = index">
+        <a [href]="document.src" target="_blank" rel="noopener">{{ document.name }}</a>
+        <button type="button" class="remove" (click)="removeDocument(i)">Remove</button>
+      </li>
+    </ul>
+
+    <h2 *ngIf="c.images?.length">Images</h2>
+    <ul class="upload-grid" *ngIf="c.images?.length">
+      <li *ngFor="let image of c.images; let i = index">
+        <img [src]="image.src" [alt]="image.alt || 'Contact image'" />
+        <button type="button" class="remove" (click)="removeImage(i)">Remove</button>
+      </li>
+    </ul>
+  </ng-container>
+</section>

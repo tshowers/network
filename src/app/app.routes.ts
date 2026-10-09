@@ -105,6 +105,11 @@ export const routes: Routes = [
       import( './features/view/view.component' ).then( ( m ) => m.ViewComponent ),
   },
   {
+    path: 'contact-upload',
+    loadComponent: () =>
+      import( './features/contact-upload/contact-upload.component' ).then( ( m ) => m.ContactUploadComponent ),
+  },
+  {
     path: 'success',
     loadComponent: () =>
       import( './features/paid-success/paid-success.component' ).then( ( m ) => m.PaidSuccessComponent ),

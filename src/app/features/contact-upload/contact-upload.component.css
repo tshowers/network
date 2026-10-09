@@ -1,0 +1,14 @@
+.upload-page { max-width: 880px; margin: 0 auto; padding: 24px 16px 64px; display: flex; flex-direction: column; gap: 16px; }
+.upload-header h1 { margin: 0 0 6px; }
+.upload-note, .upload-status { color: var(--bs-secondary-color, #5b6472); }
+.upload-error { color: #b42318; }
+.drop-zone { border: 2px dashed var(--bs-border-color, #cfd6df); border-radius: 16px; padding: 32px 16px; text-align: center; }
+.link-button { background: none; border: 0; padding: 0; color: inherit; text-decoration: underline; cursor: pointer; font: inherit; }
+.upload-progress { height: 6px; border-radius: 3px; background: var(--bs-border-color, #e5e9ef); overflow: hidden; margin-top: 12px; }
+.upload-progress__bar { height: 100%; background: var(--bs-primary, #4f46e5); }
+.upload-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.upload-list li { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.upload-grid { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+.upload-grid li { display: flex; flex-direction: column; gap: 6px; }
+.upload-grid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px; }
+.remove { align-self: flex-start; background: none; border: 1px solid #b42318; color: #b42318; border-radius: 999px; padding: 2px 12px; cursor: pointer; }
