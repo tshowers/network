@@ -4,11 +4,12 @@ import { Title, Meta } from '@angular/platform-browser';
 import { LandingEngagementService } from '../../services/landing-engagement.service';
 import { NetworkAuthService } from '../../services/network-auth.service';
 import { SeoService } from '../../shared/seo.service';
+import { SiteFooterComponent } from '../../shared/site-footer/site-footer.component';
 
 @Component( {
   selector: 'app-network-landing',
   standalone: true,
-  imports: [RouterModule],
+  imports: [SiteFooterComponent, RouterModule],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.css'
 } )

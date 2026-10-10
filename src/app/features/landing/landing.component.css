@@ -1,5 +1,8 @@
 /* 15a landing (laptop), 15k (iPhone). */
-:host { display: block; }
+
+/* Fills the window under the header (app-root is a full-height column on this
+   page, app.component.css), so the footer sits at the bottom. */
+:host { display: flex; flex-direction: column; flex: 1 0 auto; }
 
 .nl {
   display: grid;
@@ -7,7 +10,7 @@
   align-items: center;
   gap: 40px;
   width: min(1200px, 100% - 80px);
-  min-height: calc(100vh - 82px);
+  flex: 1 0 auto;
   margin: 0 auto;
   padding: 24px 0 64px;
 }
@@ -157,7 +160,8 @@
 
 @media (max-width: 1080px) {
   .nl { grid-template-columns: 1fr; min-height: 0; }
-  .nl-visual { max-width: 520px; width: 100%; justify-self: center; }
+  /* Stacked: lead with the visual, copy underneath. */
+  .nl-visual { order: -1; max-width: 520px; width: 100%; justify-self: center; }
 }
 
 /* iPhone (15k) */

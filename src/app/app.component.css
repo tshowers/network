@@ -28,3 +28,6 @@
   font: 700 14px/1 var(--font);
   box-shadow: none;
 }
+
+/* On the signed-out landing: a full-height column, so its footer sits at the bottom. */
+:host:has(> app-network-landing) { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
