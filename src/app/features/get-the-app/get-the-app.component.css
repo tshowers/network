@@ -70,3 +70,7 @@
 .gta-faq__item { padding: 14px 16px; border: 1px solid var(--gta-line); border-radius: 14px; background: var(--gta-card); margin-bottom: 10px; }
 .gta-faq__item summary { cursor: pointer; font-weight: 700; }
 .gta-faq__item p { margin: 10px 0 0; color: var(--gta-muted); line-height: 1.6; }
+
+/* Web subscription (2026-10-11) */
+.gta-subscribe { display: flex; align-items: center; justify-content: center; width: 100%; height: 48px; margin: 16px 0 8px; border: 0; border-radius: 999px; background: var(--blue); color: #fff; font: 700 16px/1 var(--font); cursor: pointer; }
+.gta-link { margin-left: 8px; padding: 0; border: 0; background: none; color: var(--blue); font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; }

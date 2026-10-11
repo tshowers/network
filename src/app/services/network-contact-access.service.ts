@@ -19,7 +19,8 @@ export interface ContactAccessState {
  */
 @Injectable( { providedIn: 'root' } )
 export class NetworkContactAccessService {
-  readonly freeContactLimit = 10;
+  /** Nothing stored is free (Ty, 2026-10-11): contacts need Network. */
+  readonly freeContactLimit = 0;
 
   constructor ( private authService: NetworkAuthService ) { }
 

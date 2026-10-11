@@ -451,9 +451,9 @@ export class NetworkAssistantLauncherComponent implements OnInit, OnDestroy {
         stageLabel: 'At limit',
         tone: 'attention',
         icon: 'fa-solid fa-triangle-exclamation',
-        title: "You've used your free contacts",
+        title: 'Network subscription needed',
         message: limitMessage,
-        whyItMatters: "TODD can't save a new contact until there's room, or the account is upgraded.",
+        whyItMatters: "TODD can't save new contacts without a Network subscription.",
         bullets: [],
       };
     }

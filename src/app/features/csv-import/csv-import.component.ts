@@ -18,6 +18,7 @@ import { Contact, PhoneNumber, EmailAddress } from '../../models/contact.model';
 import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.component';
 import { PreloaderComponent } from '../../shared/preloader/preloader.component';
 import { RouterLink } from '@angular/router';
+import { WriteActionDirective } from '../../shared/write-access/write-action.directive';
 import { FieldMatchComponent } from '../../shared/field-match/field-match.component';
 
 interface ImportStep {
@@ -45,6 +46,7 @@ interface ImportStep {
   selector: 'app-csv-import',
   standalone: true,
   imports: [
+    WriteActionDirective,
     CommonModule,
     FormsModule,
     BackToTopComponent,
@@ -320,15 +322,13 @@ export class CsvImportComponent implements OnInit, OnDestroy {
 
   // ── Step 4: gating + submit ─────────────────────────────────────────
 
+  /** Signed in is enough here: the Import button's appWriteAction asks for Network first (nothing stored is free). */
   canStartImport (): boolean {
-    if ( !this.isSignedIn || !this.accessState?.isLoggedIn ) return false;
-    if ( this.accessState.isPaidUser ) return true;
-    return this.contacts.length <= this.accessState.remainingFreeContacts;
+    return this.isSignedIn && !!this.accessState?.isLoggedIn;
   }
 
   getImportButtonLabel (): string {
     if ( !this.isSignedIn ) return 'Sign In to Import';
-    if ( !this.canStartImport() ) return 'Upgrade to Import';
     return 'Import';
   }
 
@@ -339,10 +339,7 @@ export class CsvImportComponent implements OnInit, OnDestroy {
     if ( this.accessState.isPaidUser ) {
       return 'Your paid account can import all of these contacts.';
     }
-    if ( this.contacts.length > this.accessState.remainingFreeContacts ) {
-      return `This file has ${this.contacts.length} contacts, but you only have ${this.accessState.remainingFreeContacts} free slots left. Upgrade to import all of them.`;
-    }
-    return `Free account: ${this.accessState.remainingFreeContacts} of ${this.accessState.contactLimit} contacts remaining after this import.`;
+    return 'Importing contacts needs a Network subscription.';
   }
 
   async submitImport (): Promise<void> {

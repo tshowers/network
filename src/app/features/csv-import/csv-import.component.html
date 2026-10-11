@@ -58,7 +58,7 @@
     <p class="ci-note" [class.ci-note--warn]="!canStartImport()">{{ getImportAccessNote() }}</p>
     <div class="ci-actions">
       <button type="button" class="nw-btn nw-btn--on-surface" (click)="previousStep()">Back</button>
-      <button type="button" class="nw-btn nw-btn--primary" [disabled]="processing" (click)="submitImport()">{{ getImportButtonLabel() }}</button>
+      <button type="button" class="nw-btn nw-btn--primary" [disabled]="processing" appWriteAction="import these contacts" (click)="submitImport()">{{ getImportButtonLabel() }}</button>
     </div>
   </section>
 

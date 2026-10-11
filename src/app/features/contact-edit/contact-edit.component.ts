@@ -186,13 +186,8 @@ export class ContactEditComponent implements OnInit, OnDestroy {
     }
 
     const state = await this.accessService.getAccessState();
-    if ( state.isPaidUser ) {
-      this.limitMessage = '';
-    } else if ( state.remainingFreeContacts <= 0 ) {
-      this.limitMessage = 'You have used all of your free contacts. Upgrade to keep adding people.';
-    } else {
-      this.limitMessage = `${state.remainingFreeContacts} of ${state.contactLimit} free contacts left`;
-    }
+    // Nothing stored is free (Ty, 2026-10-11); Save's appWriteAction offers the subscription.
+    this.limitMessage = state.isPaidUser ? '' : 'Saving contacts needs a Network subscription.';
   }
 
   /** Mirrors ContactService.getMissingInfo. */
