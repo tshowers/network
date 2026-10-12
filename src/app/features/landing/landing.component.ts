@@ -5,11 +5,12 @@ import { LandingEngagementService } from '../../services/landing-engagement.serv
 import { NetworkAuthService } from '../../services/network-auth.service';
 import { SeoService } from '../../shared/seo.service';
 import { SiteFooterComponent } from '../../shared/site-footer/site-footer.component';
+import { AlsoFromUsComponent } from '../../shared/also-from-us/also-from-us.component';
 
 @Component( {
   selector: 'app-network-landing',
   standalone: true,
-  imports: [SiteFooterComponent, RouterModule],
+  imports: [ AlsoFromUsComponent, SiteFooterComponent, RouterModule],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.css'
 } )
