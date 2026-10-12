@@ -22,10 +22,10 @@ describe( 'Network routes - signed out', () => {
 
   it( 'renders the pricing page signed out at /pricing', () => {
     cy.visit( '/pricing' );
-    // "Browse free, create with the app" (2026-09-28) replaced the Stripe plans page.
+    // "Browse free, create with the app" (2026-09-28), selling on the web too since 2026-10-11.
     cy.get( '[data-cy="get-the-app"]' ).should( 'be.visible' );
     cy.contains( 'Browse Network free' ).should( 'exist' );
-    cy.get( '[data-cy="get-the-app-faq"]' ).should( 'contain.text', 'Not yet.' );
+    cy.get( '[data-cy="get-the-app-faq"]' ).should( 'contain.text', 'Subscribe here with a card' );
   } );
 
   it( 'redirects /login to the TODD hosted login page', () => {

@@ -367,7 +367,10 @@ export class ContactEditComponent implements OnInit, OnDestroy {
 
     if ( isNewContact ) {
       const state = await this.accessService.getAccessState();
-      if ( !state.canAddContact ) {
+      // The contact pack is for subscribers at their limit. Everyone else was
+      // already asked for Network by Save's appWriteAction (and the server
+      // enforces it), so don't sell them a pack here.
+      if ( state.isPaidUser && !state.canAddContact ) {
         try {
           const startedCheckout = await this.contactPackService.promptAndStartCheckout();
           if ( !startedCheckout ) {

@@ -90,6 +90,11 @@ describe( 'Network routes - signed in', () => {
 
   it( 'imports the sample CSV end to end at /contact-import', () => {
     stubEntitlement();
+    // Import carries appWriteAction, so this user needs Network write access.
+    cy.intercept( 'GET', '**/account/summary', {
+      statusCode: 200,
+      body: { success: true, data: { writeAccess: { network: true } } },
+    } );
 
     cy.visitWithFirebaseEmulators( '/contact-import', {
       email: `network-import-${Date.now()}@example.com`,
