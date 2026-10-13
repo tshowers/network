@@ -24,8 +24,7 @@ export interface ContactLookupParseResult {
  * Port of TODD's ContactLocalAssistantService. The only real change from
  * the original is the data layer it calls: TODD's ContactService.findByName
  * / getLastContactDate become NetworkDataService.findContactsByName here
- * (client-side filter over getAllContacts, same as list.component.ts's own
- * loadData()), threaded through with tenantId since this app doesn't have
+ * (first/last-name equality queries), threaded through with tenantId since this app doesn't have
  * ContactService's implicit tenant resolution. Network doesn't track a
  * lastContacted field yet, so "when did I last contact X" answers fall back
  * to the contact record's own fields only - no separate lookup.

@@ -12,6 +12,7 @@ import {
   query,
   setDoc,
   updateDoc,
+  where,
   writeBatch,
   getFirestore,
 } from 'firebase/firestore';
@@ -133,19 +134,53 @@ export class NetworkDataService {
   }
 
   /**
-   * Client-side name lookup for the assistant box (find-contact-by-name
-   * intents). Network's collection is small enough per tenant that a full
-   * fetch + filter is fine here - mirrors how getAllContacts is already used
-   * by list.component.ts's own loadData().
+   * Name lookup for the assistant box (find-contact-by-name intents). Uses
+   * equality queries on firstName/lastName rather than fetching the whole
+   * collection - the old full fetch + substring filter read every contact
+   * (thousands, for real tenants) on each question. Firestore can't do
+   * substring or case-insensitive matching, so each name part is tried as
+   * typed and capitalized; equality on two fields needs no composite index.
+   *
+   *   "Roland Martin"        -> first=Roland & last=Martin
+   *   "Mary Ann Smith"       -> first=Mary & last=Smith, first="Mary Ann" & last=Smith,
+   *                             first=Mary & last="Ann Smith"
+   *   "Martin"               -> last=Martin, or first=Martin
    */
   async findContactsByName ( tenantId: string, name: string ): Promise<Contact[]> {
-    const needle = ( name || '' ).trim().toLowerCase();
-    if ( !needle ) return [];
+    const parts = ( name || '' ).trim().split( /\s+/ ).filter( Boolean );
+    if ( !parts.length ) return [];
 
-    const all = await this.getAllContacts( tenantId );
-    return all.filter( ( c: any ) => {
-      const displayName = c.displayName || [c.firstName, c.lastName].filter( Boolean ).join( ' ' );
-      return String( displayName || '' ).toLowerCase().includes( needle );
-    } );
+    const variants = ( v: string ) => {
+      const capitalized = v.charAt( 0 ).toUpperCase() + v.slice( 1 ).toLowerCase();
+      return Array.from( new Set( [v, capitalized] ) );
+    };
+
+    const pairs: Array<{ firstName?: string; lastName?: string; }> = [];
+    if ( parts.length === 1 ) {
+      variants( parts[0] ).forEach( ( v ) => pairs.push( { lastName: v }, { firstName: v } ) );
+    } else {
+      for ( let split = 1; split < parts.length; split++ ) {
+        const first = parts.slice( 0, split ).join( ' ' );
+        const last = parts.slice( split ).join( ' ' );
+        for ( const f of variants( first ) ) {
+          for ( const l of variants( last ) ) pairs.push( { firstName: f, lastName: l } );
+        }
+      }
+      // A middle name in the question ("Mary Ann Smith") when the record only has first + last.
+      if ( parts.length === 3 ) {
+        variants( parts[0] ).forEach( ( f ) => variants( parts[2] ).forEach( ( l ) => pairs.push( { firstName: f, lastName: l } ) ) );
+      }
+    }
+
+    const snaps = await Promise.all( pairs.map( ( pair ) => {
+      const filters = Object.entries( pair ).map( ( [field, value] ) => where( field, '==', value ) );
+      return getDocs( query( this.contactsRef( tenantId ), ...filters, limit( 10 ) ) );
+    } ) );
+
+    const byId = new Map<string, Contact>();
+    snaps.forEach( ( snap ) => snap.docs.forEach( ( d ) => {
+      if ( !byId.has( d.id ) ) byId.set( d.id, { ...( d.data() as any ), id: d.id } as Contact );
+    } ) );
+    return Array.from( byId.values() );
   }
 }
