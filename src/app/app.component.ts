@@ -66,6 +66,8 @@ export class AppComponent implements OnInit {
     } );
 
     this.router.events.pipe( filter( event => event instanceof NavigationEnd ) ).subscribe( () => {
+      // A page loaded, so any earlier chunk recovery worked; allow it again.
+      try { sessionStorage.removeItem( this.chunkRecoveryStorageKey ); } catch { }
       if ( this.pendingUpdateVersion && !this.isEditingContact() ) {
         const version = this.pendingUpdateVersion;
         this.pendingUpdateVersion = '';
@@ -182,8 +184,9 @@ export class AppComponent implements OnInit {
 
     let alreadyAttempted = false;
     try {
-      alreadyAttempted = sessionStorage.getItem( this.updateReloadStorageKey ) === '1';
-      if ( !alreadyAttempted ) sessionStorage.setItem( this.updateReloadStorageKey, '1' );
+      // Keyed by version so a later deploy in the same tab still reloads.
+      alreadyAttempted = sessionStorage.getItem( this.updateReloadStorageKey ) === version;
+      if ( !alreadyAttempted ) sessionStorage.setItem( this.updateReloadStorageKey, version );
     } catch { }
     if ( alreadyAttempted ) {
       // Already reloaded once this session for a version mismatch and it's still
