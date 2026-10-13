@@ -45,22 +45,14 @@
   padding: 0.6rem 0.85rem;
   border-radius: 999px;
   border: 1px solid var(--todd-border, rgba(0, 0, 0, .12));
-  background: #fff;
-  color: #172033;
+  background: var(--todd-input-bg, #fff);
+  color: var(--todd-text, #172033);
   font-size: 0.9rem;
 }
 
 .ios-input:focus {
   outline: none;
   border-color: var(--todd-link, #2563eb);
-}
-
-@media (prefers-color-scheme: dark) {
-  .ios-input {
-    background: #1a2535;
-    color: #f0f6ff;
-    border-color: rgba(0, 191, 255, 0.12);
-  }
 }
 
 .assistant-confirm {
@@ -132,8 +124,7 @@
 /* Assistant response styling - sized for the compact launcher window
    (~440px wide), not a full-page bar. */
 .assistant-response {
-  background-color: rgba(248, 249, 250, 0.5);
-  color: #212529;
+  color: var(--todd-text, #212529);
   padding: 0.85rem 1rem;
   border-radius: 12px;
   font-size: 0.95rem;
@@ -144,15 +135,6 @@
 
 .assistant-response-external {
   font-size: 0.9rem;
-}
-
-@media (prefers-color-scheme: dark) {
-  .assistant-response {
-    background: #2a2a2a;
-    color: #eee;
-    border-color: #444;
-    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.04);
-  }
 }
 
 @keyframes fadeIn {
@@ -180,10 +162,11 @@
 }
 
 .inline-card {
-  border: 1px solid var(--ring);
+  border: 1px solid var(--todd-border, rgba(0, 0, 0, .08));
   border-radius: 14px;
   padding: 12px;
-  background: var(--panel, #f8fafc);
+  background: var(--todd-card-bg, #f8fafc);
+  color: var(--todd-text, #172033);
 }
 
 .inline-card .field {
@@ -215,10 +198,6 @@
   gap: 8px;
 }
 
-.assistant-container .assistant-response {
-  color: inherit;
-}
-
 .assistant-response p,
 .assistant-response strong,
 .assistant-response button,
@@ -228,7 +207,7 @@
 
 .assistant-response a,
 .assistant-response .route-link {
-  color: #2563eb;
+  color: var(--todd-link, #2563eb);
   text-decoration: underline;
   text-underline-offset: 0.14em;
   cursor: pointer;
@@ -236,13 +215,13 @@
 
 .assistant-response a:hover,
 .assistant-response .route-link:hover {
-  color: #1d4ed8;
+  color: color-mix(in srgb, var(--todd-link, #2563eb) 80%, var(--todd-text, #172033));
 }
 
 .assistant-inline .inline-card {
-  background: rgba(255, 255, 255, 0.06);
-  color: inherit;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--todd-card-bg, #fff);
+  color: var(--todd-text, #172033);
+  border: 1px solid var(--todd-border, rgba(0, 0, 0, .08));
   border-radius: 12px;
   padding: 14px;
 }
@@ -259,8 +238,8 @@
 }
 
 .assistant-inline .chip {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: var(--todd-bubble-assistant, rgba(0, 0, 0, 0.04));
+  border: 1px solid var(--todd-border, rgba(0, 0, 0, .08));
   color: inherit;
   border-radius: 999px;
   padding: 4px 10px;
@@ -272,58 +251,17 @@
   margin: 6px 6px 0 0;
 }
 
-body.dark .assistant-inline .inline-card {
-  background: rgba(16, 18, 24, 0.9);
-  border-color: rgba(255, 255, 255, 0.14);
-}
-
-body.dark .assistant-inline .chip {
-  background: rgba(30, 32, 38, 0.9);
-  border-color: rgba(255, 255, 255, 0.16);
-}
-
-@media (prefers-color-scheme: dark) {
-  .assistant-inline .inline-card {
-    background: rgba(16, 18, 24, 0.9);
-    border-color: rgba(255, 255, 255, 0.14);
-  }
-
-  .assistant-inline .chip {
-    background: rgba(30, 32, 38, 0.9);
-    border-color: rgba(255, 255, 255, 0.16);
-  }
-
-  .assistant-response a,
-  .assistant-response .route-link {
-    color: #93c5fd;
-  }
-
-  .assistant-response a:hover,
-  .assistant-response .route-link:hover {
-    color: #bfdbfe;
-  }
-}
-
 .assistant-nudge {
   padding: 12px;
   margin-top: 12px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.6);
+  background: var(--todd-card-bg, rgba(255, 255, 255, 0.6));
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--todd-border, rgba(0, 0, 0, 0.08));
 }
 
-@media (prefers-color-scheme: dark) {
-  .assistant-nudge {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-  }
-}
-
-.assistant-thread {
-  max-height: 320px;
-  overflow-y: auto;
-}
+/* .assistant-thread has no scroll box of its own - the launcher window's
+   body is the one scroll area, so new messages can't hide inside a nested one. */
 
 .assistant-message {
   display: flex;
@@ -346,12 +284,13 @@ body.dark .assistant-inline .chip {
 }
 
 .assistant-message-bubble-user {
-  background: rgba(0, 149, 204, 0.12);
+  background: var(--todd-bubble-user, rgba(0, 149, 204, 0.12));
+  color: var(--todd-text, #172033);
   border-top-right-radius: 2px;
 }
 
 .assistant-message-bubble-assistant {
-  background: rgba(0, 0, 0, 0.04);
+  background: var(--todd-bubble-assistant, rgba(0, 0, 0, 0.04));
   border-top-left-radius: 2px;
   padding-left: 2rem;
 }

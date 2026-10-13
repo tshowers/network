@@ -8,7 +8,7 @@ import { environment } from '../../../environments/environment';
 import { NetworkAuthService } from '../../services/network-auth.service';
 import { NetworkContactStateService } from '../../services/network-contact-state.service';
 import { NetworkDataService } from '../../services/network-data.service';
-import { NetworkInsightService } from '../../services/network-insight.service';
+import { NetworkAssistantSignalService } from '../../services/network-assistant-signal.service';
 import { Contact } from '../../models/contact.model';
 
 import { ReadComponent } from '../read/read.component';
@@ -34,8 +34,8 @@ import { BrowseNoticeComponent } from '../../shared/write-access/browse-notice.c
  * copy for one sentence of UI).
  *
  * Kept: load the contact (live, via getContactRealtime - matches the
- * original's getDocument/getDocumentRealtime), the contact insight AI
- * call, edit/delete/add-new navigation, and a raw-JSON debug tab (cheap,
+ * original's getDocument/getDocumentRealtime), edit/delete/add-new
+ * navigation, and a raw-JSON debug tab (cheap,
  * genuinely useful).
  */
 @Component( {
@@ -57,7 +57,6 @@ export class ViewComponent implements OnInit, OnDestroy {
   contactId: string | null = null;
   errorMessage: string | null = null;
   isLoading = true;
-  contactInsightText: string | null = null;
 
   userId?: string;
   tenantId = '';
@@ -71,8 +70,8 @@ export class ViewComponent implements OnInit, OnDestroy {
     private titleService: Title,
     private authService: NetworkAuthService,
     private dataService: NetworkDataService,
-    private insightService: NetworkInsightService,
     private contactState: NetworkContactStateService,
+    private assistantBus: NetworkAssistantSignalService,
   ) { }
 
   ngOnInit (): void {
@@ -98,6 +97,7 @@ export class ViewComponent implements OnInit, OnDestroy {
   ngOnDestroy (): void {
     this.tenantId$?.unsubscribe();
     this.contactSubscription?.unsubscribe();
+    this.assistantBus.clearPageContext();
   }
 
   private loadContact (): void {
@@ -109,7 +109,7 @@ export class ViewComponent implements OnInit, OnDestroy {
         this.isLoading = false;
         if ( contact ) {
           this.contact = contact;
-          this.loadContactInsight();
+          this.publishPageContext( contact );
         } else {
           this.router.navigate( ['/not-found'] );
         }
@@ -121,26 +121,49 @@ export class ViewComponent implements OnInit, OnDestroy {
     } );
   }
 
-  private loadContactInsight (): void {
-    if ( !this.contact?.company?.name ) return;
+  /**
+   * Tells TODD which contact is open, so questions on this page are answered
+   * from this record instead of a name search across the whole network.
+   * Only the fields TODD's answers read are sent - notes are trimmed so the
+   * context stays small enough to ride along on every LLM prompt.
+   */
+  private publishPageContext ( contact: Contact ): void {
+    const c: any = contact;
+    const displayName = c.displayName || [c.firstName, c.lastName].filter( Boolean ).join( ' ' ).trim();
+    const notes = Array.isArray( c.notes )
+      ? c.notes.slice( 0, 5 ).map( ( n: any ) => ( { subject: n?.subject || '', body: String( n?.body || '' ).slice( 0, 400 ) } ) )
+      : [];
 
-    this.insightService.contactInsight( this.contact ).subscribe( {
-      next: ( result ) => {
-        const insight = result?.response;
-        if ( insight?.relationshipBuilder && insight.relationshipBuilder !== 'No insight available' ) {
-          this.contactInsightText = `
-            <div class="insight-block">
-              <p><strong>💡 Relationship Tip:</strong><br>${insight.relationshipBuilder}</p>
-              <p><strong>📌 Recommended Action:</strong><br>${insight.recommendedAction}</p>
-              <p><strong>✅ Suggested Task:</strong><br>${insight.suggestedTask}</p>
-            </div>
-          `.trim();
-        } else {
-          this.contactInsightText = '<p>No insight available.</p>';
-        }
+    this.assistantBus.setPageContext( {
+      feature: 'contact',
+      page: 'contact-view',
+      route: this.router.url,
+      mode: 'view',
+      title: displayName || 'Contact',
+      description: 'A single contact record. Questions on this page are about this contact unless another person is named.',
+      summary: {
+        contactId: this.contactId,
+        displayName,
       },
-      error: () => {
-        this.contactInsightText = 'Insight unavailable.';
+      dataPreview: {
+        contact: {
+          id: this.contactId,
+          displayName,
+          firstName: c.firstName || '',
+          lastName: c.lastName || '',
+          profession: c.profession || '',
+          status: c.status || '',
+          email: c.email || '',
+          emailAddresses: c.emailAddresses || [],
+          phoneNumbers: c.phoneNumbers || [],
+          category: c.category || [],
+          addresses: c.addresses || [],
+          lastContacted: c.lastContacted || null,
+          company: c.company
+            ? { name: c.company.name || '', publicInfo: c.company.publicInfo || '', dba: c.company.dba || '', numberOfEmployees: c.company.numberOfEmployees || '' }
+            : null,
+          notes,
+        },
       },
     } );
   }

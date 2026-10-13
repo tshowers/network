@@ -244,6 +244,9 @@ export class NetworkAssistantLauncherComponent implements OnInit, OnDestroy {
       };
     }
 
+    // Don't claim an empty network while the counts are still in flight.
+    if ( total === 0 && summary['isLoadingDashboardCounts'] === true ) return null;
+
     if ( total === 0 ) {
       return {
         eyebrow: 'GETTING STARTED',

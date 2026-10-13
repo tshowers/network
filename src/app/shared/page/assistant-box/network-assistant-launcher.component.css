@@ -9,10 +9,18 @@
   --todd-card-bg: rgba(255, 255, 255, 0.92);
   --todd-modal-bg: rgba(255, 255, 255, 0.94);
   --todd-link: #0095cc;
+  --todd-bubble-user: rgba(0, 149, 204, 0.12);
+  --todd-bubble-assistant: rgba(0, 0, 0, 0.04);
+  --todd-input-bg: #fff;
 }
 
+/* Dark mode: follows the site's Light/Dark toggle (data-theme on <html>)
+ * where there is one, and the system setting where there isn't - the
+ * system setting alone left TODD dark on a page toggled to Light. The
+ * nested assistant-box reads these same tokens, so the whole window
+ * switches together. */
 @media (prefers-color-scheme: dark) {
-  :host {
+  :host-context(html:not([data-theme='light'])) {
     --todd-text: #f0f6ff;
     --todd-border: rgba(0, 191, 255, 0.12);
     --todd-panel-border: rgba(0, 191, 255, 0.12);
@@ -20,7 +28,23 @@
     --todd-card-bg: #1a2535;
     --todd-modal-bg: #131c27;
     --todd-link: #00bfff;
+    --todd-bubble-user: rgba(0, 191, 255, 0.16);
+    --todd-bubble-assistant: rgba(255, 255, 255, 0.06);
+    --todd-input-bg: #131c27;
   }
+}
+
+:host-context(html[data-theme='dark']) {
+  --todd-text: #f0f6ff;
+  --todd-border: rgba(0, 191, 255, 0.12);
+  --todd-panel-border: rgba(0, 191, 255, 0.12);
+  --todd-surface-2: #1a2535;
+  --todd-card-bg: #1a2535;
+  --todd-modal-bg: #131c27;
+  --todd-link: #00bfff;
+  --todd-bubble-user: rgba(0, 191, 255, 0.16);
+  --todd-bubble-assistant: rgba(255, 255, 255, 0.06);
+  --todd-input-bg: #131c27;
 }
 
 .todd-assistant-root {

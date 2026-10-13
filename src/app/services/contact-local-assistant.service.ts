@@ -3,6 +3,8 @@ import { NetworkDataService } from './network-data.service';
 import { AssistantBoxUtilityService } from './assistant-box-utility.service';
 import { AssistantBoxHelperService } from './assistant-box-helper.service';
 import { MomentumNudgeService } from './momentum-nudge.service';
+import { NetworkInsightService } from './network-insight.service';
+import { NetworkAssistantSignalService } from './network-assistant-signal.service';
 
 export interface ContactFilterParseResult {
     handled: boolean;
@@ -35,7 +37,14 @@ export class ContactLocalAssistantService {
         private util: AssistantBoxUtilityService,
         private helper: AssistantBoxHelperService,
         private momentum: MomentumNudgeService,
+        private insightService: NetworkInsightService,
+        private assistantBus: NetworkAssistantSignalService,
     ) { }
+
+    /** Relationship tips already fetched this session, by contact id - the
+     *  /contact-insight call is an LLM round-trip, so asking twice about the
+     *  same person shouldn't pay for it twice. */
+    private readonly relationshipTipCache = new Map<string, string>();
 
     tryFilterParse ( raw: string ): ContactFilterParseResult | null {
         if ( !raw ) return null;
@@ -112,7 +121,13 @@ export class ContactLocalAssistantService {
     private reLastContact = /^(?:when|what)\b.*(?:last\s*(?:email|contact(?:ed)?|follow[-\s]?up))\s*(?:with|for)?\s+(.+)$/i;
     private reDirectQA = /^(?:what|when|how|who|where|which|do|does|did|is|are|can|should)\s+.+?\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+){0,2})$/;
 
-    async tryLocal ( prompt: string, tenantId: string ): Promise<{
+    /** "his email", "tell me about this contact" - no name, so it means the open contact. */
+    private reCurrentContactRef = /\b(this (?:contact|person)|him|his|her|hers|they|their|them)\b/i;
+
+    /** The contact open on the current page, if any - set by the assistant box from pageContext. */
+    private currentContact: any | null = null;
+
+    async tryLocal ( prompt: string, tenantId: string, currentContact: any | null = null ): Promise<{
         handled: boolean;
         assistantResponse?: string;
         inlineReply?: any;
@@ -121,6 +136,7 @@ export class ContactLocalAssistantService {
     } | null> {
         const raw = ( prompt || '' ).trim();
         if ( !raw || !tenantId ) return null;
+        this.currentContact = currentContact;
 
         let m = raw.match( this.reSummarize );
         if ( m && m[1] ) {
@@ -143,6 +159,13 @@ export class ContactLocalAssistantService {
             } else {
                 return await this.buildContactSummary( lookup.name, tenantId );
             }
+        }
+
+        // No name in the question, but it points at someone ("what's his
+        // email?") and a contact is open - answer about that contact.
+        if ( currentContact && this.reCurrentContactRef.test( raw ) ) {
+            const openName = this.displayNameOf( currentContact );
+            if ( openName ) return await this.buildContactAnswer( raw, openName, tenantId );
         }
 
         return null;
@@ -201,10 +224,13 @@ export class ContactLocalAssistantService {
 
         const route = this.util.buildRouteForContact( contact, displayName );
         let response = `Here's a quick summary for ${payload.name}.`;
+        const publicInfo = String( ( contact as any ).company?.publicInfo || '' ).trim();
+        if ( publicInfo ) response += `\n\n${publicInfo}`;
         const insightHtml = this.util.getContactInsightHtml( contact );
         if ( insightHtml ) response += this.helper.normalizeAssistantHtml( `<hr/>${insightHtml}` );
 
         try { this.momentum.register( {} ); } catch { }
+        this.followUpWithRelationshipTip( contact, displayName );
 
         return {
             handled: true,
@@ -253,6 +279,10 @@ export class ContactLocalAssistantService {
             evidence.push( 'lastContacted' );
         }
 
+        // Open-ended questions ("what can you tell me about X") don't ask for
+        // a single field - give the summary instead of "can't find that".
+        if ( !evidence.length ) return await this.buildContactSummary( name, tenantId );
+
         const route = this.util.buildRouteForContact( contact, displayName );
         let response = `Answer for ${displayName}: ${answer}`;
         const insightHtml = this.util.getContactInsightHtml( contact );
@@ -268,7 +298,55 @@ export class ContactLocalAssistantService {
         };
     }
 
+    /**
+     * The Relationship Tip the old contact page showed on load, now fetched
+     * only when someone asks TODD about the contact. The summary goes out
+     * immediately; the tip follows as its own message once the insight call
+     * returns, so a slow LLM round-trip never holds up the answer.
+     */
+    private followUpWithRelationshipTip ( contact: any, displayName: string ): void {
+        // Same guard the contact page used - the insight prompt leans on the company.
+        if ( !contact?.company?.name ) return;
+
+        const id = this.util.resolveContactId( contact );
+        const cached = id ? this.relationshipTipCache.get( id ) : undefined;
+        if ( cached ) {
+            this.assistantBus.pushTranscript( { role: 'assistant', content: cached } );
+            return;
+        }
+
+        this.insightService.contactInsight( contact ).subscribe( {
+            next: ( result ) => {
+                const insight = result?.response;
+                if ( !insight?.relationshipBuilder || insight.relationshipBuilder === 'No insight available' ) return;
+
+                const esc = ( v: any ) => String( v ?? '' ).replace( /[&<>"]/g, ( ch ) => ( { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' } as any )[ch] );
+                const lines = [
+                    `<p><strong>💡 Relationship Tip for ${esc( displayName )}:</strong><br>${esc( insight.relationshipBuilder )}</p>`,
+                    insight.recommendedAction ? `<p><strong>📌 Recommended Action:</strong><br>${esc( insight.recommendedAction )}</p>` : '',
+                    insight.suggestedTask ? `<p><strong>✅ Suggested Task:</strong><br>${esc( insight.suggestedTask )}</p>` : '',
+                ];
+                const html = `<div class="insight-block">${lines.join( '' )}</div>`;
+                if ( id ) this.relationshipTipCache.set( id, html );
+                this.assistantBus.pushTranscript( { role: 'assistant', content: html } );
+            },
+            // The summary already answered the question; a missing tip isn't worth an error bubble.
+            error: () => { },
+        } );
+    }
+
+    private displayNameOf ( c: any ): string {
+        return c?.displayName || [c?.firstName, c?.lastName].filter( Boolean ).join( ' ' ).trim();
+    }
+
     private async findFirstByName ( name: string, tenantId: string ): Promise<any | null> {
+        // The open contact answers for its own name without loading the
+        // whole network - and can't be shadowed by a similarly named record.
+        const open = this.currentContact;
+        const needle = ( name || '' ).trim().toLowerCase();
+        const openName = this.displayNameOf( open ).toLowerCase();
+        if ( open && needle && openName && ( openName.includes( needle ) || needle.includes( openName ) ) ) return open;
+
         const result = await this.dataService.findContactsByName( tenantId, name ).catch( () => [] as any[] );
         return ( Array.isArray( result ) && result[0] ) || null;
     }

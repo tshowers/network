@@ -556,6 +556,7 @@ export class ContactHomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.isLoadingDashboardCounts = true;
     this.dashboardCountsError = '';
+    this.publishPageContext();
 
     try {
       const response = await fetch( `${environment.backendURL}/network/dashboard-counts?tenantId=${encodeURIComponent( authContext.tenantId )}`, {
@@ -582,6 +583,9 @@ export class ContactHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     } finally {
       this.isLoadingDashboardCounts = false;
       this.recomputeDashboardDerivedState();
+      // Counts and limits load in parallel - republish so TODD's guidance
+      // card sees the real totals instead of the empty placeholder.
+      this.publishPageContext();
     }
   }
 
@@ -628,6 +632,7 @@ export class ContactHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         isAuthenticated: this.isLoggedIn,
         interactionMode: this.isLoggedIn ? 'member' : 'guest',
         hasNetworkFeaturesPage: true,
+        isLoadingDashboardCounts: this.isLoadingDashboardCounts,
         totalContacts: counts.totalContacts,
         validEmailContacts: counts.validEmailContacts,
         enrichedContacts: counts.enrichedContacts,

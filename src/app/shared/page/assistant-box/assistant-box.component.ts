@@ -207,7 +207,9 @@ export class AssistantBoxComponent implements OnInit, OnChanges, OnDestroy {
 
     private scheduleAssistantScroll ( delay = 0 ): void {
         if ( this.parentOwnsHistory ) return;
-        this.assistantUi.scheduleScrollToBottom( this.messageContainerRef?.nativeElement || null, delay );
+        // Resolve the thread element when the timer fires, not now - on the
+        // first message the *ngIf'd thread doesn't exist until change detection runs.
+        setTimeout( () => this.assistantUi.scrollToBottom( this.messageContainerRef?.nativeElement || null ), delay );
     }
 
     private renderAssistantContent ( content: string ): string {
@@ -315,6 +317,12 @@ export class AssistantBoxComponent implements OnInit, OnChanges, OnDestroy {
         return summary && typeof summary === 'object' ? summary : {};
     }
 
+    /** The contact record open on the current page (contact view), if any. */
+    private getOpenContact (): any | null {
+        if ( String( this.pageContext?.feature || '' ).toLowerCase() !== 'contact' ) return null;
+        return this.getCurrentPageDataPreview()['contact'] || null;
+    }
+
     private getCurrentPageDataPreview (): Record<string, any> {
         const dataPreview = this.pageContext?.dataPreview;
         return dataPreview && typeof dataPreview === 'object' ? dataPreview : {};
@@ -415,6 +423,7 @@ export class AssistantBoxComponent implements OnInit, OnChanges, OnDestroy {
 
         if ( !this.parentOwnsHistory ) {
             this.history.push( { role: 'user', content: raw } );
+            this.scheduleAssistantScroll( 40 );
         } else {
             this.message.emit( { role: 'user', content: raw } );
         }
@@ -450,9 +459,6 @@ export class AssistantBoxComponent implements OnInit, OnChanges, OnDestroy {
                 );
 
                 if ( folded.assistantResponse !== undefined ) patches.setAssistantResponse( folded.assistantResponse || '' );
-                if ( p.assistantResponse === undefined && folded.assistantResponse ) {
-                    patches.setAssistantResponse( folded.assistantResponse );
-                }
                 if ( p.pendingAction !== undefined ) this.pendingAction = folded.pendingAction;
                 if ( p.inlineReply !== undefined ) this.inlineReply = p.inlineReply;
                 if ( p.showConfirmPrompt !== undefined || p.pendingAction !== undefined ) this.showConfirmPrompt = !!folded.showConfirmPrompt;
@@ -551,19 +557,25 @@ export class AssistantBoxComponent implements OnInit, OnChanges, OnDestroy {
                 return { handled: true, responseHtml: parsed.message || '', pendingAction: null } as any;
             },
             contactLocalDeep: async ( raw: string ) => {
-                const res = await this.contactLocal.tryLocal( raw, this.tenantId || '' );
-                return res ? ( res as any ) : null;
+                // The local lookup can hit Firestore - show the spinner meanwhile.
+                this.isLoading = true;
+                try {
+                    const res = await this.contactLocal.tryLocal( raw, this.tenantId || '', this.getOpenContact() );
+                    return res ? ( res as any ) : null;
+                } finally {
+                    this.isLoading = false;
+                }
             },
             routeDomain: ( raw: string ) => this.intentRunner.routeDomain( raw ),
             handleContactLLMIntent: ( raw: string ) => {
                 this.openAISubscription?.unsubscribe?.();
-                const promptWithContext = raw;
+                const promptWithContext = `${raw}${this.buildPageContextSnippet()}`;
                 const history = this.buildHistoryForLLM();
                 this.openAISubscription = this.contactLLM.run( {
                     promptWithContext,
                     userId: this.userId || 'UI',
                     history,
-                    selectedContact: null,
+                    selectedContact: this.getOpenContact(),
                     setLoading: ( v ) => ( this.isLoading = v ),
                     patchState: ( p ) => patches.patchState( p as any ),
                     emitAssistant: ( html ) => io.emitMessage( 'assistant', html ),

@@ -119,8 +119,9 @@ export class AssistantEngineService {
             patches.setAssistantPrompt( '' );
             if ( contactLocalDeep.assistantResponse || contactLocalDeep.responseHtml ) {
                 const html = contactLocalDeep.assistantResponse || contactLocalDeep.responseHtml || '';
+                // setAssistantResponse already adds the reply to the chat -
+                // emitting it as well showed every local answer twice.
                 patches.setAssistantResponse( html );
-                io.emitMessage( 'assistant', html );
                 io.scheduleScrollToBottom( true );
             }
             patches.patchState( {

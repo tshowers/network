@@ -6,25 +6,24 @@ export class AssistantUiService {
         setTimeout( () => this.scrollToBottom( element ), delay );
     }
 
+    /**
+     * Brings the newest message into view. A reply is aligned to its top so
+     * a long answer reads from the start; the user's own message is aligned
+     * to its bottom. With no thread rendered yet this is a no-op - it used to
+     * fall back to scrolling the whole page, which yanked the page under the
+     * chat window on the first message.
+     */
     scrollToBottom ( element: HTMLElement | null ): void {
         try {
-            if ( !element ) {
-                const doc = document.documentElement || ( document.body as any );
-                window.scrollTo( { top: doc.scrollHeight, behavior: 'smooth' } );
+            if ( !element ) return;
+            const bubbles = element.querySelectorAll( '.assistant-message' );
+            const last = bubbles.length ? bubbles[bubbles.length - 1] as HTMLElement : null;
+            if ( !last ) {
+                element.scrollTop = element.scrollHeight;
                 return;
             }
-            const assistantMessages = element.querySelectorAll( '.assistant-message-assistant' );
-            const lastAssistant = assistantMessages.length ? assistantMessages[assistantMessages.length - 1] as HTMLElement : null;
-            if ( lastAssistant ) {
-                lastAssistant.scrollIntoView( { behavior: 'smooth', block: 'start' } );
-            } else {
-                const lastBubble = element.querySelector( '.assistant-message:last-child' ) as HTMLElement | null;
-                if ( lastBubble ) {
-                    lastBubble.scrollIntoView( { behavior: 'smooth', block: 'start' } );
-                } else {
-                    element.scrollTop = element.scrollHeight;
-                }
-            }
+            const isAssistant = last.classList.contains( 'assistant-message-assistant' );
+            last.scrollIntoView( { behavior: 'smooth', block: isAssistant ? 'start' : 'end' } );
         } catch {
             // ignore
         }
