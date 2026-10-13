@@ -87,75 +87,29 @@
 /* Kept for people who look for it; the header also has Pricing. */
 .nl-pricing { margin-left: 4px; color: var(--muted); font-size: 15px; font-weight: 600; }
 
-/* Right: blue disc, app icon, tilted sample card. */
+/* Right: Claude Design demo video, light or dark to match the theme. */
 .nl-visual {
-  position: relative;
   display: grid;
   place-items: center;
-  min-height: 460px;
 }
 
-.nl-disc {
-  width: 420px;
-  height: 420px;
-  border-radius: 50%;
-  background: var(--t-blue);
-}
-
-.nl-icon {
-  position: absolute;
-  top: 20px;
-  right: 40px;
-  width: 128px;
-  height: 128px;
-  border-radius: 34px;
-  box-shadow: 0 0 0 6px var(--bg), var(--shadow);
-}
-
-.nl-card {
-  position: absolute;
-  left: 0;
-  right: 70px;
-  top: 50%;
-  display: grid;
-  justify-items: start;
-  gap: 14px;
-  padding: 22px;
-  border-radius: 28px;
-  background: var(--bg);
-  box-shadow: var(--shadow);
-  transform: translateY(-40%) rotate(-2deg);
-}
-
-.nl-card__who { display: flex; align-items: center; gap: 12px; }
-.nl-card__who .nw-avatar { width: 48px; height: 48px; font-size: 16px; }
-.nl-card__who strong { display: block; font-size: 18px; }
-.nl-card__who span { font-size: 14px; color: var(--muted); }
-
-.nl-warm {
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: var(--t-yellow);
-  color: var(--t-yellow-fg);
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.nl-note {
-  justify-self: stretch;
-  margin: 0;
-  padding: 12px 14px;
-  border-radius: 16px;
-  background: var(--surface);
-  font-size: 15px;
-}
-
-.nl-note b {
+.nl-demo {
   display: block;
-  font-size: 12px;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  color: var(--muted);
+  width: 100%;
+  max-width: 460px;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  border-radius: 28px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.nl-demo--dark { display: none; }
+:host-context(html[data-theme="dark"]) .nl-demo--light { display: none; }
+:host-context(html[data-theme="dark"]) .nl-demo--dark { display: block; }
+@media (prefers-color-scheme: dark) {
+  :host-context(html:not([data-theme="light"])) .nl-demo--light { display: none; }
+  :host-context(html:not([data-theme="light"])) .nl-demo--dark { display: block; }
 }
 
 @media (max-width: 1080px) {
@@ -175,8 +129,5 @@
   .nl-ctas > * { flex: 1 1 100%; justify-content: center; }
   .nl-store { justify-content: center; }
   .nl-pricing { text-align: center; }
-  .nl-visual { min-height: 340px; }
-  .nl-disc { width: 300px; height: 300px; }
-  .nl-icon { width: 88px; height: 88px; border-radius: 24px; right: 8px; top: 0; }
-  .nl-card { right: 20px; padding: 18px; }
+  .nl-demo { max-width: 300px; border-radius: 22px; }
 }

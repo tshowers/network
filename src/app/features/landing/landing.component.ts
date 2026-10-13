@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Title, Meta } from '@angular/platform-browser';
 import { LandingEngagementService } from '../../services/landing-engagement.service';
@@ -16,6 +16,11 @@ import { AlsoFromUsComponent } from '../../shared/also-from-us/also-from-us.comp
 } )
 export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly isLoggedIn$: ReturnType<NetworkAuthService['isLoggedIn']>;
+
+  @ViewChildren( 'demoVideo' ) private demoVideos?: QueryList<ElementRef<HTMLVideoElement>>;
+  private themeObserver?: MutationObserver;
+  private colorSchemeQuery?: MediaQueryList;
+  private readonly onColorSchemeChange = (): void => this.playVisibleDemo();
 
   constructor (
     private readonly landingContext: LandingEngagementService,
@@ -56,10 +61,13 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit (): void {
     window.scrollTo( 0, 0 );
     this.publishScrollDepth();
+    this.startDemoVideo();
   }
 
   ngOnDestroy (): void {
     this.landingContext.stop();
+    this.themeObserver?.disconnect();
+    this.colorSchemeQuery?.removeEventListener( 'change', this.onColorSchemeChange );
   }
 
   onPrimaryCtaClick (): void {
@@ -84,6 +92,32 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
     if ( event.clientY <= 0 ) {
       this.landingContext.markExitIntent();
     }
+  }
+
+  // Both theme variants are in the DOM with preload="none"; CSS hides one, so
+  // only the visible one is fetched and played. Re-check when the theme flips.
+  private startDemoVideo (): void {
+    this.playVisibleDemo();
+    this.themeObserver = new MutationObserver( () => this.playVisibleDemo() );
+    this.themeObserver.observe( document.documentElement, { attributes: true, attributeFilter: ['data-theme'] } );
+    this.colorSchemeQuery = window.matchMedia( '(prefers-color-scheme: dark)' );
+    this.colorSchemeQuery.addEventListener( 'change', this.onColorSchemeChange );
+  }
+
+  private playVisibleDemo (): void {
+    const reduceMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+    this.demoVideos?.forEach( ( { nativeElement: video } ) => {
+      if ( getComputedStyle( video ).display === 'none' ) {
+        video.pause();
+        return;
+      }
+      if ( reduceMotion ) {
+        return; // Leave the poster frame up.
+      }
+      // muted must be set as a property for autoplay policies; the attribute alone isn't always honored.
+      video.muted = true;
+      video.play().catch( () => { /* Autoplay blocked (e.g. Low Power Mode); the poster stays. */ } );
+    } );
   }
 
   private publishScrollDepth (): void {

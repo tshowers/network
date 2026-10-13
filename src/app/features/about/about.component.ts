@@ -69,7 +69,7 @@ export class AboutComponent implements OnInit, OnDestroy {
           applicationCategory: 'BusinessApplication',
           applicationSubCategory: 'Relationship management',
           operatingSystem: 'Web',
-          image: 'https://network.taliferro.tech/assets/seo/network-card.webp',
+          image: 'https://network.taliferro.tech/assets/seo/network-card-demo.webp',
           creator: { '@id': 'https://taliferro.com/#organization' },
           publisher: { '@id': 'https://taliferro.com/#organization' },
         },
