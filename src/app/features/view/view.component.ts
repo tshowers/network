@@ -9,6 +9,7 @@ import { NetworkAuthService } from '../../services/network-auth.service';
 import { NetworkContactStateService } from '../../services/network-contact-state.service';
 import { NetworkDataService } from '../../services/network-data.service';
 import { NetworkAssistantSignalService } from '../../services/network-assistant-signal.service';
+import { buildContactPageContext } from '../../services/contact-page-context';
 import { Contact } from '../../models/contact.model';
 
 import { ReadComponent } from '../read/read.component';
@@ -121,51 +122,14 @@ export class ViewComponent implements OnInit, OnDestroy {
     } );
   }
 
-  /**
-   * Tells TODD which contact is open, so questions on this page are answered
-   * from this record instead of a name search across the whole network.
-   * Only the fields TODD's answers read are sent - notes are trimmed so the
-   * context stays small enough to ride along on every LLM prompt.
-   */
+  /** Tells TODD which contact is open, so questions here are answered from this record. */
   private publishPageContext ( contact: Contact ): void {
-    const c: any = contact;
-    const displayName = c.displayName || [c.firstName, c.lastName].filter( Boolean ).join( ' ' ).trim();
-    const notes = Array.isArray( c.notes )
-      ? c.notes.slice( 0, 5 ).map( ( n: any ) => ( { subject: n?.subject || '', body: String( n?.body || '' ).slice( 0, 400 ) } ) )
-      : [];
-
-    this.assistantBus.setPageContext( {
-      feature: 'contact',
+    this.assistantBus.setPageContext( buildContactPageContext( contact, this.contactId || '', {
       page: 'contact-view',
       route: this.router.url,
       mode: 'view',
-      title: displayName || 'Contact',
       description: 'A single contact record. Questions on this page are about this contact unless another person is named.',
-      summary: {
-        contactId: this.contactId,
-        displayName,
-      },
-      dataPreview: {
-        contact: {
-          id: this.contactId,
-          displayName,
-          firstName: c.firstName || '',
-          lastName: c.lastName || '',
-          profession: c.profession || '',
-          status: c.status || '',
-          email: c.email || '',
-          emailAddresses: c.emailAddresses || [],
-          phoneNumbers: c.phoneNumbers || [],
-          category: c.category || [],
-          addresses: c.addresses || [],
-          lastContacted: c.lastContacted || null,
-          company: c.company
-            ? { name: c.company.name || '', publicInfo: c.company.publicInfo || '', dba: c.company.dba || '', numberOfEmployees: c.company.numberOfEmployees || '' }
-            : null,
-          notes,
-        },
-      },
-    } );
+    } ) );
   }
 
   navigateToEditContact (): void {

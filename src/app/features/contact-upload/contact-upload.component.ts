@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 import { combineLatest } from 'rxjs';
 
@@ -10,6 +10,8 @@ import { environment } from '../../../environments/environment';
 import { Contact, ContactDocument, ContactImage } from '../../models/contact.model';
 import { NetworkAuthService } from '../../services/network-auth.service';
 import { NetworkDataService } from '../../services/network-data.service';
+import { NetworkAssistantSignalService } from '../../services/network-assistant-signal.service';
+import { buildContactPageContext } from '../../services/contact-page-context';
 
 /**
  * Attach images and files to a contact: /contact-upload?id=<contactId>.
@@ -27,6 +29,8 @@ import { NetworkDataService } from '../../services/network-data.service';
 } )
 export class ContactUploadComponent {
   private readonly dataService = inject( NetworkDataService );
+  private readonly assistantBus = inject( NetworkAssistantSignalService );
+  private readonly router = inject( Router );
 
   readonly contactId = String( inject( ActivatedRoute ).snapshot.queryParamMap.get( 'id' ) || '' ).trim();
   contact = signal<Contact | null>( null );
@@ -41,6 +45,7 @@ export class ContactUploadComponent {
 
   constructor () {
     inject( Title ).setTitle( `${environment.COMPANY_NAME} - Attach Files` );
+    inject( DestroyRef ).onDestroy( () => this.assistantBus.clearPageContext() );
     if ( !this.contactId ) {
       this.loading.set( false );
       return;
@@ -93,6 +98,7 @@ export class ContactUploadComponent {
       const contact = await this.dataService.getContact( this.tenantId, this.contactId );
       if ( !contact ) this.error.set( 'That contact could not be found.' );
       this.contact.set( contact );
+      this.publishPageContext();
     } catch {
       this.error.set( 'Unable to load this contact.' );
     } finally {
@@ -133,6 +139,18 @@ export class ContactUploadComponent {
     );
   }
 
+  /** Tells TODD which contact files are being attached to, and how many it already has. */
+  private publishPageContext (): void {
+    const contact = this.contact();
+    if ( !contact ) return;
+    this.assistantBus.setPageContext( buildContactPageContext( contact, this.contactId, {
+      page: 'contact-upload',
+      route: this.router.url,
+      mode: 'edit',
+      description: 'Attach images and files to this contact. Images go on the contact; other files are stored as its documents.',
+    } ) );
+  }
+
   /** Saves only the images/documents field that changed (a merge, not an overwrite). */
   private async save ( changes: Pick<Contact, 'images'> | Pick<Contact, 'documents'>, message: string ): Promise<void> {
     const contact = this.contact();
@@ -140,6 +158,7 @@ export class ContactUploadComponent {
     try {
       await this.dataService.updateContact( this.tenantId, contact.id, changes );
       this.contact.set( { ...contact, ...changes } );
+      this.publishPageContext();
       this.status.set( message );
     } catch {
       this.error.set( 'Could not save the change to this contact.' );

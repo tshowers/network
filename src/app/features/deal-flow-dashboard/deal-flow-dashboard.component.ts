@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { Title } from '@angular/platform-browser';
@@ -9,6 +9,7 @@ import { environment } from '../../../environments/environment';
 import { Contact } from '../../models/contact.model';
 import { NetworkAuthService } from '../../services/network-auth.service';
 import { NetworkDataService } from '../../services/network-data.service';
+import { NetworkAssistantSignalService } from '../../services/network-assistant-signal.service';
 import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.component';
 import { PreloaderComponent } from '../../shared/preloader/preloader.component';
 
@@ -46,7 +47,7 @@ interface PipelineStatusStep {
   templateUrl: './deal-flow-dashboard.component.html',
   styleUrl: './deal-flow-dashboard.component.css',
 } )
-export class DealFlowDashboardComponent implements OnInit {
+export class DealFlowDashboardComponent implements OnInit, OnDestroy {
   readonly stages: FlowStage[] = [
     { label: 'Visitor', description: 'Visited the Network site today', statusNames: ['Visitor'], count: 0, accent: 'purple', icon: 'desktop', countLabel: 'visitors', detail: 'Returning 0%' },
     { label: 'Contacted', description: 'The first move has been made', statusNames: ['Contacted', 'Lead Generation'], count: 0, accent: 'teal', icon: 'paper-plane', countLabel: 'contacts', detail: '0 threads' },
@@ -89,13 +90,18 @@ export class DealFlowDashboardComponent implements OnInit {
     private dataService: NetworkDataService,
     private titleService: Title,
     private router: Router,
+    private assistantBus: NetworkAssistantSignalService,
   ) { }
+
+  ngOnDestroy (): void {
+    this.assistantBus.clearPageContext();
+  }
 
   async ngOnInit (): Promise<void> {
     this.titleService.setTitle( `${environment.COMPANY_NAME} - Networking Progress` );
     const userId = await firstValueFrom( this.authService.getUserId() );
     this.isSignedIn = !!userId;
-    if ( !userId ) { this.isLoading = false; return; }
+    if ( !userId ) { this.isLoading = false; this.publishPageContext(); return; }
 
     this.tenantId = await this.authService.resolveTenantId( userId );
     try {
@@ -190,6 +196,39 @@ export class DealFlowDashboardComponent implements OnInit {
       { label: 'Needs You', description: 'Needs your input or approval', count: this.countForStatuses( ['Engaged', 'Engagement'] ), accent: 'purple', icon: 'user' },
       { label: 'Cold Reserve', description: 'Parked for now, not a priority', count: this.unassignedCount, accent: 'gray', icon: 'box-archive' },
     ];
+    this.publishPageContext();
+  }
+
+  /**
+   * Tells TODD what Progress is showing - stage and priority counts plus
+   * today's outreach momentum - so it can answer "where is my pipeline
+   * stuck?" from these numbers. Republished whenever they change (contacts
+   * load, visitor and momentum metrics arrive later).
+   */
+  private publishPageContext (): void {
+    const count = ( items: Array<{ label: string; count: number; }> ) =>
+      Object.fromEntries( items.map( ( item ) => [item.label, item.count] ) );
+
+    this.assistantBus.setPageContext( {
+      feature: 'progress',
+      page: 'deal-flow-dashboard',
+      route: this.router.url,
+      mode: 'dashboard',
+      title: 'Progress',
+      description: 'How contacts move through the relationship stages (Visitor to Customer), what needs attention by priority, and today\'s outreach momentum.',
+      summary: {
+        isAuthenticated: this.isSignedIn,
+        totalContacts: this.contacts.length,
+        stageCounts: count( this.stages ),
+        priorityCounts: count( this.priorityStages ),
+        opportunityCount: this.opportunityCount,
+        customerCount: this.customerCount,
+        unassignedCount: this.unassignedCount,
+        visitorCount: this.visitorCount,
+        returningVisitorPercent: this.returningVisitorPercent,
+        todayMomentum: this.todayMomentumLoaded ? this.todayMomentum : null,
+      },
+    } );
   }
 
   displayName ( contact: Contact ): string {
@@ -272,6 +311,7 @@ export class DealFlowDashboardComponent implements OnInit {
       if ( data ) {
         this.todayMomentum = { sent: Number( data.emailsSent || 0 ), opens: Number( data.emailsOpened || 0 ), clicks: Number( data.emailsClicked || 0 ), visits: Number( data.visits || 0 ), socialPosts: Number( data.socialPostsPublished || 0 ), likes: Number( data.socialLikes || 0 ), comments: Number( data.socialComments || 0 ), trend: data.trend?.direction || 'flat' };
         this.todayMomentumLoaded = true;
+        this.publishPageContext();
       }
     } catch { /* Network may not have Outreach activity enabled. */ }
 
