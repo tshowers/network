@@ -35,7 +35,7 @@ export class OpenAIService {
 
   getAssistance ( prompt: string, domain: 'general' | 'contact', user?: string, data?: any ): Observable<any> {
     this.logger.log( 'Calling', `${environment.backendURL}/app-assistant`, 'With this message', prompt );
-    const headers = new HttpHeaders().set( 'Authorization', `Bearer ${environment.apiKey}` );
+    const headers = new HttpHeaders();
     const payload = {
       prompt,
       domain,

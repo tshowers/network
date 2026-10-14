@@ -16,7 +16,7 @@ export class NetworkInsightService {
   constructor ( private http: HttpClient ) { }
 
   contactInsight ( contact: Contact ): Observable<any> {
-    const headers = new HttpHeaders().set( 'Authorization', `Bearer ${environment.apiKey}` );
+    const headers = new HttpHeaders();
     return this.http.post<any>( `${environment.backendURL}/contact-insight`, { profile: contact }, { headers } );
   }
 }
