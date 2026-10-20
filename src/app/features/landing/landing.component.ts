@@ -40,13 +40,13 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
     // metadata stuck in place. This route is excluded from prerendering
     // (see app.routes.server.ts — it depends on Firebase Auth state, which
     // isn't safe to evaluate at build time), so this only ever runs client-side.
-    this.title.setTitle( 'Network — Know who matters and what to do next | Taliferro Tech' );
-    this.meta.updateTag( { name: 'description', content: 'Network keeps contacts, companies, conversations, and opportunities connected so TODD can surface who needs attention and what to do next.' } );
-    this.meta.updateTag( { property: 'og:title', content: 'Network — Know who matters and what to do next' } );
-    this.meta.updateTag( { property: 'og:description', content: 'Keep relationship context together so TODD can identify who needs attention, which opportunities are moving, and what should happen next.' } );
+    this.title.setTitle( 'Network — Get clients. Keep clients. | Taliferro Tech' );
+    this.meta.updateTag( { name: 'description', content: 'Your next client is probably someone you already know. Network keeps contacts, companies, conversations, and opportunities connected so TODD can surface who needs attention and what to do next.' } );
+    this.meta.updateTag( { property: 'og:title', content: 'Network — Get clients. Keep clients.' } );
+    this.meta.updateTag( { property: 'og:description', content: 'Your next client is probably someone you already know. See who needs your attention and what to do next.' } );
     this.meta.updateTag( { property: 'og:url', content: 'https://network.taliferro.tech/' } );
-    this.meta.updateTag( { name: 'twitter:title', content: 'Network — Know who matters and what to do next' } );
-    this.meta.updateTag( { name: 'twitter:description', content: 'Keep relationship context together so TODD can identify who needs attention and what should happen next.' } );
+    this.meta.updateTag( { name: 'twitter:title', content: 'Network — Get clients. Keep clients.' } );
+    this.meta.updateTag( { name: 'twitter:description', content: 'Your next client is probably someone you already know. See who needs your attention and what to do next.' } );
     this.seo.setCanonical( 'https://network.taliferro.tech/' );
 
     this.landingContext.start( {

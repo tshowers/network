@@ -11,7 +11,7 @@ describe( 'Network routes - signed out', () => {
     cy.visit( '/' );
     cy.get( '[data-cy="landing-shell"]' ).should( 'be.visible' );
     cy.get( '.nl-flow' ).should( 'be.visible' ).and( 'contain', 'Relationships' ).and( 'contain', 'Revenue' );
-    cy.contains( 'h1', "You can't grow every relationship" ).should( 'be.visible' );
+    cy.contains( 'h1', 'Get clients. Keep clients.' ).should( 'be.visible' );
   } );
 
   it( 'renders the iOS showcase at /ios', () => {

@@ -4,23 +4,22 @@
     <p class="nl-flow" aria-label="Relationships, then attention, then opportunities, then revenue">
       <span>Relationships</span><i aria-hidden="true"></i><span>Attention</span><i aria-hidden="true"></i><span>Opportunities</span><i aria-hidden="true"></i><span>Revenue</span>
     </p>
-    <h1>You can't grow every relationship. You shouldn't try.</h1>
-    <p class="nl-body">Network helps you see which relationships deserve your attention. Because attention creates opportunities. And opportunities create revenue.</p>
+    <h1>Get clients.<br> Keep clients.</h1>
+    <p class="nl-body">Your next client is probably someone you already know. Network shows you who needs your attention and what to do next.</p>
     <p class="nl-closing">Know your relationships. Know where to look next.</p>
     <div class="nl-ctas">
-      <a class="nw-btn nw-btn--primary nl-cta" routerLink="/get-started" (click)="onPrimaryCtaClick()">Get started <svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      <a class="nw-btn nw-btn--primary nl-cta" routerLink="/get-started" (click)="onPrimaryCtaClick()">Get started <svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 12h14M12 5l7 7-7 7" />
+        </svg></a>
       <span class="nl-store">App Store · coming soon</span>
       <a class="nl-pricing" routerLink="/pricing" data-cy="landing-pricing" (click)="onPricingCtaClick()">Pricing</a>
     </div>
     <p class="tt-made-by"><a href="https://todd.taliferro.tech" target="_blank" rel="noopener"><span class="tt-made-by__todd"><img src="assets/find/entities/todd/logo-bw-icon.png" alt="" /></span>Powered by <strong>TODD</strong></a><i aria-hidden="true"></i><a appAlsoFromUs></a></p>
   </section>
-
   <!-- Demo video; CSS shows the one matching the theme, the component only loads/plays that one. -->
   <div class="nl-visual" aria-hidden="true" data-cy="landing-demo">
-    <video #demoVideo class="nl-demo nl-demo--light" muted loop playsinline preload="none" width="1024" height="1280"
-      poster="assets/video/network-todd-demo-light-poster.jpg" src="assets/video/network-todd-demo-light.mp4"></video>
-    <video #demoVideo class="nl-demo nl-demo--dark" muted loop playsinline preload="none" width="1024" height="1280"
-      poster="assets/video/network-todd-demo-dark-poster.jpg" src="assets/video/network-todd-demo-dark.mp4"></video>
+    <video #demoVideo class="nl-demo nl-demo--light" muted loop playsinline preload="none" width="1024" height="1280" poster="assets/video/network-todd-demo-light-poster.jpg" src="assets/video/network-todd-demo-light.mp4"></video>
+    <video #demoVideo class="nl-demo nl-demo--dark" muted loop playsinline preload="none" width="1024" height="1280" poster="assets/video/network-todd-demo-dark-poster.jpg" src="assets/video/network-todd-demo-dark.mp4"></video>
   </div>
 </main>
 <app-site-footer></app-site-footer>
