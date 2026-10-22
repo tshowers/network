@@ -13,8 +13,10 @@ import { ContactLocalAssistantService } from '../../../services/contact-local-as
 import { SystemRecoveryService } from '../../../services/system-recovery.service';
 import { NetworkAssistantSignalService } from '../../../services/network-assistant-signal.service';
 import { AssistantUiService } from '../../../services/assistant-ui.service';
+import { AssistantMissionComponent, AssistantMissionsService } from '../../missions/assistant-missions';
 
-type ChatMsg = { role: 'user' | 'assistant'; content: string; };
+// role 'mission': a Mission the assistant started from this ask, shown in place (missionId).
+type ChatMsg = { role: 'user' | 'assistant' | 'mission'; content: string; missionId?: string; };
 
 /**
  * Network's own assistant-box - a trimmed port of TODD's
@@ -28,7 +30,7 @@ type ChatMsg = { role: 'user' | 'assistant'; content: string; };
 @Component( {
     selector: 'app-assistant-box',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, AssistantMissionComponent],
     templateUrl: './assistant-box.component.html',
     styleUrls: ['./assistant-box.component.css']
 } )
@@ -71,6 +73,7 @@ export class AssistantBoxComponent implements OnInit, OnChanges, OnDestroy {
         private systemRecovery: SystemRecoveryService,
         private assistantBus: NetworkAssistantSignalService,
         private assistantUi: AssistantUiService,
+        private assistantMissions: AssistantMissionsService,
     ) { }
 
     ngOnInit (): void {
@@ -428,6 +431,11 @@ export class AssistantBoxComponent implements OnInit, OnChanges, OnDestroy {
             this.message.emit( { role: 'user', content: raw } );
         }
 
+        if ( await this.tryMission( raw ) ) {
+            this.assistantPrompt = '';
+            return;
+        }
+
         const ctx: AssistantEngineContext = {
             rawPrompt: raw,
             userId: this.userId,
@@ -621,9 +629,38 @@ export class AssistantBoxComponent implements OnInit, OnChanges, OnDestroy {
         this.assistantPrompt = '';
     }
 
-    private buildHistoryForLLM (): Array<ChatMsg> {
+    /**
+     * The Missions gate (taliferro-ui/missions/assistant-missions): real work
+     * becomes a Mission shown right here - its plan, who does each step,
+     * Start, and every step a person must finish; a quick question is
+     * answered by the right tool. Navigation commands, help questions and
+     * any error fall through to the assistant as before.
+     * @returns true when the ask was handled here.
+     */
+    private async tryMission ( raw: string ): Promise<boolean> {
+        if ( !this.userId || this.parentOwnsHistory || this.externalMode ) return false;
+        if ( this.capabilities.tryDirectNavCommand( raw ).handled ) return false;
+        this.isLoading = true;
+        try {
+            const route = await this.assistantMissions.route( raw, 'network', this.pageContext );
+            if ( route?.kind === 'mission' ) {
+                this.history.push( { role: 'mission', content: '', missionId: route.missionId } );
+                this.assistantMissions.reveal();
+                return true;
+            }
+            if ( route?.kind === 'answer' ) {
+                this.publishChatMessage( 'assistant', route.text );
+                return true;
+            }
+            return false;
+        } finally {
+            this.isLoading = false;
+        }
+    }
+
+    private buildHistoryForLLM (): Array<{ role: 'user' | 'assistant'; content: string }> {
         if ( !this.history?.length ) return [];
         const stripHtml = ( html: string ) => html.replace( /<[^>]*>/g, '' );
-        return this.history.slice( -6 ).map( m => ( { role: m.role, content: stripHtml( m.content || '' ).slice( 0, 1000 ) } ) );
+        return this.history.filter( m => m.role !== 'mission' ).slice( -6 ).map( m => ( { role: m.role as 'user' | 'assistant', content: stripHtml( m.content || '' ).slice( 0, 1000 ) } ) );
     }
 }

@@ -301,3 +301,10 @@
     display: none !important;
   }
 }
+
+/* In the large centered assistant, the conversation isn't capped: the window
+ * scrolls, so a Mission's whole plan shows instead of a small slice. */
+:host-context(.todd-assistant-window) .assistant-thread {
+  max-height: none;
+  overflow: visible;
+}

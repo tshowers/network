@@ -7,6 +7,8 @@
           {{ msg.content }}
         </div>
       </div>
+      <!-- A Mission started from this ask: its live plan, Start, and the steps that need you -->
+      <tm-assistant-mission *ngIf="msg.role === 'mission' && msg.missionId" [missionId]="msg.missionId" [viewerId]="userId || ''"></tm-assistant-mission>
       <!-- Assistant messages -->
       <div *ngIf="msg.role === 'assistant'" class="assistant-message assistant-message-assistant">
         <div class="assistant-message-bubble assistant-message-bubble-assistant assistant-response" [innerHTML]="msg.content" (click)="onAssistantContentClick($event)">
