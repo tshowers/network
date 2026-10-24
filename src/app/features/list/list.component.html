@@ -35,7 +35,12 @@
 
     <app-preloader [isLoading]="isLoading" message="Loading your contacts…"></app-preloader>
 
-    <p class="cl-empty" *ngIf="!isLoading && filteredContacts.length === 0 && !errorMessage">{{ contacts.length === 0 ? 'No contacts yet.' : 'No contacts match your search.' }}</p>
+    <app-empty-state *ngIf="!isLoading && !errorMessage && !hasContacts" kicker="Contacts" heading="Your contacts will live here"
+                     body="Bring them in from a CSV, or add people one at a time. TODD checks every email and fills in missing details as they land." data-cy="contacts-empty">
+      <a class="nw-btn nw-btn--primary" routerLink="/contact-import" appWriteAction="import contacts">Import contacts</a>
+      <button type="button" class="nw-btn nw-btn--on-surface" appWriteAction="add a contact" (click)="addContact()">Add one by hand</button>
+    </app-empty-state>
+    <p class="cl-empty" *ngIf="!isLoading && filteredContacts.length === 0 && !errorMessage && hasContacts">No contacts match your search.</p>
 
     <div class="cl-table" *ngIf="filteredContacts.length > 0" role="table" aria-label="Contacts">
       <div class="cl-row cl-row--head" role="row">

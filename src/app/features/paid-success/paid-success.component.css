@@ -1,83 +1,79 @@
-:host {
-    display: block;
+:host { display: block; }
+
+.ps { padding-top: 40px; }
+
+.ps-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  max-width: 760px;
+  padding: 28px;
+  border-radius: 24px;
+  background: var(--surface);
 }
 
-.network-success-page {
-    padding: 1.5rem;
+.ps-card h1 { margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+.ps-card p { margin: 0; color: var(--muted); line-height: 1.5; }
+
+.ps-intro { display: flex; flex-direction: column; gap: 14px; max-width: 760px; }
+
+.ps-tag {
+  align-self: flex-start;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
 }
 
-.network-success-card {
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 1.75rem;
-    border-radius: 1.25rem;
+.ps-title { font-size: 48px; line-height: 1.05; }
+.ps-intro .nw-sub { max-width: 600px; margin: 0; }
+
+.ps-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+  margin-top: 14px;
 }
 
-.network-success-eyebrow {
-    font-size: 0.85rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 0.75rem;
-    /* Explicit color, not just opacity: Bootstrap's .card class (also on
-       this element) sets its own fixed, non-theme-aware text color, which
-       otherwise wins the cascade over this component's dark-mode rule
-       below since nothing here overrides it in light mode either. */
-    color: #0095cc;
+.ps-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 0;
+  padding: 24px;
+  border: 0;
+  border-radius: 24px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
 }
 
-.network-success-card h1 {
-    margin: 0 0 0.75rem;
-    font-size: clamp(2rem, 3vw, 2.6rem);
-    line-height: 1.05;
+.ps-tile:hover { transform: translateY(-2px); background: var(--t-blue); box-shadow: var(--shadow-md); }
+.ps-tile:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.ps-tile strong { font-size: 17px; }
+.ps-tile > span:last-child { font-size: 14px; color: var(--muted); }
+
+.ps-mark {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--blue-ink);
+  font-weight: 700;
 }
 
-.network-success-card p {
-    margin: 0;
-    line-height: 1.7;
-    font-size: 1.02rem;
-}
+.ps-later { align-self: flex-start; padding: 0; border: 0; background: none; cursor: pointer; }
 
-.network-success-actions {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-    margin-top: 1.25rem;
-}
-
-.network-success-error-card {
-    border: 1px solid rgba(220, 53, 69, 0.18);
-}
-
-@media (max-width: 640px) {
-    .network-success-page {
-        padding: 1rem;
-    }
-
-    .network-success-card {
-        padding: 1.15rem;
-    }
-}
-
-@media (prefers-color-scheme: dark) {
-    .network-success-card {
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .network-success-error-card {
-        border-color: rgba(255, 107, 107, 0.24);
-    }
-
-    .network-success-eyebrow {
-        color: #00bfff;
-    }
-
-    .network-success-card h1 {
-        color: #f5f5f5;
-    }
-
-    .network-success-card p {
-        color: rgba(255, 255, 255, 0.75);
-    }
+@media (max-width: 760px) {
+  .ps { padding-top: 16px; }
+  .ps-title { font-size: 34px; }
 }

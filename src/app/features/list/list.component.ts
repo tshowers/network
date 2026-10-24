@@ -15,6 +15,7 @@ import { PreloaderComponent } from '../../shared/preloader/preloader.component';
 import { StatusFlowComponent } from '../../shared/status-flow/status-flow.component';
 import { stageTint } from '../../shared/stage-tint';
 import { WriteActionDirective } from '../../shared/write-access/write-action.directive';
+import { EmptyStateComponent } from '../../shared/empty-state/empty-state.component';
 
 type ContactSortKey = 'name' | 'company' | 'email' | 'phone' | 'status';
 type SortDirection = 'asc' | 'desc';
@@ -39,7 +40,7 @@ type SortDirection = 'asc' | 'desc';
 @Component( {
   selector: 'app-list',
   standalone: true,
-  imports: [WriteActionDirective, CommonModule, FormsModule, RouterModule, BackToTopComponent, PreloaderComponent, StatusFlowComponent],
+  imports: [WriteActionDirective, CommonModule, FormsModule, RouterModule, BackToTopComponent, PreloaderComponent, StatusFlowComponent, EmptyStateComponent],
   templateUrl: './list.component.html',
   styleUrl: './list.component.css',
 } )
@@ -198,6 +199,11 @@ export class ListComponent implements OnInit, OnDestroy {
 
   /** The signed-in user's own contact record (its id is their uid) - shown
    * with a "(You)" tag, the same cue TODD's contact list gives. */
+  /** Anyone besides the user's own record. */
+  get hasContacts (): boolean {
+    return this.contacts.some( ( contact ) => !this.isSelf( contact ) );
+  }
+
   isSelf ( contact: Contact ): boolean {
     return !!this.currentUserId && ( contact as any ).id === this.currentUserId;
   }

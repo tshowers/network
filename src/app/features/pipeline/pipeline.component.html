@@ -23,7 +23,10 @@
   <ng-container *ngIf="isSignedIn">
     <p class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</p>
 
-    <p class="pl-empty" *ngIf="!isLoading && pipelineContactCount === 0 && !errorMessage">No contacts have a pipeline status yet. Set a contact's status from its edit page to see it here.</p>
+    <app-empty-state *ngIf="!isLoading && pipelineContactCount === 0 && !errorMessage" kicker="Pipeline" heading="Nothing in your pipeline yet"
+                     body="Give a contact a stage, like Lead, Talking or Proposal, and they show up here so you can see what's moving." data-cy="pipeline-empty">
+      <a class="nw-btn nw-btn--primary" routerLink="/contact-list">Go to contacts</a>
+    </app-empty-state>
 
     <ng-container *ngIf="pipelineContactCount > 0">
       <!-- Phone: pick one lane instead of scrolling sideways through eight. -->

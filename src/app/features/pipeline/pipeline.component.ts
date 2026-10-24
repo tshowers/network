@@ -15,6 +15,7 @@ import type { ArcGaugeTone } from '../../shared/arc-gauge/arc-gauge.component';
 import { stageTint } from '../../shared/stage-tint';
 import { StatusFlowComponent } from '../../shared/status-flow/status-flow.component';
 import { ChoiceFieldComponent, ChoiceOption } from '../../shared/choice-field/choice-field.component';
+import { EmptyStateComponent } from '../../shared/empty-state/empty-state.component';
 
 interface PipelineStage {
   name: string;
@@ -70,6 +71,7 @@ const LATE_STAGES = ['Negotiation', 'Closing', 'Post-Sale', 'Closed Won'];
     PreloaderComponent,
     StatusFlowComponent,
     ChoiceFieldComponent,
+    EmptyStateComponent,
   ],
   templateUrl: './pipeline.component.html',
   styleUrl: './pipeline.component.css',

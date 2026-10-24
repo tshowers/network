@@ -112,8 +112,8 @@ describe( 'Network user journey - sign up to sign out', { defaultCommandTimeout:
     cy.intercept( 'GET', '**/network/limits*', { statusCode: 200, body: {} } );
     // Import and Save carry appWriteAction - this user has Network write access.
     cy.intercept( 'GET', '**/account/summary', { statusCode: 200, body: { success: true, data: { writeAccess: { network: true } } } } );
-    // Nothing left on the Getting Started checklist, so sign-in goes straight to /app.
-    cy.intercept( 'GET', '**/network/getting-started', { statusCode: 200, body: { data: { allDone: true } } } );
+    // Setup checklist done, so Home shows the dashboard rather than first-run steps.
+    cy.intercept( 'GET', '**/network/onboarding', { statusCode: 200, body: { data: { allDone: true, steps: [], counts: { imported: 1 } } } } );
 
     // The backend's onboarding save only fills blank fields.
     cy.intercept( 'POST', '**/onboarding/profile', ( req ) => {
@@ -176,11 +176,9 @@ describe( 'Network user journey - sign up to sign out', { defaultCommandTimeout:
     // 4a. Import the sample CSV.
     cy.visit( '/contact-import' );
     cy.get( '[data-cy="csv-import-shell"]' ).should( 'be.visible' );
-    cy.contains( 'button', 'Or try it with sample data' ).click();
-    cy.contains( '.field-mapping-toolbar__actions button', 'Next' ).click();
-    cy.contains( '.ci-actions button', 'Continue' ).click();
-    cy.get( '.ci-actions .nw-btn--primary' ).should( 'contain.text', 'Import' ).click();
-    cy.contains( '.ci-card--center h2', 'Import complete', { timeout: 15000 } ).should( 'be.visible' );
+    cy.get( '[data-cy="ci-sample"]' ).click();
+    cy.get( '[data-cy="ci-import"]' ).should( 'contain.text', 'Import 12 contacts' ).click();
+    cy.contains( '.ci-card--center h2', '12 contacts imported', { timeout: 15000 } ).should( 'be.visible' );
 
     // 4b. Create one contact by hand: a company, but no email.
     cy.visit( '/contact-edit' );

@@ -84,6 +84,6 @@ describe( 'Network routes - signed out', () => {
     cy.visit( '/contact-import' );
     cy.get( '[data-cy="csv-import-shell"]' ).should( 'be.visible' );
     cy.get( '.ci-guest' ).should( 'be.visible' );
-    cy.contains( '.ci-drop h2', 'Drag a CSV here, or choose a file' ).should( 'be.visible' );
+    cy.contains( '.ci-drop h2', 'Drop a CSV here' ).should( 'be.visible' );
   } );
 } );

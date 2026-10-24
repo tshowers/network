@@ -6,11 +6,10 @@ import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import {
   COMPANY_DESCRIPTION_CHOICES,
-  computeProfileCompletion,
-  ProfileCompletion,
   fillProfileChoice,
   MISSION_CHOICES,
   PROFILE_ROLES,
+  ProfileAiField,
   ProfileChoice,
   ToddProfile,
   VALUE_PROPOSITION_CHOICES,
@@ -19,6 +18,8 @@ import { getProfileUrl } from '@taliferro/ui/platform/account-menu.model';
 import { NetworkAuthService } from '../../services/network-auth.service';
 import { OnboardingProfileService } from '../../services/onboarding-profile.service';
 import { ProfileApiService } from '../../services/profile-api.service';
+import { NetworkOnboardingService } from '../../services/network-onboarding.service';
+import { ProfileQuestionCardComponent } from '../../shared/profile-question-card/profile-question-card.component';
 
 interface ChoiceField {
   key: 'companyDescription' | 'valueProp' | 'companyGoal';
@@ -37,7 +38,7 @@ interface ChoiceField {
 @Component( {
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, ProfileQuestionCardComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css',
 } )
@@ -48,6 +49,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
     { key: 'valueProp', title: 'Value proposition', choices: VALUE_PROPOSITION_CHOICES },
     { key: 'companyGoal', title: 'Mission', choices: MISSION_CHOICES },
   ];
+  /** The fields TODD's AI writes from; empty ones get an "Answer" button for the side card. */
+  readonly aiRows: Array<{ field: ProfileAiField; label: string }> = [
+    { field: 'companyDescription', label: 'What your company does' },
+    { field: 'valueProp', label: 'Value proposition' },
+    { field: 'companyGoal', label: 'Mission' },
+    { field: 'jobDescriptionForTODD', label: 'What TODD should do for you each week' },
+  ];
+  askField: ProfileAiField | null = null;
   readonly timezones = this.supportedTimezones();
   readonly toddProfileUrl = getProfileUrl();
 
@@ -65,6 +74,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private readonly api: ProfileApiService,
     private readonly authService: NetworkAuthService,
     private readonly onboarding: OnboardingProfileService,
+    private readonly setup: NetworkOnboardingService,
     private readonly router: Router,
     private readonly title: Title,
   ) { }
@@ -105,13 +115,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
   }
 
-  /** Completion of the saved profile (not unsaved edits), same items as iOS. */
-  get completion (): ProfileCompletion | null {
-    return this.savedJson ? computeProfileCompletion( JSON.parse( this.savedJson ) ) : null;
+  answer ( field: ProfileAiField ): void {
+    this.askField = field;
   }
 
-  get missingSummary (): string {
-    return ( this.completion?.missing || [] ).map( ( item ) => item.label.toLowerCase() ).join( ', ' );
+  /** The side card saved an answer (or rolled one back). */
+  onAnswerSaved ( profile: ToddProfile ): void {
+    this.setProfile( profile );
+    void this.setup.refresh();
   }
 
   get isDirty (): boolean {
@@ -165,6 +176,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.errorMessage = '';
     try {
       this.setProfile( await this.api.save( this.profile ) );
+      void this.setup.refresh();
       this.isEditing = false;
       this.justSaved = true;
       setTimeout( () => ( this.justSaved = false ), 2000 );

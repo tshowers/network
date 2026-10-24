@@ -1,8 +1,9 @@
 /**
  * Trimmed from services/purchase-flow.config.ts - only the Network entry,
- * and postConfirmRoute/loginReturnUrl point at this app's own root ('/')
- * rather than TODD's '/network' sub-route, since this app IS Network, not
- * a page inside a larger app.
+ * and loginReturnUrl points at this app's own pages rather than TODD's
+ * '/network' sub-route, since this app IS Network, not a page inside a
+ * larger app. postConfirmRoute is Home: the paid-success page asks for
+ * contacts first, and "I'll do this later" goes there.
  */
 export interface ProductPurchaseFlowConfig {
   productKey: 'network';
@@ -23,5 +24,5 @@ export const NETWORK_PURCHASE_FLOW: ProductPurchaseFlowConfig = {
   checkoutEndpoint: '/network/checkout',
   confirmEndpoint: '/network/checkout/confirm',
   successRoute: '/success',
-  postConfirmRoute: '/',
+  postConfirmRoute: '/app',
 };

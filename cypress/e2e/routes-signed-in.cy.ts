@@ -102,21 +102,27 @@ describe( 'Network routes - signed in', () => {
     } );
 
     cy.get( '[data-cy="csv-import-shell"]' ).should( 'be.visible' );
-    cy.contains( 'button', 'Or try it with sample data' ).click();
+    cy.get( '[data-cy="ci-sample"]' ).click();
 
-    // Step 2: Field Match auto-maps the sample file's headers - just confirm.
+    // One confirm step: TODD matched the sample's columns, nothing to map.
+    cy.contains( '[data-cy="ci-preview"] h2', '12 contacts found' ).should( 'be.visible' );
+    cy.get( '[data-cy="ci-preview"] .nw-pill' ).should( 'contain.text', 'Email Address' );
+    cy.get( '[data-cy="ci-import"]' ).should( 'contain.text', 'Import 12 contacts' ).click();
+
+    cy.contains( '.ci-card--center h2', '12 contacts imported', { timeout: 15000 } ).should( 'be.visible' );
+  } );
+
+  it( 'opens the column mapper from the import preview', () => {
+    stubEntitlement();
+    cy.visitWithFirebaseEmulators( '/contact-import?sample=1', {
+      email: `network-import-map-${Date.now()}@example.com`,
+      password: 'CypressTest123!',
+    } );
+
+    cy.contains( '[data-cy="ci-preview"] h2', '12 contacts found' ).should( 'be.visible' );
+    cy.get( '[data-cy="ci-change"]' ).click();
     cy.contains( '.field-mapping-toolbar__actions button', 'Next' ).click();
-
-    // Step 3: Review the mapped rows.
-    cy.contains( '.ci-actions button', 'Continue' ).click();
-
-    // Step 4: Confirm + import. Target the button's unique class rather than
-    // its exact label text (getImportButtonLabel()'s "Import" is whitespace-
-    // padded by the template interpolation, which made an exact-text regex
-    // match unreliable).
-    cy.get( '.ci-actions .nw-btn--primary' ).should( 'contain.text', 'Import' ).click();
-
-    cy.contains( '.ci-card--center h2', 'Import complete', { timeout: 15000 } ).should( 'be.visible' );
+    cy.contains( '[data-cy="ci-preview"] h2', '12 contacts found' ).should( 'be.visible' );
   } );
 
   it( 'confirms a checkout session at /success', () => {
@@ -131,6 +137,9 @@ describe( 'Network routes - signed in', () => {
 
     cy.wait( '@confirmCheckout' );
     cy.get( '[data-cy="paid-success-shell"]' ).should( 'be.visible' );
-    cy.contains( 'h1', 'Network access is now active' ).should( 'be.visible' );
+    cy.get( '[data-cy="paid-success-ready"]' ).should( 'contain.text', 'Network is unlocked' );
+    cy.contains( 'h1', 'Where are your contacts?' ).should( 'be.visible' );
+    cy.get( '[data-cy="paid-source-csv"]' ).click();
+    cy.location( 'pathname' ).should( 'eq', '/contact-import' );
   } );
 } );

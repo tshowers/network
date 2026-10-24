@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Subscription, combineLatest } from 'rxjs';
@@ -13,6 +13,8 @@ import type { StatusLedTone } from '../../shared/status-led/status-led.component
 import { PageAction } from '../../models/page-actions.models';
 import type { CockpitCommandDeckLink } from '../../shared/cockpit-command-deck/cockpit-command-deck.component';
 import { ReliefStatus, SeverityLevel } from '../../models/business-symptom.model';
+import { IMPORT_SOURCES, ImportSource, openImportSource } from '../../models/import-sources';
+import { NetworkOnboarding, NetworkOnboardingService, OnboardingStep } from '../../services/network-onboarding.service';
 
 interface NetworkLimitState {
   currentCount: number;
@@ -119,6 +121,9 @@ export class ContactHomeComponent implements OnInit, AfterViewInit, OnDestroy {
   momentumScore = 0;
   healthMeters: NetworkHealthMeter[] = [];
   diagnosisRows: NetworkDiagnosisRow[] = [];
+  readonly onboarding = inject( NetworkOnboardingService );
+  readonly sources = IMPORT_SOURCES;
+
   appStatusSummary = 'TODD is standing by. Connect the relationship graph to turn diagnosis, treatment, and relief monitoring on.';
 
   private readonly contactLimitAssistantMessage = 'You can’t generate more revenue because you’ve hit your contact limit.';
@@ -166,6 +171,60 @@ export class ContactHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         hasNetworkFeaturesPage: false,
       }
     } );
+  }
+
+  /** Signed in, not embedded, and the checklist has loaded. */
+  get setup (): NetworkOnboarding | null {
+    return this.isLoggedIn && !this.isEmbedded ? this.onboarding.onboarding() : null;
+  }
+
+  get showSetup (): boolean {
+    return !!this.setup && !this.setup.allDone;
+  }
+
+  /** No contacts yet: Home is only the setup steps and the import panel. */
+  get isFirstRun (): boolean {
+    return !!this.setup && this.setup.counts.imported === 0;
+  }
+
+  get setupTitle (): string {
+    const setup = this.setup;
+    if ( !setup || setup.counts.imported === 0 ) {
+      return setup?.firstName ? `Welcome, ${setup.firstName}. Let’s get your contacts in.` : 'Welcome. Let’s get your contacts in.';
+    }
+    return this.stepDone( 'cleanup' ) ? 'Your list is clean. Time to reach out.' : 'TODD is working on your contacts.';
+  }
+
+  get setupSub (): string {
+    return this.isFirstRun
+      ? 'Network is most useful once it has your people in it. Bring them in from wherever they are now, and TODD does the tidying.'
+      : 'Your relationship dashboard fills in as contacts are checked. Pick up where you left off below.';
+  }
+
+  /** Home shows the four steps a new user acts on or waits for (not "Look at what TODD flagged"). */
+  get setupCards (): OnboardingStep[] {
+    return ( this.setup?.steps || [] ).filter( ( step ) => step.id !== 'review' );
+  }
+
+  stepNumber ( step: OnboardingStep ): number {
+    return ( this.setup?.steps || [] ).indexOf( step ) + 1;
+  }
+
+  isCurrentStep ( step: OnboardingStep ): boolean {
+    return this.onboarding.currentStepId() === step.id;
+  }
+
+  /** Only the current card has a button; the import panel covers step 1. */
+  showsStepAction ( step: OnboardingStep ): boolean {
+    return this.isCurrentStep( step ) && step.available && step.id !== 'contacts';
+  }
+
+  pickSource ( source: ImportSource ): void {
+    openImportSource( source, this.router, this.contactState );
+  }
+
+  private stepDone ( id: OnboardingStep['id'] ): boolean {
+    return !!this.setup?.steps.find( ( step ) => step.id === id )?.done;
   }
 
   ngOnDestroy (): void {
@@ -446,6 +505,7 @@ export class ContactHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loggedInSubscription?.unsubscribe();
     this.loggedInSubscription = this.authService.isLoggedIn().subscribe( loggedIn => {
       this.isLoggedIn = loggedIn;
+      if ( loggedIn ) void this.onboarding.refresh();
       this.recomputeDashboardDerivedState();
     } );
   }

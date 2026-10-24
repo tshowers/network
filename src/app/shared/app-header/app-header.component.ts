@@ -5,6 +5,7 @@ import { filter } from 'rxjs';
 import { ThemeMode, currentTheme, toggleTheme } from '@taliferro/ui/platform/theme';
 
 import { PlatformMenuComponent } from '../platform-menu/platform-menu.component';
+import { SetupChecklistComponent } from '../setup-checklist/setup-checklist.component';
 
 /** The four signed-in sections (design_handoff_music_leadvault_network 15b–15g). */
 export const NETWORK_SECTIONS = [
@@ -16,13 +17,14 @@ export const NETWORK_SECTIONS = [
 
 /**
  * Network's header: logo and name; the section nav when signed in, or
- * Pricing and Sign in when not; the Light/Dark pill; the Menu pill.
+ * Pricing and Sign in when not; the Setup pill while setup steps remain;
+ * the Light/Dark pill; the Menu pill.
  * On a phone the nav moves into the Menu and the title becomes the section.
  */
 @Component( {
   selector: 'app-header',
   standalone: true,
-  imports: [RouterLink, PlatformMenuComponent],
+  imports: [RouterLink, PlatformMenuComponent, SetupChecklistComponent],
   templateUrl: './app-header.component.html',
 } )
 export class AppHeaderComponent {

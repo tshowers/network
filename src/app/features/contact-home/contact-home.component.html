@@ -1,6 +1,36 @@
 <!-- Relationships (design_handoff_music_leadvault_network 15b; 15l on iPhone). -->
 <app-back-to-top *ngIf="!isEmbedded"></app-back-to-top>
 <main class="nw-page rel" [class.rel--embedded]="isEmbedded" data-demo="contact-list" data-cy="contact-home-shell">
+  <!-- First session (design_handoff_network_onboarding 02): one goal per step until setup is done. -->
+  <section class="rel-setup" *ngIf="showSetup && setup as s" data-cy="home-setup">
+    <div class="rel-setup__intro">
+      <h1 class="nw-title rel-setup__title">{{ setupTitle }}</h1>
+      <p class="nw-sub">{{ setupSub }}</p>
+    </div>
+    <div class="rel-setup__cards">
+      <article class="rel-step" *ngFor="let step of setupCards; trackBy: trackById" [class.is-current]="isCurrentStep(step)" data-cy="home-setup-step">
+        <div class="rel-step__head">
+          <span class="rel-step__mark" [class.is-done]="step.done" [class.is-current]="isCurrentStep(step)" aria-hidden="true">{{ step.done ? '✓' : stepNumber(step) }}</span>
+          <span class="nw-eyebrow">{{ step.kicker }}</span>
+        </div>
+        <strong>{{ step.title }}</strong>
+        <p>{{ step.detail }}</p>
+        <ng-container *ngIf="showsStepAction(step)">
+          <button *ngIf="step.id === 'reachOut'; else stepLink" type="button" class="nw-btn nw-btn--primary rel-step__action" (click)="onboarding.openOutreach()">{{ onboarding.actionFor(step) }}</button>
+          <ng-template #stepLink><a class="nw-btn nw-btn--primary rel-step__action" [routerLink]="onboarding.routeFor(step)">{{ onboarding.actionFor(step) }}</a></ng-template>
+        </ng-container>
+      </article>
+    </div>
+    <div class="rel-import" *ngIf="isFirstRun" data-cy="home-import">
+      <h2>Bring in your contacts</h2>
+      <div class="rel-import__sources">
+        <button type="button" class="nw-btn nw-btn--on-surface" *ngFor="let source of sources" (click)="pickSource(source)" [attr.data-cy]="'home-source-' + source.id">{{ source.name }}</button>
+      </div>
+      <a class="nw-link" routerLink="/contact-import" [queryParams]="{ sample: 1 }" data-cy="home-sample">No list handy? Try it with 12 sample contacts</a>
+    </div>
+  </section>
+
+  <ng-container *ngIf="!isFirstRun">
   <header class="rel-top" *ngIf="!isEmbedded" data-demo="contact-command-deck">
     <div>
       <span class="nw-tag">TODD command deck</span>
@@ -117,4 +147,5 @@
       </div>
     </section>
   </div>
+  </ng-container>
 </main>

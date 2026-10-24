@@ -69,3 +69,22 @@ textarea.pf-input { resize: vertical; }
 .pf-completion__meter span.is-complete { background: var(--green); }
 .pf-completion .pf-note { margin-bottom: 0; }
 .pf-link { border: 0; background: none; padding: 0; color: var(--pf-accent); font: inherit; font-weight: 700; cursor: pointer; }
+
+/* Read view (design_handoff_network_onboarding 07): sections, and the
+ * question card that fills the AI fields, side by side. */
+.pf-inner { max-width: 1040px; }
+.pf-header p { max-width: 640px; }
+form, .pf-inner > .pf-card { max-width: 760px; }
+
+.pf-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 360px); gap: 20px; align-items: start; }
+.pf-aside { position: sticky; top: 20px; }
+
+.pf-unanswered { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.pf-unanswered .is-empty { color: var(--network-muted); }
+.pf-answer { height: 30px; min-height: 0; padding: 0 12px; border: 0; border-radius: 999px; background: var(--bg); color: var(--text); font: 600 13px/1 var(--font); cursor: pointer; }
+.pf-answer:hover { background: var(--surface2); }
+
+@media (max-width: 860px) {
+  .pf-layout { grid-template-columns: minmax(0, 1fr); }
+  .pf-aside { position: static; order: -1; }
+}

@@ -1,0 +1,34 @@
+<section class="pq" aria-labelledby="pq-heading" data-cy="profile-question-card">
+  <div class="pq-top">
+    <span id="pq-heading" class="pq-heading">{{ heading }}</span>
+    <span>TODD knows {{ completion.completed }} of {{ completion.total }}</span>
+  </div>
+  <div class="pq-bar" role="progressbar" [attr.aria-valuenow]="completion.completed" aria-valuemin="0" [attr.aria-valuemax]="completion.total">
+    <span [style.width.%]="completion.percent"></span>
+  </div>
+
+  @if (question; as q) {
+    <h3 class="pq-question">{{ q.question }}</h3>
+    <p class="pq-hint">{{ q.hint }}</p>
+    <div class="pq-choices" role="group" [attr.aria-label]="q.question">
+      @for (choice of q.choices; track choice.label) {
+        <button type="button" class="pq-chip" [class.is-selected]="pickedChoice === choice.label" [attr.aria-pressed]="pickedChoice === choice.label" (click)="pick(choice)" data-cy="pq-choice">{{ choice.label }}</button>
+      }
+    </div>
+    <textarea class="nw-input nw-input--on-surface pq-text" rows="3" placeholder="Write your own" [attr.aria-label]="q.question"
+              [(ngModel)]="draft" (ngModelChange)="onType()" data-cy="pq-text"></textarea>
+    <div class="pq-actions">
+      <button type="button" class="nw-btn nw-btn--primary pq-btn" [disabled]="!draft.trim()" (click)="save()" data-cy="pq-save">{{ remaining === 1 ? 'Save' : 'Save and next' }}</button>
+      <button type="button" class="nw-btn nw-btn--on-surface pq-btn" (click)="skip()" data-cy="pq-later">Later</button>
+      <span class="pq-step">{{ answeredCount + 1 }} of {{ questions.length }}</span>
+    </div>
+  } @else {
+    <p class="pq-done" data-cy="pq-done">TODD has what it needs. Outreach, Docs and Maya use this to write in your voice. Change it any time from your profile.</p>
+    @if (showProfileLink) {
+      <a class="nw-btn nw-btn--on-surface pq-btn" routerLink="/profile">See your profile</a>
+    }
+  }
+  @if (errorMessage) {
+    <p class="pq-error" role="alert">{{ errorMessage }}</p>
+  }
+</section>

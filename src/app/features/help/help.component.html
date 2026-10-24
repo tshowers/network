@@ -22,7 +22,7 @@
 
   <section *ngIf="progress" id="your-progress" class="ni-card ni-progress" aria-labelledby="help-progress-title" data-cy="help-progress">
     <p class="nw-eyebrow nw-eyebrow--blue">Your progress</p>
-    <h2 id="help-progress-title">{{ progress.allDone ? "You're all set" : 'Get the most out of Network' }}</h2>
+    <h2 id="help-progress-title">{{ progress.allDone ? "You're all set" : 'Get Network working' }}</h2>
     <p class="ni-muted">Each step checks itself off as you go. {{ progress.completedSteps }} of {{ progress.totalSteps }} done.</p>
     <div class="ni-meter" role="progressbar" [attr.aria-valuenow]="progress.completedSteps" aria-valuemin="0" [attr.aria-valuemax]="progress.totalSteps">
       <span [style.width.%]="progress.completedSteps / progress.totalSteps * 100"></span>
@@ -31,14 +31,13 @@
       <li *ngFor="let step of progress.steps; trackBy: trackStep" [class.is-done]="step.done" data-cy="help-progress-step">
         <span class="ni-check" aria-hidden="true">{{ step.done ? '✓' : '' }}</span>
         <div><strong>{{ step.title }}</strong><span>{{ step.detail }}</span></div>
-        <a class="ni-pill" [routerLink]="gettingStarted.routeFor(step)" [queryParams]="gettingStarted.queryParamsFor(step)">{{ gettingStarted.actionFor(step) }} <span aria-hidden="true">→</span></a>
+        <ng-container *ngIf="!step.done && step.available && !step.automatic">
+          <button *ngIf="step.id === 'reachOut'; else stepLink" type="button" class="ni-pill" (click)="onboarding.openOutreach()">{{ onboarding.actionFor(step) }} <span aria-hidden="true">→</span></button>
+          <ng-template #stepLink><a class="ni-pill" [routerLink]="onboarding.routeFor(step)">{{ onboarding.actionFor(step) }} <span aria-hidden="true">→</span></a></ng-template>
+        </ng-container>
         <span class="visually-hidden">{{ step.done ? 'Done' : 'Not done' }}</span>
       </li>
     </ol>
-    <label class="ni-toggle">
-      <input type="checkbox" [checked]="showAfterSignIn" (change)="toggleShowAfterSignIn($any($event.target).checked)" />
-      Show this after I sign in
-    </label>
   </section>
 
   <section class="ni-start" aria-labelledby="help-start-title">

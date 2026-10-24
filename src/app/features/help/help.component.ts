@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { Title, Meta } from '@angular/platform-browser';
 import { SeoService } from '../../shared/seo.service';
 import { NetworkAuthService } from '../../services/network-auth.service';
-import { GettingStarted, GettingStartedService, GettingStartedStep } from '../../services/getting-started.service';
+import { NetworkOnboarding, NetworkOnboardingService, OnboardingStep } from '../../services/network-onboarding.service';
 
 interface HelpOutcome {
   icon: string;
@@ -44,26 +44,24 @@ interface HelpRoutineStep {
   styleUrl: '../about/about.component.css',
 })
 export class HelpComponent implements OnInit {
-  /** Signed-in only: the Getting Started checklist, checked off from real data. */
-  progress: GettingStarted | null = null;
-  showAfterSignIn = true;
+  /** Signed-in only: the setup checklist, checked off from real data. */
+  progress: NetworkOnboarding | null = null;
 
   constructor(
     private readonly title: Title,
     private readonly meta: Meta,
     private readonly seo: SeoService,
     private readonly authService: NetworkAuthService,
-    readonly gettingStarted: GettingStartedService,
+    readonly onboarding: NetworkOnboardingService,
   ) {}
 
   ngOnInit(): void {
-    this.showAfterSignIn = this.gettingStarted.showAfterSignIn;
     this.authService.getUserId().subscribe( ( userId ) => {
       if ( !userId ) {
         this.progress = null;
         return;
       }
-      this.gettingStarted.load().then( ( progress ) => ( this.progress = progress ) ).catch( () => ( this.progress = null ) );
+      void this.onboarding.refresh().then( ( progress ) => ( this.progress = progress ) );
     } );
 
     const pageTitle = 'Network Help — How to work your relationships | Taliferro Tech';
@@ -232,12 +230,7 @@ export class HelpComponent implements OnInit {
     document.getElementById( id )?.scrollIntoView( { behavior: 'smooth', block: 'start' } );
   }
 
-  toggleShowAfterSignIn ( value: boolean ): void {
-    this.showAfterSignIn = value;
-    this.gettingStarted.showAfterSignIn = value;
-  }
-
-  trackStep ( _index: number, step: GettingStartedStep ): string {
+  trackStep ( _index: number, step: OnboardingStep ): string {
     return step.id;
   }
 }

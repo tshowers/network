@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import * as Papa from 'papaparse';
 
@@ -19,12 +19,13 @@ import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.compone
 import { PreloaderComponent } from '../../shared/preloader/preloader.component';
 import { RouterLink } from '@angular/router';
 import { WriteActionDirective } from '../../shared/write-access/write-action.directive';
-import { FieldMatchComponent } from '../../shared/field-match/field-match.component';
+import { EXPECTED_FIELDS, FieldMatchComponent, matchCsvHeaders } from '../../shared/field-match/field-match.component';
+import { NetworkOnboardingService } from '../../services/network-onboarding.service';
 
-interface ImportStep {
-  key: 'upload' | 'map' | 'review' | 'confirm' | 'result';
-  label: string;
-}
+type ImportStep = 'upload' | 'preview' | 'map' | 'result';
+
+/** 12 people to try Network with, tagged "Sample" so they're easy to find and delete. */
+const SAMPLE_FILE = 'assets/sample-contacts.csv';
 
 /**
  * Ported from features/contact/csv-import/csv-import.component.ts (1,470
@@ -41,6 +42,10 @@ interface ImportStep {
  * layer only had single-contact addContact) so this adds
  * NetworkDataService.uploadContacts alongside it, batched, add-only - no
  * merge/dedupe against existing contacts like TODD's original.
+ *
+ * One confirm step (design_handoff_network_onboarding 03): columns are
+ * matched automatically and shown as a preview; the mapper only opens when
+ * the user asks to change them or no email column was found.
  */
 @Component( {
   selector: 'app-csv-import',
@@ -58,15 +63,7 @@ interface ImportStep {
   styleUrl: './csv-import.component.css',
 } )
 export class CsvImportComponent implements OnInit, OnDestroy {
-  readonly steps: ImportStep[] = [
-    { key: 'upload', label: 'Upload' },
-    { key: 'map', label: 'Map fields' },
-    { key: 'review', label: 'Review' },
-    { key: 'confirm', label: 'Confirm' },
-    { key: 'result', label: 'Import' },
-  ];
-
-  currentStep = 0;
+  step: ImportStep = 'upload';
   isSignedIn = false;
   isLoading = true;
   processing = false;
@@ -82,12 +79,18 @@ export class CsvImportComponent implements OnInit, OnDestroy {
   lastImportSuccessCount = 0;
   lastImportFailureCount = 0;
 
+  /** Mapped columns as the preview's tags, and the columns left out. */
+  matchedLabels: string[] = [];
+  skippedHeaders: string[] = [];
+
   accessState: ContactAccessState | null = null;
 
   private tenantId = '';
 
   constructor (
     private router: Router,
+    private route: ActivatedRoute,
+    private onboarding: NetworkOnboardingService,
     private titleService: Title,
     private http: HttpClient,
     private authService: NetworkAuthService,
@@ -112,6 +115,7 @@ export class CsvImportComponent implements OnInit, OnDestroy {
 
     this.isLoading = false;
     this.publishAssistantContext();
+    if ( this.route.snapshot.queryParamMap.get( 'sample' ) ) this.importSample();
   }
 
   ngOnDestroy (): void {
@@ -122,10 +126,10 @@ export class CsvImportComponent implements OnInit, OnDestroy {
     this.assistantBus.setPageContext( {
       feature: 'contact-import',
       page: 'contact-import',
-      mode: this.currentStepKey === 'result' ? 'view' : 'create',
+      mode: this.step === 'result' ? 'view' : 'create',
       title: 'Import Contacts',
       summary: {
-        currentStep: this.currentStep,
+        currentStep: this.step,
         processing: this.processing,
         importCompleted: this.importCompleted,
         csvRowCount: this.csvData.length,
@@ -152,10 +156,6 @@ export class CsvImportComponent implements OnInit, OnDestroy {
     } catch {
       this.accessState = null;
     }
-  }
-
-  get currentStepKey (): ImportStep['key'] {
-    return this.steps[this.currentStep]?.key || 'upload';
   }
 
   // ── Step 1: Upload ──────────────────────────────────────────────────
@@ -189,10 +189,12 @@ export class CsvImportComponent implements OnInit, OnDestroy {
         this.csvData = result.data as any[];
         this.csvHeaders = result.meta.fields || [];
         this.processing = false;
-        this.message = `Loaded ${this.csvData.length} rows.`;
-        this.currentStep = 1;
+        this.message = '';
         this.soundService.playSound( 'finished' );
-        this.notificationService.show( 'File loaded', `${this.csvData.length} rows ready to map.`, 'success' );
+        const { mapping } = matchCsvHeaders( this.csvHeaders );
+        // No email column means nothing for TODD to check: ask for the mapping.
+        if ( mapping['emailAddress'] ) this.applyMapping( mapping );
+        else this.step = 'map';
         this.publishAssistantContext();
       },
       error: ( error: any ) => {
@@ -205,15 +207,32 @@ export class CsvImportComponent implements OnInit, OnDestroy {
   }
 
   importSample (): void {
-    this.http.get( 'assets/sample.csv', { responseType: 'blob' } ).subscribe( {
-      next: ( blob ) => this.processFile( new File( [blob], 'sample.csv', { type: 'text/csv' } ) ),
+    this.http.get( SAMPLE_FILE, { responseType: 'blob' } ).subscribe( {
+      next: ( blob ) => this.processFile( new File( [blob], 'sample-contacts.csv', { type: 'text/csv' } ) ),
       error: () => this.notificationService.show( 'Sample unavailable', 'Unable to load the sample file.', 'error' ),
     } );
   }
 
-  // ── Step 2: Map fields ──────────────────────────────────────────────
+  // ── Preview, and the mapper behind "change them" ─────────────────────
 
+  /** From the mapper. */
   updateFieldMapping ( mapping: Record<string, string> ): void {
+    this.soundService.playSound( 'click' );
+    this.applyMapping( mapping );
+    this.publishAssistantContext();
+  }
+
+  changeColumns (): void {
+    this.step = 'map';
+    this.publishAssistantContext();
+  }
+
+  onMapperCancel (): void {
+    if ( this.contacts.length ) this.step = 'preview';
+    else this.resetImportState();
+  }
+
+  private applyMapping ( mapping: Record<string, string> ): void {
     this.fieldMapping = mapping;
     this.mappedData = this.csvData.map( ( row ) => {
       const mapped: any = {};
@@ -223,25 +242,14 @@ export class CsvImportComponent implements OnInit, OnDestroy {
       } );
       return mapped;
     } );
-    this.currentStep = 2;
-    this.soundService.playSound( 'click' );
-    this.publishAssistantContext();
-  }
-
-  // ── Step 3: Review mapped rows, Step 4: confirm/transform ───────────
-
-  get previewHeaders (): string[] {
-    return this.mappedData.length > 0 ? Object.keys( this.mappedData[0] ) : [];
-  }
-
-  get previewRows (): any[] {
-    return this.mappedData.slice( 0, 25 );
-  }
-
-  confirmMappedData (): void {
-    this.contacts = this.transformToContact( this.mappedData );
-    this.currentStep = 3;
-    this.publishAssistantContext();
+    this.contacts = this.transformToContact( this.mappedData )
+      .filter( ( contact ) => Object.keys( contact ).length > 0 );
+    const used = new Set( Object.values( mapping ).filter( Boolean ) );
+    this.matchedLabels = EXPECTED_FIELDS
+      .filter( ( field ) => !!mapping[field.name] )
+      .map( ( field ) => field.description.split( ',' )[0] );
+    this.skippedHeaders = this.csvHeaders.filter( ( header ) => !used.has( header ) );
+    this.step = 'preview';
   }
 
   private parseBoolean ( value: any ): boolean {
@@ -321,7 +329,7 @@ export class CsvImportComponent implements OnInit, OnDestroy {
     } );
   }
 
-  // ── Step 4: gating + submit ─────────────────────────────────────────
+  // ── Gating + submit ─────────────────────────────────────────────────
 
   /** Signed in is enough here: the Import button's appWriteAction asks for Network first (nothing stored is free). */
   canStartImport (): boolean {
@@ -330,16 +338,15 @@ export class CsvImportComponent implements OnInit, OnDestroy {
 
   getImportButtonLabel (): string {
     if ( !this.isSignedIn ) return 'Sign In to Import';
-    return 'Import';
+    return `Import ${this.contacts.length} contact${this.contacts.length === 1 ? '' : 's'}`;
   }
 
+  /** Only when something stands in the way - a paid account needs no note. */
   getImportAccessNote (): string {
     if ( !this.isSignedIn || !this.accessState?.isLoggedIn ) {
       return 'Sign in to import contacts into your network.';
     }
-    if ( this.accessState.isPaidUser ) {
-      return 'Your paid account can import all of these contacts.';
-    }
+    if ( this.accessState.isPaidUser ) return '';
     return 'Importing contacts needs a Network subscription.';
   }
 
@@ -361,7 +368,7 @@ export class CsvImportComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.currentStep = 4;
+    this.step = 'result';
     this.processing = true;
     this.importCompleted = false;
     this.message = 'Writing contacts to Network...';
@@ -375,6 +382,7 @@ export class CsvImportComponent implements OnInit, OnDestroy {
       this.importCompleted = true;
       this.message = `Complete. ${results.successCount} imported${results.failureCount ? `, ${results.failureCount} failed` : ''}.`;
       this.soundService.playSound( 'finished' );
+      void this.onboarding.refresh();
     } catch ( error: any ) {
       this.message = error?.message || 'Unable to import contacts.';
       this.notificationService.show( 'Import failed', this.message, 'error' );
@@ -387,14 +395,22 @@ export class CsvImportComponent implements OnInit, OnDestroy {
 
   // ── Navigation ───────────────────────────────────────────────────────
 
-  previousStep (): void {
+  /** Back: from the preview to the drop zone, from the drop zone to Home. */
+  goBack (): void {
     this.soundService.playSound( 'click' );
-    if ( this.currentStep > 0 ) this.currentStep--;
-    this.publishAssistantContext();
+    if ( this.step === 'upload' ) {
+      void this.router.navigate( ['/app'] );
+      return;
+    }
+    if ( this.step === 'result' && !this.importCompleted ) {
+      this.step = 'preview';
+      return;
+    }
+    this.resetImportState();
   }
 
-  onCancel (): void {
-    this.resetImportState();
+  goHome (): void {
+    void this.router.navigate( ['/app'] );
   }
 
   startAnotherImport (): void {
@@ -407,7 +423,7 @@ export class CsvImportComponent implements OnInit, OnDestroy {
   }
 
   private resetImportState ( options?: { preserveStep?: boolean } ): void {
-    if ( !options?.preserveStep ) this.currentStep = 0;
+    if ( !options?.preserveStep ) this.step = 'upload';
     this.processing = false;
     this.message = '';
     this.csvData = [];
@@ -415,6 +431,8 @@ export class CsvImportComponent implements OnInit, OnDestroy {
     this.fieldMapping = {};
     this.mappedData = [];
     this.contacts = [];
+    this.matchedLabels = [];
+    this.skippedHeaders = [];
     this.importCompleted = false;
     this.lastImportSuccessCount = 0;
     this.lastImportFailureCount = 0;
