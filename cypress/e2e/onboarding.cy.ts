@@ -163,6 +163,24 @@ describe( 'Onboarding', () => {
     cy.contains( '[data-cy="profile-question-card"] h3', 'What does your company do?' );
   } );
 
+  it( 'holds a Save clicked before access is known, then saves', () => {
+    cy.intercept( 'GET', '**/account/summary', {
+      delay: 1500, statusCode: 200, body: { success: true, data: { writeAccess: { network: true } } },
+    } );
+    cy.intercept( 'GET', '**/network/onboarding', { statusCode: 200, body: { data: onboarding() } } );
+    cy.intercept( 'GET', '**/api/profile', { statusCode: 200, body: { success: true, profile } } ).as( 'loadProfile' );
+    cy.intercept( 'PATCH', '**/api/profile', ( req ) => {
+      req.reply( { statusCode: 200, body: { success: true, profile: { ...profile, ...req.body.profile } } } );
+    } ).as( 'saveProfile' );
+    signIn( '/profile' );
+    cy.wait( '@loadProfile' );
+
+    cy.contains( '[data-cy="pq-choice"]', 'Software' ).click();
+    cy.get( '[data-cy="pq-save"]' ).click();
+    cy.get( '[data-cy="write-access-prompt"]' ).should( 'not.exist' );
+    cy.wait( '@saveProfile' ).its( 'request.body.profile.companyDescription' ).should( 'contain', 'builds software' );
+  } );
+
   it( 'shows the Contacts empty state for a user with no contacts', () => {
     cy.intercept( 'GET', '**/network/onboarding', { statusCode: 200, body: { data: onboarding() } } );
     signIn( '/contact-list' );
