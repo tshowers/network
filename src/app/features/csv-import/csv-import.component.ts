@@ -276,6 +276,7 @@ export class CsvImportComponent implements OnInit, OnDestroy {
       if ( entry['company.url'] ) company!.url = entry['company.url'];
       if ( entry['company.dba'] ) company!.dba = entry['company.dba'];
       if ( entry['company.numberOfEmployees'] ) company!.numberOfEmployees = entry['company.numberOfEmployees'];
+      if ( entry['company.industry'] ) company!.industry = entry['company.industry'];
       if ( entry['company.sicCode'] ) company!.sicCode = entry['company.sicCode'];
       if ( entry['company.capabilities'] ) company!.capabilities = this.parseTags( entry['company.capabilities'] );
       if ( entry['company.streetAddress'] ) {

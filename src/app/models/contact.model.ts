@@ -63,6 +63,7 @@ export interface Company {
   publicInfo?: string;
   dba?: string;
   numberOfEmployees?: string;
+  industry?: string;
   sicCode?: string;
   capabilities?: string[];
   addresses?: Address[];

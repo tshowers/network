@@ -78,11 +78,12 @@
         <h4 class="rd-eyebrow">Public info</h4>
         <p class="rd-body">{{ contact.company.publicInfo }}</p>
       </div>
-      <div class="rd-panel" *ngIf="contact.company?.dba || contact.company?.numberOfEmployees || contact.company?.sicCode">
+      <div class="rd-panel" *ngIf="contact.company?.dba || contact.company?.numberOfEmployees || contact.company?.industry || contact.company?.sicCode">
         <h4 class="rd-eyebrow">Business details</h4>
         <div class="rd-facts">
           <div *ngIf="contact.company?.dba"><small>DBA</small><strong>{{ contact.company.dba }}</strong></div>
           <div *ngIf="contact.company?.numberOfEmployees"><small>Employees</small><strong>{{ contact.company.numberOfEmployees }}</strong></div>
+          <div *ngIf="contact.company?.industry"><small>Industry</small><strong>{{ contact.company.industry }}</strong></div>
           <div *ngIf="contact.company?.sicCode"><small>SIC code</small><strong>{{ contact.company.sicCode }}</strong></div>
         </div>
       </div>
