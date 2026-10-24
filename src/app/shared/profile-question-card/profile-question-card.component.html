@@ -18,7 +18,7 @@
     <textarea class="nw-input nw-input--on-surface pq-text" rows="3" placeholder="Write your own" [attr.aria-label]="q.question"
               [(ngModel)]="draft" (ngModelChange)="onType()" data-cy="pq-text"></textarea>
     <div class="pq-actions">
-      <button type="button" class="nw-btn nw-btn--primary pq-btn" [disabled]="!draft.trim()" (click)="save()" data-cy="pq-save">{{ remaining === 1 ? 'Save' : 'Save and next' }}</button>
+      <button type="button" class="nw-btn nw-btn--primary pq-btn" [disabled]="!draft.trim()" appWriteAction="save your profile" (click)="save()" data-cy="pq-save">{{ remaining === 1 ? 'Save' : 'Save and next' }}</button>
       <button type="button" class="nw-btn nw-btn--on-surface pq-btn" (click)="skip()" data-cy="pq-later">Later</button>
       <span class="pq-step">{{ answeredCount + 1 }} of {{ questions.length }}</span>
     </div>

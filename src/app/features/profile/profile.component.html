@@ -119,7 +119,7 @@
       <div class="pf-savebar">
         <span class="pf-savebar__status" aria-live="polite">{{ justSaved ? 'Saved' : ( isDirty ? 'Unsaved changes' : '' ) }}</span>
         <button type="button" class="pf-button pf-button--ghost" (click)="cancelEditing()" [disabled]="isSaving" data-cy="profile-cancel">Cancel</button>
-        <button type="submit" class="pf-button" [disabled]="!isDirty || isSaving" data-cy="profile-save">{{ isSaving ? 'Saving…' : 'Save' }}</button>
+        <button type="submit" class="pf-button" [disabled]="!isDirty || isSaving" appWriteAction="save your profile" data-cy="profile-save">{{ isSaving ? 'Saving…' : 'Save' }}</button>
       </div>
     </form>
 

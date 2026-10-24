@@ -27,6 +27,8 @@ describe( 'Profile page', () => {
     cy.intercept( 'POST', '**/network/entitlement', { statusCode: 200, body: { success: true, hasNetwork: false, effectiveLimit: 0, currentCount: 0 } } );
     cy.intercept( 'GET', '**/network/limits*', { statusCode: 200, body: {} } );
     cy.intercept( 'GET', '**/network/dashboard-counts*', { statusCode: 200, body: {} } );
+    // Saving the profile needs Network write access, like every write.
+    cy.intercept( 'GET', '**/account/summary', { statusCode: 200, body: { success: true, data: { writeAccess: { network: true } } } } ).as( 'writeAccess' );
     cy.intercept( 'GET', '**/api/profile', { statusCode: 200, body: { success: true, profile } } ).as( 'loadProfile' );
   } );
 
@@ -46,6 +48,7 @@ describe( 'Profile page', () => {
     cy.get( '[data-cy="profile-edit"]' ).click();
     cy.get( '[data-cy="profile-first-name"]' ).should( 'have.value', 'April' );
     cy.contains( '[data-cy="profile-role"]', 'Owner' ).should( 'have.class', 'is-selected' );
+    cy.wait( '@writeAccess' );
     cy.get( '[data-cy="profile-save"]' ).should( 'be.disabled' );
 
     cy.contains( '[data-cy="profile-role"]', 'Sales' ).click();

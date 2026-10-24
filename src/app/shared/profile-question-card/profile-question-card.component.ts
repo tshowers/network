@@ -12,17 +12,19 @@ import {
 } from '@taliferro/ui/platform/profile-choices.model';
 
 import { ProfileApiService } from '../../services/profile-api.service';
+import { WriteActionDirective } from '../write-access/write-action.directive';
 
 /**
  * Asks the four profile questions TODD's AI writes from, one at a time
  * (design_handoff_network_onboarding 04 "While TODD works", 07 Profile).
  * Saves each answer to the shared profile on "Save and next" - optimistic,
- * then PATCH /api/profile; "Later" moves on without saving.
+ * then PATCH /api/profile; "Later" moves on without saving. Saving needs
+ * Network (appWriteAction), like every other write.
  */
 @Component( {
   selector: 'app-profile-question-card',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, WriteActionDirective],
   templateUrl: './profile-question-card.component.html',
   styleUrl: './profile-question-card.component.css',
 } )

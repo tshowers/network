@@ -111,7 +111,7 @@ describe( 'Network user journey - sign up to sign out', { defaultCommandTimeout:
     cy.intercept( 'POST', '**/network/entitlement', { statusCode: 200, body: { success: true, hasNetwork: false, effectiveLimit: 0, currentCount: 0 } } );
     cy.intercept( 'GET', '**/network/limits*', { statusCode: 200, body: {} } );
     // Import and Save carry appWriteAction - this user has Network write access.
-    cy.intercept( 'GET', '**/account/summary', { statusCode: 200, body: { success: true, data: { writeAccess: { network: true } } } } );
+    cy.intercept( 'GET', '**/account/summary', { statusCode: 200, body: { success: true, data: { writeAccess: { network: true } } } } ).as( 'writeAccess' );
     // Setup checklist done, so Home shows the dashboard rather than first-run steps.
     cy.intercept( 'GET', '**/network/onboarding', { statusCode: 200, body: { data: { allDone: true, steps: [], counts: { imported: 1 } } } } );
 
@@ -168,6 +168,7 @@ describe( 'Network user journey - sign up to sign out', { defaultCommandTimeout:
     cy.get( '[data-cy="profile-read"]' ).should( 'contain.text', 'Ada Lovelace' ).and( 'contain.text', 'Owner' );
     cy.get( '[data-cy="profile-edit"]' ).click();
     cy.contains( '[data-cy="profile-choice-valueProp"]', 'Personal service' ).click();
+    cy.wait( '@writeAccess' );
     cy.get( '[data-cy="profile-save"]' ).should( 'not.be.disabled' ).click();
     cy.wait( '@saveProfile' ).its( 'request.body.profile' ).should( 'include', { firstName: 'Ada', profession: 'Owner' } )
       .and( 'have.property', 'valueProp' ).and( 'not.be.empty' );

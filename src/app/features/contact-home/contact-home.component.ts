@@ -8,6 +8,7 @@ import { NetworkContactStateService } from '../../services/network-contact-state
 import { NetworkPageActionsService } from '../../services/network-page-actions.service';
 import { NetworkAssistantSignalService } from '../../services/network-assistant-signal.service';
 import { BackToTopComponent } from '../../shared/back-to-top/back-to-top.component';
+import { WriteActionDirective } from '../../shared/write-access/write-action.directive';
 import type { ArcGaugeTone } from '../../shared/arc-gauge/arc-gauge.component';
 import type { StatusLedTone } from '../../shared/status-led/status-led.component';
 import { PageAction } from '../../models/page-actions.models';
@@ -83,7 +84,7 @@ interface NetworkDiagnosisRow {
 @Component( {
   selector: 'app-contact-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, BackToTopComponent],
+  imports: [CommonModule, RouterModule, BackToTopComponent, WriteActionDirective],
   templateUrl: './contact-home.component.html',
   styleUrl: './contact-home.component.css'
 } )

@@ -24,9 +24,9 @@
     <div class="rel-import" *ngIf="isFirstRun" data-cy="home-import">
       <h2>Bring in your contacts</h2>
       <div class="rel-import__sources">
-        <button type="button" class="nw-btn nw-btn--on-surface" *ngFor="let source of sources" (click)="pickSource(source)" [attr.data-cy]="'home-source-' + source.id">{{ source.name }}</button>
+        <button type="button" class="nw-btn nw-btn--on-surface" *ngFor="let source of sources" [appWriteAction]="source.id === 'manual' ? 'add a contact' : 'import contacts'" (click)="pickSource(source)" [attr.data-cy]="'home-source-' + source.id">{{ source.name }}</button>
       </div>
-      <a class="nw-link" routerLink="/contact-import" [queryParams]="{ sample: 1 }" data-cy="home-sample">No list handy? Try it with 12 sample contacts</a>
+      <a class="nw-link" routerLink="/contact-import" [queryParams]="{ sample: 1 }" appWriteAction="import the sample contacts" data-cy="home-sample">No list handy? Try it with 12 sample contacts</a>
     </div>
   </section>
 

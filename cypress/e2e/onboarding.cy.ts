@@ -47,7 +47,12 @@ describe( 'Onboarding', () => {
     password: 'CypressTest123!',
   } );
 
+  const writeAccess = ( network: boolean ) => cy.intercept( 'GET', '**/account/summary', {
+    statusCode: 200, body: { success: true, data: { writeAccess: { network } } },
+  } ).as( 'writeAccess' );
+
   beforeEach( () => {
+    writeAccess( true );
     cy.intercept( 'POST', '**/network/entitlement', { statusCode: 200, body: { success: true, hasNetwork: false, effectiveLimit: 0, currentCount: 0 } } );
     cy.intercept( 'GET', '**/network/limits*', { statusCode: 200, body: {} } );
     cy.intercept( 'GET', '**/network/dashboard-counts*', { statusCode: 200, body: {} } );
@@ -65,6 +70,7 @@ describe( 'Onboarding', () => {
     cy.get( '.rel-health' ).should( 'not.exist' );
     cy.screenshot( 'onboarding/home-first-run', { capture: 'viewport' } );
 
+    cy.wait( '@writeAccess' );
     cy.get( '[data-cy="home-sample"]' ).click();
     cy.location( 'pathname' ).should( 'eq', '/contact-import' );
     cy.contains( '[data-cy="ci-preview"] h2', '12 contacts found' ).should( 'be.visible' );
@@ -128,6 +134,7 @@ describe( 'Onboarding', () => {
     cy.contains( '[data-cy="profile-question-card"] h3', "What is your company's mission?" );
     cy.get( '[data-cy="pq-save"]' ).should( 'be.disabled' );
     cy.contains( '[data-cy="pq-choice"]', 'Make it simple' ).click();
+    cy.wait( '@writeAccess' );
     cy.get( '[data-cy="pq-save"]' ).should( 'contain.text', 'Save and next' ).click();
     cy.wait( '@saveProfile' ).its( 'request.body.profile.companyGoal' ).should( 'eq', 'To make complicated things simple for the people we serve.' );
     cy.get( '[data-cy="profile-read"]' ).should( 'exist' );
@@ -138,6 +145,22 @@ describe( 'Onboarding', () => {
     cy.contains( '[data-cy="profile-question-card"] h3', 'What does your company do?' );
     cy.get( '[data-cy="pq-later"]' ).click();
     cy.contains( '[data-cy="profile-question-card"] h3', "What's your value proposition?" );
+  } );
+
+  it( 'asks an unpaid user to subscribe instead of saving an answer', () => {
+    writeAccess( false );
+    cy.intercept( 'GET', '**/network/onboarding', { statusCode: 200, body: { data: onboarding() } } );
+    cy.intercept( 'GET', '**/api/profile', { statusCode: 200, body: { success: true, profile } } ).as( 'loadProfile' );
+    cy.intercept( 'PATCH', '**/api/profile', cy.spy().as( 'saveProfile' ) );
+    signIn( '/profile' );
+    cy.wait( '@loadProfile' );
+
+    cy.contains( '[data-cy="pq-choice"]', 'Software' ).click();
+    cy.wait( '@writeAccess' );
+    cy.get( '[data-cy="pq-save"]' ).click();
+    cy.get( '[data-cy="write-access-prompt"]' ).should( 'be.visible' );
+    cy.get( '@saveProfile' ).should( 'not.have.been.called' );
+    cy.contains( '[data-cy="profile-question-card"] h3', 'What does your company do?' );
   } );
 
   it( 'shows the Contacts empty state for a user with no contacts', () => {

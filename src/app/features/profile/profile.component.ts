@@ -20,6 +20,7 @@ import { OnboardingProfileService } from '../../services/onboarding-profile.serv
 import { ProfileApiService } from '../../services/profile-api.service';
 import { NetworkOnboardingService } from '../../services/network-onboarding.service';
 import { ProfileQuestionCardComponent } from '../../shared/profile-question-card/profile-question-card.component';
+import { WriteActionDirective } from '../../shared/write-access/write-action.directive';
 
 interface ChoiceField {
   key: 'companyDescription' | 'valueProp' | 'companyGoal';
@@ -38,7 +39,7 @@ interface ChoiceField {
 @Component( {
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, ProfileQuestionCardComponent],
+  imports: [CommonModule, FormsModule, RouterModule, ProfileQuestionCardComponent, WriteActionDirective],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css',
 } )
