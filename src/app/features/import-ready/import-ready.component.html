@@ -1,0 +1,79 @@
+<main class="nw-page ir" data-cy="import-ready">
+  @if (errorMessage) {
+    <p class="alert alert-danger">{{ errorMessage }}</p>
+  }
+
+  @if (state) {
+    <header class="ir-intro">
+      <span class="nw-tint ir-tag" data-tint="green">Cleanup finished</span>
+      <h1 class="nw-title ir-title" data-cy="ready-heading">{{ readyCount }} {{ readyCount === 1 ? 'person is' : 'people are' }} ready to hear from you.</h1>
+      <p class="nw-sub">TODD verified their emails, fixed {{ fixedCount }} {{ fixedCount === 1 ? 'record' : 'records' }} and filled in {{ filledCount }} {{ filledCount === 1 ? 'company' : 'companies' }}.
+        @if (openFlags) { {{ openFlags }} {{ openFlags === 1 ? 'needs' : 'need' }} you. }
+        @if (deferredCount) { {{ deferredCount }} more {{ deferredCount === 1 ? 'is' : 'are' }} checked tonight. }</p>
+    </header>
+
+    <div class="ir-grid">
+      <section class="ir-next" aria-labelledby="ir-next-title" data-cy="ready-next">
+        <span class="ir-kicker">Next step</span>
+        @if (hasOutreach) {
+          <h2 id="ir-next-title">Send your first email in Outreach</h2>
+          <p>Write a message once and Outreach sends it and tracks replies. Replies show up here on each contact.</p>
+          <button type="button" class="nw-btn nw-btn--primary ir-start" (click)="openOutreach()" data-cy="ready-open-outreach">Open in Outreach →</button>
+        } @else {
+          <h2 id="ir-next-title">Reach them with Outreach</h2>
+          <p>Outreach sends your emails and tracks who opens and replies. Replies show up here on each contact. Browsing is free, and sending needs a subscription.</p>
+          <div class="ir-actions">
+            <button type="button" class="nw-btn nw-btn--primary" (click)="addOutreach()" data-cy="ready-add-outreach">Add Outreach</button>
+            <button type="button" class="nw-btn nw-btn--on-surface" (click)="openOutreach()" data-cy="ready-look-around">Look around first</button>
+          </div>
+        }
+
+        <div class="ir-note" data-cy="ready-voice">
+          @if (missingAnswers) {
+            <strong>Outreach writes from your profile. {{ missingAnswers }} {{ missingAnswers === 1 ? 'answer' : 'answers' }} missing</strong>
+            <span>Without what your company does and why clients pick you, first drafts sound generic.</span>
+            <a class="ir-small-btn" routerLink="/profile">Answer {{ missingAnswers }} quick {{ missingAnswers === 1 ? 'question' : 'questions' }}</a>
+          } @else if (profile) {
+            <strong>Outreach will write from your profile</strong>
+            <span>“{{ valuePropQuote }}”</span>
+          }
+        </div>
+
+        <label class="ir-note ir-weekly">
+          <input type="checkbox" [checked]="weeklyDigest" appWriteAction="turn on the weekly list" (change)="setWeekly($any($event.target).checked)" data-cy="ready-weekly" />
+          <span>
+            <strong>Send me a weekly follow-up list</strong>
+            <span>Without Outreach, Network still watches these relationships. Every Monday it emails you who’s gone quiet and who to contact next.</span>
+          </span>
+        </label>
+      </section>
+
+      <section class="ir-flags" aria-labelledby="ir-flags-title" data-cy="ready-flags">
+        <h2 id="ir-flags-title">Needs you · {{ openFlags }}</h2>
+        @if (!flagged.length) {
+          <p class="ir-muted">Nothing flagged. Every address TODD checked looks like a real person.</p>
+        }
+        @for (row of flagged; track row.id) {
+          <div class="ir-flag" data-cy="ready-flag">
+            <div class="ir-flag-text">
+              <strong>{{ row.name }}</strong>
+              <span>{{ row.email }} · {{ row.note }}</span>
+            </div>
+            @if (row.resolution) {
+              <span class="nw-pill" data-tint="grey">{{ row.resolution }}</span>
+            } @else {
+              <div class="ir-flag-actions">
+                <button type="button" class="ir-small-btn" [disabled]="busy.has(row.id)" appWriteAction="update this contact"
+                        (click)="resolve(row, row.flagReason === 'undeliverable' ? 'find_email' : 'keep')" data-cy="ready-flag-keep">{{ keepLabel(row) }}</button>
+                <button type="button" class="ir-small-btn ir-ghost" [disabled]="busy.has(row.id)" appWriteAction="remove this contact"
+                        (click)="resolve(row, 'remove')" data-cy="ready-flag-remove">Remove</button>
+              </div>
+            }
+          </div>
+        }
+      </section>
+    </div>
+  } @else if (!errorMessage) {
+    <p class="ir-muted">Loading…</p>
+  }
+</main>

@@ -30,6 +30,8 @@ export interface NetworkOnboarding {
   profileCompletion: ProfileCompletion;
   aiProfile: { answered: number; total: number };
   counts: { imported: number; emails: number; checked: number; fixed: number; enriched: number; flagged: number; reachedOut: number };
+  /** The newest import and its cleanup - where Watch, Review and Reach out go. */
+  latestImport: { id: string; status: string; total: number } | null;
   state: { weeklyDigest: boolean; outreachOpenedAt: string | null; neverOpenedBannerDismissedAt: string | null };
 }
 
@@ -95,13 +97,20 @@ export class NetworkOnboardingService {
     this.onboarding.set( null );
   }
 
-  /** Where a step's action goes. reachOut opens Outreach instead (openOutreach). */
+  /** Where a step's action goes, unless opensOutreach(step). */
   routeFor ( step: OnboardingStep ): string {
+    const batchId = this.onboarding()?.latestImport?.id;
     switch ( step.id ) {
       case 'contacts': return '/contact-import';
       case 'profile': return '/profile';
-      default: return '/contact-list';
+      case 'cleanup': return batchId ? `/import/${batchId}/cleanup` : '/contact-list';
+      default: return batchId ? `/import/${batchId}/ready` : '/contact-list';
     }
+  }
+
+  /** "Reach out" goes to the Ready screen after an import, straight to Outreach before one. */
+  opensOutreach ( step: OnboardingStep ): boolean {
+    return step.id === 'reachOut' && !this.onboarding()?.latestImport;
   }
 
   actionFor ( step: OnboardingStep ): string {
@@ -112,6 +121,11 @@ export class NetworkOnboardingService {
       case 'review': return 'Review';
       default: return 'Reach out';
     }
+  }
+
+  /** Outreach's plans, for "Add Outreach". */
+  openOutreachPricing (): void {
+    window.open( `${OUTREACH_URL}/pricing`, '_blank', 'noopener' );
   }
 
   /** Opens Outreach in a new tab and checks off "Start reaching out". */

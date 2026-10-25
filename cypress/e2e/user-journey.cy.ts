@@ -113,6 +113,7 @@ describe( 'Network user journey - sign up to sign out', { defaultCommandTimeout:
     // Import and Save carry appWriteAction - this user has Network write access.
     cy.intercept( 'GET', '**/account/summary', { statusCode: 200, body: { success: true, data: { writeAccess: { network: true } } } } ).as( 'writeAccess' );
     // Setup checklist done, so Home shows the dashboard rather than first-run steps.
+    cy.intercept( 'POST', '**/network/imports', { statusCode: 503, body: {} } );
     cy.intercept( 'GET', '**/network/onboarding', { statusCode: 200, body: { data: { allDone: true, steps: [], counts: { imported: 1 } } } } );
 
     // The backend's onboarding save only fills blank fields.

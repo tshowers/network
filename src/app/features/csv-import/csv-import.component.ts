@@ -21,6 +21,7 @@ import { RouterLink } from '@angular/router';
 import { WriteActionDirective } from '../../shared/write-access/write-action.directive';
 import { EXPECTED_FIELDS, FieldMatchComponent, matchCsvHeaders } from '../../shared/field-match/field-match.component';
 import { NetworkOnboardingService } from '../../services/network-onboarding.service';
+import { NetworkImportService } from '../../services/network-import.service';
 
 type ImportStep = 'upload' | 'preview' | 'map' | 'result';
 
@@ -91,6 +92,7 @@ export class CsvImportComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private onboarding: NetworkOnboardingService,
+    private importService: NetworkImportService,
     private titleService: Title,
     private http: HttpClient,
     private authService: NetworkAuthService,
@@ -376,12 +378,34 @@ export class CsvImportComponent implements OnInit, OnDestroy {
     this.publishAssistantContext();
 
     try {
-      const results = await this.dataService.uploadContacts( this.tenantId, this.contacts );
+      // A batch lets TODD clean these contacts right away and the user watch
+      // it. If the batch can't be opened, the import still goes ahead and
+      // the nightly run cleans them instead.
+      let batchId = '';
+      try {
+        batchId = await this.importService.create( 'csv', this.contacts.length );
+      } catch ( error ) {
+        console.warn( '[CsvImport] could not open an import batch; cleanup will run tonight', error );
+      }
+      const contacts = batchId
+        ? this.contacts.map( ( contact ) => ( { ...contact, importBatchId: batchId } ) )
+        : this.contacts;
+      const results = await this.dataService.uploadContacts( this.tenantId, contacts );
       this.lastImportSuccessCount = results.successCount;
       this.lastImportFailureCount = results.failureCount;
+      this.soundService.playSound( 'finished' );
+      if ( batchId && results.successCount > 0 ) {
+        try {
+          await this.importService.start( batchId );
+          void this.onboarding.refresh();
+          await this.router.navigate( ['/import', batchId, 'cleanup'] );
+          return;
+        } catch ( error ) {
+          console.warn( '[CsvImport] could not start cleanup; it will run tonight', error );
+        }
+      }
       this.importCompleted = true;
       this.message = `Complete. ${results.successCount} imported${results.failureCount ? `, ${results.failureCount} failed` : ''}.`;
-      this.soundService.playSound( 'finished' );
       void this.onboarding.refresh();
     } catch ( error: any ) {
       this.message = error?.message || 'Unable to import contacts.';

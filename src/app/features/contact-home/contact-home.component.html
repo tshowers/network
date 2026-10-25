@@ -16,7 +16,7 @@
         <strong>{{ step.title }}</strong>
         <p>{{ step.detail }}</p>
         <ng-container *ngIf="showsStepAction(step)">
-          <button *ngIf="step.id === 'reachOut'; else stepLink" type="button" class="nw-btn nw-btn--primary rel-step__action" (click)="onboarding.openOutreach()">{{ onboarding.actionFor(step) }}</button>
+          <button *ngIf="onboarding.opensOutreach(step); else stepLink" type="button" class="nw-btn nw-btn--primary rel-step__action" (click)="onboarding.openOutreach()">{{ onboarding.actionFor(step) }}</button>
           <ng-template #stepLink><a class="nw-btn nw-btn--primary rel-step__action" [routerLink]="onboarding.routeFor(step)">{{ onboarding.actionFor(step) }}</a></ng-template>
         </ng-container>
       </article>

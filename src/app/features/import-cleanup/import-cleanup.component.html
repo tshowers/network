@@ -1,0 +1,66 @@
+<main class="nw-page ic" data-cy="import-cleanup">
+  @if (errorMessage) {
+    <p class="alert alert-danger">{{ errorMessage }}</p>
+  }
+
+  @if (state; as s) {
+    <header class="ic-top">
+      <div class="ic-intro">
+        <span class="nw-tint ic-tag" [attr.data-tint]="isDone ? 'green' : 'blue'">
+          <span class="ic-dot" [class.is-pulsing]="!isDone" aria-hidden="true"></span>{{ isDone ? 'Finished' : 'TODD is working' }}
+        </span>
+        <h1 class="nw-title ic-title" data-cy="cleanup-heading">{{ heading }}</h1>
+        <p class="nw-sub">{{ subline }}</p>
+      </div>
+      @if (isDone) {
+        <a class="nw-btn nw-btn--primary" [routerLink]="['/import', batchId, 'ready']" data-cy="cleanup-ready">See what’s ready →</a>
+      }
+    </header>
+
+    <div class="ic-bar" role="progressbar" [attr.aria-valuenow]="percent" aria-valuemin="0" aria-valuemax="100">
+      <span [style.width.%]="percent"></span>
+    </div>
+
+    <div class="ic-counters">
+      @for (counter of counters; track counter.label) {
+        <div class="ic-counter" data-cy="cleanup-counter"><strong>{{ counter.value }}</strong><span>{{ counter.label }}</span></div>
+      }
+    </div>
+
+    <div class="ic-body">
+      <section class="ic-table" aria-label="Imported contacts">
+        @for (row of s.contacts; track row.id) {
+          <div class="ic-row" data-cy="cleanup-row">
+            <div class="ic-cell">
+              <strong>{{ row.name }}</strong>
+              @if (row.title) { <span class="ic-title-note">{{ row.title }}</span> }
+            </div>
+            <div class="ic-cell">
+              <span [class.is-struck]="row.status === 'undeliverable'">{{ row.email || '—' }}</span>
+              @if (row.note) { <span class="ic-note">{{ row.note }}</span> }
+            </div>
+            <span class="ic-cell ic-company">{{ row.company || '—' }}</span>
+            <span class="nw-pill ic-status" [class.is-outline]="!labels[row.status].tint" [attr.data-tint]="labels[row.status].tint">{{ labels[row.status].label }}</span>
+          </div>
+        }
+      </section>
+
+      <aside class="ic-side">
+        @if (profile) {
+          <app-profile-question-card [profile]="profile" heading="While TODD works" [showProfileLink]="true" (saved)="onProfileSaved($event)" />
+        }
+        <h2 class="ic-feed-title">What TODD changed</h2>
+        @if (!s.fixLog.length) {
+          <p class="ic-muted">Starting with the first contact…</p>
+        }
+        <ul class="ic-feed" data-cy="cleanup-feed">
+          @for (entry of s.fixLog; track entry.id) {
+            <li><span class="ic-feed-dot" [attr.data-tone]="entry.tone" aria-hidden="true"></span><span>{{ entry.text }}</span></li>
+          }
+        </ul>
+      </aside>
+    </div>
+  } @else if (!errorMessage) {
+    <p class="ic-muted">Loading your import…</p>
+  }
+</main>

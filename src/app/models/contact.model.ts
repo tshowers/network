@@ -72,6 +72,8 @@ export interface Company {
 
 export interface Contact {
   id: string;
+  /** The Network import that brought this contact in (network-import.service.ts). */
+  importBatchId?: string;
   firstName: string;
   middleName?: string;
   lastName: string;

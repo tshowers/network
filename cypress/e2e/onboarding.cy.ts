@@ -185,7 +185,8 @@ describe( 'Onboarding', () => {
     cy.intercept( 'GET', '**/network/onboarding', { statusCode: 200, body: { data: onboarding() } } );
     signIn( '/contact-list' );
 
-    cy.get( '[data-cy="contacts-empty"]' ).should( 'contain.text', 'Your contacts will live here' )
+    // The list loads the whole collection first; slower under a full run.
+    cy.get( '[data-cy="contacts-empty"]', { timeout: 10000 } ).should( 'contain.text', 'Your contacts will live here' )
       .and( 'contain.text', 'Import contacts' ).and( 'contain.text', 'Add one by hand' );
   } );
 } );

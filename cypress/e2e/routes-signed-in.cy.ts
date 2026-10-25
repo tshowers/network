@@ -96,6 +96,10 @@ describe( 'Network routes - signed in', () => {
       body: { success: true, data: { writeAccess: { network: true } } },
     } );
 
+    // No import batch (backend unreachable): the import still lands, and
+    // cleanup is left to the nightly run.
+    cy.intercept( 'POST', '**/network/imports', { statusCode: 503, body: {} } );
+
     cy.visitWithFirebaseEmulators( '/contact-import', {
       email: `network-import-${Date.now()}@example.com`,
       password: 'CypressTest123!',

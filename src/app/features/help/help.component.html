@@ -32,7 +32,7 @@
         <span class="ni-check" aria-hidden="true">{{ step.done ? '✓' : '' }}</span>
         <div><strong>{{ step.title }}</strong><span>{{ step.detail }}</span></div>
         <ng-container *ngIf="!step.done && step.available && !step.automatic">
-          <button *ngIf="step.id === 'reachOut'; else stepLink" type="button" class="ni-pill" (click)="onboarding.openOutreach()">{{ onboarding.actionFor(step) }} <span aria-hidden="true">→</span></button>
+          <button *ngIf="onboarding.opensOutreach(step); else stepLink" type="button" class="ni-pill" (click)="onboarding.openOutreach()">{{ onboarding.actionFor(step) }} <span aria-hidden="true">→</span></button>
           <ng-template #stepLink><a class="ni-pill" [routerLink]="onboarding.routeFor(step)">{{ onboarding.actionFor(step) }} <span aria-hidden="true">→</span></a></ng-template>
         </ng-container>
         <span class="visually-hidden">{{ step.done ? 'Done' : 'Not done' }}</span>

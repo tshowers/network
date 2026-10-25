@@ -85,6 +85,18 @@ export const routes: Routes = [
       import( './features/csv-import/csv-import.component' ).then( ( m ) => m.CsvImportComponent ),
   },
   {
+    // TODD cleaning an import while the user watches, then who's ready
+    // (design_handoff_network_onboarding 04–05).
+    path: 'import/:batchId/cleanup',
+    loadComponent: () =>
+      import( './features/import-cleanup/import-cleanup.component' ).then( ( m ) => m.ImportCleanupComponent ),
+  },
+  {
+    path: 'import/:batchId/ready',
+    loadComponent: () =>
+      import( './features/import-ready/import-ready.component' ).then( ( m ) => m.ImportReadyComponent ),
+  },
+  {
     path: 'contact-deal-flow',
     loadComponent: () =>
       import( './features/pipeline/pipeline.component' ).then( ( m ) => m.PipelineComponent ),

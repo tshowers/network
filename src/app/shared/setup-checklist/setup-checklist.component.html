@@ -23,7 +23,7 @@
               <span>{{ step.detail }}</span>
             </div>
             @if (showAction(step)) {
-              @if (step.id === 'reachOut') {
+              @if (service.opensOutreach(step)) {
                 <button type="button" class="sc-action" (click)="reachOut()">{{ service.actionFor(step) }}</button>
               } @else {
                 <a class="sc-action" [routerLink]="service.routeFor(step)">{{ service.actionFor(step) }}</a>
