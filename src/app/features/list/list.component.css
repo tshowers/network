@@ -63,7 +63,7 @@
 .cl-row {
   position: relative;
   display: grid;
-  grid-template-columns: 1.4fr 1.1fr 1.4fr 140px 170px 40px;
+  grid-template-columns: 24px 1.4fr 1.1fr 1.4fr 140px 170px 112px;
   align-items: center;
   gap: 16px;
   padding: 10px 16px;
@@ -129,6 +129,39 @@
 .cl-del button:focus-visible { opacity: 1; }
 .cl-del button:hover { background: var(--t-red); color: var(--t-red-fg); transform: none; }
 
+.cl-del { display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
+.cl-del button.cl-email {
+  width: auto;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font: 600 13px/1 var(--font);
+  color: var(--text);
+  opacity: 1;
+}
+.cl-del button.cl-email:hover { background: var(--t-green); color: var(--t-green-fg); }
+
+.cl-check { display: grid; place-items: center; }
+.cl-check input { width: 18px; height: 18px; margin: 0; accent-color: var(--green); cursor: pointer; }
+
+.cl-bulk {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  align-self: flex-end;
+  margin-left: auto;
+  padding: 6px 6px 6px 18px;
+  border-radius: 999px;
+  background: var(--t-green);
+  color: var(--t-green-fg);
+  font-size: 14px;
+  font-weight: 700;
+  width: fit-content;
+  justify-self: end;
+}
+.cl-bulk .nw-btn { height: 38px; font-size: 14px; }
+.cl-bulk__clear { width: 32px; height: 32px; min-height: 0; padding: 0; border: 0; border-radius: 50%; background: transparent; color: inherit; cursor: pointer; }
+
 .cl-picker {
   grid-column: 1 / -1;
   padding: 14px;
@@ -143,8 +176,8 @@
 @media (hover: none) { .cl-del button { opacity: 1; } }
 
 @media (max-width: 1080px) {
-  .cl-row { grid-template-columns: 1.4fr 1.2fr 150px 40px; }
-  .cl-row > :nth-child(3), .cl-row > :nth-child(4) { display: none; }
+  .cl-row { grid-template-columns: 24px 1.4fr 1.2fr 150px 112px; }
+  .cl-row > :nth-child(4), .cl-row > :nth-child(5) { display: none; }
 }
 
 /* iPhone (15m): rows are name + status; a floating Add pill. */
@@ -153,7 +186,7 @@
   .cl-title { display: none; }
   .cl-search { flex: 1 1 100%; max-width: none; }
   .cl-actions { display: none; }
-  .cl-row { grid-template-columns: minmax(0, 1fr) auto; padding: 10px 8px; gap: 10px; }
+  .cl-row { grid-template-columns: 24px minmax(0, 1fr) auto; padding: 10px 8px; gap: 10px; }
   .cl-row > .cl-hide-m, .cl-del { display: none; }
   .cl-row--head { display: none; }
   .cl-name .nw-avatar { width: 40px; height: 40px; }

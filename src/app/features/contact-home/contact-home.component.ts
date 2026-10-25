@@ -16,6 +16,8 @@ import type { CockpitCommandDeckLink } from '../../shared/cockpit-command-deck/c
 import { ReliefStatus, SeverityLevel } from '../../models/business-symptom.model';
 import { IMPORT_SOURCES, ImportSource, openImportSource } from '../../models/import-sources';
 import { NetworkOnboarding, NetworkOnboardingService, OnboardingStep } from '../../services/network-onboarding.service';
+import { GoingQuiet, GoingQuietItem, NetworkGoingQuietService } from '../../services/network-going-quiet.service';
+import { OutreachLinkService } from '../../services/outreach-link.service';
 
 interface NetworkLimitState {
   currentCount: number;
@@ -124,6 +126,11 @@ export class ContactHomeComponent implements OnInit, AfterViewInit, OnDestroy {
   diagnosisRows: NetworkDiagnosisRow[] = [];
   readonly onboarding = inject( NetworkOnboardingService );
   readonly sources = IMPORT_SOURCES;
+  private readonly goingQuiet = inject( NetworkGoingQuietService );
+  private readonly outreach = inject( OutreachLinkService );
+  /** Going quiet and who's ready for Outreach; null until loaded or signed out. */
+  quiet: GoingQuiet | null = null;
+  private neverOpenedDismissed = false;
 
   appStatusSummary = 'TODD is standing by. Connect the relationship graph to turn diagnosis, treatment, and relief monitoring on.';
 
@@ -218,6 +225,76 @@ export class ContactHomeComponent implements OnInit, AfterViewInit, OnDestroy {
   /** Only the current card has a button; the import panel covers step 1. */
   showsStepAction ( step: OnboardingStep ): boolean {
     return this.isCurrentStep( step ) && step.available && step.id !== 'contacts';
+  }
+
+  /** "Good morning, Ada." once there are contacts and the list has loaded. */
+  get greeting (): string {
+    if ( !this.quiet || this.isFirstRun || this.isEmbedded ) return '';
+    const hour = new Date().getHours();
+    const part = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+    const name = this.onboarding.onboarding()?.firstName;
+    return name ? `${part}, ${name}.` : `${part}.`;
+  }
+
+  get quietLine (): string {
+    const n = this.quiet?.items.length || 0;
+    return n ? `${n} ${n === 1 ? 'person is' : 'people are'} going quiet. A short note now keeps them warm.` : 'Nobody’s gone quiet. Here’s how your relationships look.';
+  }
+
+  /** Until Outreach is opened once, or the user says not now. */
+  get showNeverOpened (): boolean {
+    const state = this.setup?.state;
+    return !!state && !state.outreachOpenedAt && !state.neverOpenedBannerDismissedAt && !this.neverOpenedDismissed &&
+      !this.isFirstRun && !!this.quiet?.readyContactIds.length;
+  }
+
+  get weeklyDigest (): boolean {
+    return !!this.setup?.state.weeklyDigest;
+  }
+
+  quietRole ( item: GoingQuietItem ): string {
+    const role = [item.title, item.company].filter( Boolean ).join( ', ' );
+    return role ? `${role} · ` : '';
+  }
+
+  emailReady (): void {
+    const ids = this.quiet?.readyContactIds || [];
+    if ( ids.length ) this.outreach.open( ids, `${ids.length} ${ids.length === 1 ? 'contact' : 'contacts'}` );
+  }
+
+  emailOne ( item: GoingQuietItem ): void {
+    this.outreach.open( [item.contactId], item.name );
+  }
+
+  async snooze ( item: GoingQuietItem ): Promise<void> {
+    if ( !this.quiet ) return;
+    this.quiet = { ...this.quiet, items: this.quiet.items.filter( ( i ) => i.contactId !== item.contactId ) };
+    try {
+      await this.goingQuiet.snooze( item.contactId );
+    } catch {
+      // Back on the list next load; nothing else to undo.
+    }
+  }
+
+  dismissNeverOpened (): void {
+    this.neverOpenedDismissed = true;
+    void this.onboarding.update( { dismissNeverOpenedBanner: true } );
+  }
+
+  async setWeekly ( on: boolean ): Promise<void> {
+    await this.onboarding.update( { weeklyDigest: on } );
+  }
+
+  trackByContact ( _index: number, item: GoingQuietItem ): string {
+    return item.contactId;
+  }
+
+  private async loadGoingQuiet (): Promise<void> {
+    try {
+      this.quiet = await this.goingQuiet.load();
+    } catch {
+      this.quiet = null;
+    }
   }
 
   pickSource ( source: ImportSource ): void {
@@ -506,7 +583,11 @@ export class ContactHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loggedInSubscription?.unsubscribe();
     this.loggedInSubscription = this.authService.isLoggedIn().subscribe( loggedIn => {
       this.isLoggedIn = loggedIn;
-      if ( loggedIn ) void this.onboarding.refresh();
+      if ( loggedIn && !this.isEmbedded ) {
+        void this.onboarding.refresh();
+        void this.loadGoingQuiet();
+      }
+      if ( !loggedIn ) this.quiet = null;
       this.recomputeDashboardDerivedState();
     } );
   }

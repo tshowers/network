@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
@@ -16,6 +16,7 @@ import { StatusFlowComponent } from '../../shared/status-flow/status-flow.compon
 import { stageTint } from '../../shared/stage-tint';
 import { WriteActionDirective } from '../../shared/write-access/write-action.directive';
 import { EmptyStateComponent } from '../../shared/empty-state/empty-state.component';
+import { OutreachLinkService } from '../../services/outreach-link.service';
 
 type ContactSortKey = 'name' | 'company' | 'email' | 'phone' | 'status';
 type SortDirection = 'asc' | 'desc';
@@ -199,6 +200,33 @@ export class ListComponent implements OnInit, OnDestroy {
 
   /** The signed-in user's own contact record (its id is their uid) - shown
    * with a "(You)" tag, the same cue TODD's contact list gives. */
+  private readonly outreach = inject( OutreachLinkService );
+  /** Contacts picked for one Outreach email (design_handoff_network_onboarding 10). */
+  readonly selected = new Set<string>();
+
+  /** Someone with an address that isn't known to bounce - not the user, not a sample. */
+  canEmail ( contact: Contact ): boolean {
+    if ( this.isSelf( contact ) || ( contact as any ).emailBlocked ) return false;
+    const email = this.primaryEmail( contact );
+    return !!email && !/\.example$/i.test( email );
+  }
+
+  toggleSelected ( contact: Contact ): void {
+    const id = ( contact as any ).id;
+    if ( this.selected.has( id ) ) this.selected.delete( id );
+    else this.selected.add( id );
+  }
+
+  emailSelected (): void {
+    const ids = [...this.selected];
+    this.outreach.open( ids, `${ids.length} ${ids.length === 1 ? 'contact' : 'contacts'}` );
+  }
+
+  emailOne ( event: Event, contact: Contact ): void {
+    event.stopPropagation();
+    this.outreach.open( [( contact as any ).id], this.displayName( contact ) );
+  }
+
   /** Anyone besides the user's own record. */
   get hasContacts (): boolean {
     return this.contacts.some( ( contact ) => !this.isSelf( contact ) );
