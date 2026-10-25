@@ -17,7 +17,7 @@
         <span class="ir-kicker">Next step</span>
         @if (hasOutreach) {
           <h2 id="ir-next-title">Send your first email in Outreach</h2>
-          <p>Write a message once and Outreach sends it and tracks replies. Replies show up here on each contact.</p>
+          <p>Your {{ readyCount }} verified {{ readyCount === 1 ? 'contact opens' : 'contacts open' }} in Outreach already selected, with a first draft from your profile. Write a message once and Outreach sends it and tracks replies.</p>
           <button type="button" class="nw-btn nw-btn--primary ir-start" (click)="openOutreach()" data-cy="ready-open-outreach">Open in Outreach →</button>
         } @else {
           <h2 id="ir-next-title">Reach them with Outreach</h2>

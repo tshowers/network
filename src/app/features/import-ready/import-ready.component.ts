@@ -9,6 +9,7 @@ import { FlagAction, ImportRow, ImportState, NetworkImportService } from '../../
 import { NetworkEntitlementService } from '../../services/network-entitlement.service';
 import { NetworkNotificationService } from '../../services/network-notification.service';
 import { NetworkOnboardingService } from '../../services/network-onboarding.service';
+import { OutreachLinkService } from '../../services/outreach-link.service';
 import { ProfileApiService } from '../../services/profile-api.service';
 import { WriteActionDirective } from '../../shared/write-access/write-action.directive';
 
@@ -36,6 +37,7 @@ export class ImportReadyComponent implements OnInit, OnDestroy {
   private readonly profileApi = inject( ProfileApiService );
   private readonly title = inject( Title );
   readonly onboarding = inject( NetworkOnboardingService );
+  private readonly outreach = inject( OutreachLinkService );
 
   batchId = '';
   state: ImportState | null = null;
@@ -125,8 +127,15 @@ export class ImportReadyComponent implements OnInit, OnDestroy {
     await this.onboarding.update( { weeklyDigest: on } );
   }
 
+  /** Ready rows Outreach can actually send to - sample contacts stay in Network. */
+  private get outreachIds (): string[] {
+    return ( this.state?.contacts || [] ).filter( ( row ) => READY_STATUSES.has( row.status ) && row.status !== 'sample' ).map( ( row ) => row.id );
+  }
+
+  /** "Open in Outreach" and "Look around first": the composer with them selected (Outreach shows its browse notice without a subscription). */
   openOutreach (): void {
-    this.onboarding.openOutreach();
+    const ids = this.outreachIds;
+    this.outreach.open( ids, ids.length === 1 ? '1 contact' : `${ids.length} contacts` );
   }
 
   addOutreach (): void {
