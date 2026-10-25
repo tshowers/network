@@ -11,7 +11,7 @@ describe( 'Onboarding', () => {
 
   const onboarding = ( overrides: Record<string, unknown> = {} ) => ( {
     steps: [
-      step( 'contacts', 'Bring in your contacts', { detail: 'HubSpot, Outlook, Google or a CSV' } ),
+      step( 'contacts', 'Bring in your contacts', { detail: 'A CSV file, or one at a time' } ),
       step( 'cleanup', 'TODD checks and fills them in', { kicker: 'Automatic', automatic: true, available: false, detail: 'Starts as soon as contacts land' } ),
       step( 'profile', 'Tell TODD about your business', { kicker: 'You · 1 minute', detail: 'TODD knows 5 of 8. Used to write your emails' } ),
       step( 'review', 'Look at what TODD flagged', { available: false } ),
