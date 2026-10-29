@@ -28,7 +28,7 @@ describe( 'Network routes - signed out', () => {
     cy.get( '[data-cy="get-the-app-faq"]' ).should( 'contain.text', 'Subscribe here with a card' );
   } );
 
-  it( 'redirects /login to the TODD hosted login page', () => {
+  it( 'redirects /login to the 16Ahead hosted login page', () => {
     cy.visit( '/login' );
     cy.get( '[data-cy="sign-in-shell"]' ).should( 'exist' );
     cy.location( 'href', { timeout: 10000 } ).should( 'include', 'todd.taliferro.tech/login' );

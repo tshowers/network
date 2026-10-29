@@ -100,7 +100,7 @@ describe( 'Profile page', () => {
     cy.location( 'pathname' ).should( 'eq', '/' );
   } );
 
-  it( 'links Profile in the menu to the in-app page, not TODD', () => {
+  it( 'links Profile in the menu to the in-app page, not the hub', () => {
     signIn( '/app' );
     cy.get( '.platform-menu-trigger, [aria-label*="menu" i]' ).first().click( { force: true } );
     cy.contains( '.um-row', 'Profile' ).should( 'have.attr', 'href', '/profile' );

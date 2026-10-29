@@ -87,7 +87,7 @@ describe( 'Get started wizard', () => {
     cy.get( '[data-cy="get-started-input"]' ).should( 'have.value', 'Grace' );
   } );
 
-  it( 'hands off to TODD hosted login from the last step', () => {
+  it( 'hands off to 16Ahead hosted login from the last step', () => {
     cy.window().then( ( win ) => win.localStorage.setItem( storageKey, JSON.stringify( {
       firstName: 'Ada', lastName: 'Lovelace', role: 'Owner', companyName: '', helpWith: ['Follow up faster'], helpNote: '', timezone: 'America/Chicago', readyToSubmit: false,
     } ) ) );

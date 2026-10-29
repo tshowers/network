@@ -74,7 +74,7 @@ describe( 'Import cleanup', () => {
     cy.contains( '[data-cy="cleanup-heading"]', 'Checking 2 of 3…' );
   } );
 
-  it( 'shows rows change as TODD works, then hands off to Ready', () => {
+  it( 'shows rows change as 16Ahead works, then hands off to Ready', () => {
     let calls = 0;
     cy.intercept( 'GET', '**/network/imports/b-1', ( req ) => {
       calls += 1;
@@ -85,7 +85,7 @@ describe( 'Import cleanup', () => {
     cy.contains( '[data-cy="cleanup-heading"]', 'Checking 2 of 3…' );
     cy.get( '[data-cy="cleanup-row"]' ).eq( 1 ).should( 'contain.text', 'Checking email' );
     cy.get( '[data-cy="cleanup-feed"]' ).should( 'contain.text', 'Sarah Chen: email verified' );
-    cy.get( '[data-cy="profile-question-card"]' ).should( 'contain.text', 'While TODD works' );
+    cy.get( '[data-cy="profile-question-card"]' ).should( 'contain.text', 'While 16Ahead works' );
     cy.screenshot( 'cleanup/running', { capture: 'viewport' } );
 
     cy.contains( '[data-cy="cleanup-heading"]', 'All 3 checked.', { timeout: 6000 } );
@@ -103,7 +103,7 @@ describe( 'Import cleanup', () => {
     signIn( '/import/b-1/cleanup' );
 
     cy.contains( '[data-cy="cleanup-heading"]', '1 checked. 2 more tonight.' );
-    cy.contains( 'TODD checks up to 25 emails a day.' );
+    cy.contains( '16Ahead checks up to 25 emails a day.' );
     cy.get( '[data-cy="cleanup-row"]' ).eq( 1 ).should( 'contain.text', 'Checks tonight' );
   } );
 

@@ -12,9 +12,9 @@ describe( 'Onboarding', () => {
   const onboarding = ( overrides: Record<string, unknown> = {} ) => ( {
     steps: [
       step( 'contacts', 'Bring in your contacts', { detail: 'A CSV file, or one at a time' } ),
-      step( 'cleanup', 'TODD checks and fills them in', { kicker: 'Automatic', automatic: true, available: false, detail: 'Starts as soon as contacts land' } ),
-      step( 'profile', 'Tell TODD about your business', { kicker: 'You · 1 minute', detail: 'TODD knows 5 of 8. Used to write your emails' } ),
-      step( 'review', 'Look at what TODD flagged', { available: false } ),
+      step( 'cleanup', '16Ahead checks and fills them in', { kicker: 'Automatic', automatic: true, available: false, detail: 'Starts as soon as contacts land' } ),
+      step( 'profile', 'Tell 16Ahead about your business', { kicker: 'You · 1 minute', detail: '16Ahead knows 5 of 8. Used to write your emails' } ),
+      step( 'review', 'Look at what 16Ahead flagged', { available: false } ),
       step( 'reachOut', 'Start reaching out', { available: false, detail: 'Email them with Outreach' } ),
     ],
     completedSteps: 0,
@@ -83,9 +83,9 @@ describe( 'Onboarding', () => {
       counts: { imported: 12, emails: 12, checked: 12, fixed: 2, enriched: 5, flagged: 3, reachedOut: 0 },
       steps: [
         step( 'contacts', 'Bring in your contacts', { done: true, detail: '12 contacts imported' } ),
-        step( 'cleanup', 'TODD checks and fills them in', { kicker: 'Automatic', automatic: true, done: true, detail: 'Done. 2 fixed, 5 filled in' } ),
-        step( 'profile', 'Tell TODD about your business', { detail: 'TODD knows 5 of 8. Used to write your emails' } ),
-        step( 'review', 'Look at the 3 TODD flagged' ),
+        step( 'cleanup', '16Ahead checks and fills them in', { kicker: 'Automatic', automatic: true, done: true, detail: 'Done. 2 fixed, 5 filled in' } ),
+        step( 'profile', 'Tell 16Ahead about your business', { detail: '16Ahead knows 5 of 8. Used to write your emails' } ),
+        step( 'review', 'Look at the 3 16Ahead flagged' ),
         step( 'reachOut', 'Start reaching out', { detail: 'Email them with Outreach' } ),
       ],
     } );
@@ -125,7 +125,7 @@ describe( 'Onboarding', () => {
     signIn( '/profile' );
     cy.wait( '@loadProfile' );
 
-    cy.get( '[data-cy="profile-question-card"]' ).should( 'contain.text', 'TODD knows 5 of 8' )
+    cy.get( '[data-cy="profile-question-card"]' ).should( 'contain.text', '16Ahead knows 5 of 8' )
       .and( 'contain.text', 'What does your company do?' );
     cy.screenshot( 'onboarding/profile', { capture: 'viewport' } );
 
@@ -139,7 +139,7 @@ describe( 'Onboarding', () => {
     cy.wait( '@saveProfile' ).its( 'request.body.profile.companyGoal' ).should( 'eq', 'To make complicated things simple for the people we serve.' );
     cy.get( '[data-cy="profile-read"]' ).should( 'exist' );
     cy.contains( 'dd', 'To make complicated things simple' ).should( 'be.visible' );
-    cy.get( '[data-cy="profile-question-card"]' ).should( 'contain.text', 'TODD knows 6 of 8' );
+    cy.get( '[data-cy="profile-question-card"]' ).should( 'contain.text', '16Ahead knows 6 of 8' );
 
     // "Later" skips without saving.
     cy.contains( '[data-cy="profile-question-card"] h3', 'What does your company do?' );

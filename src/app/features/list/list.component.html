@@ -36,7 +36,7 @@
     <app-preloader [isLoading]="isLoading" message="Loading your contacts…"></app-preloader>
 
     <app-empty-state *ngIf="!isLoading && !errorMessage && !hasContacts" kicker="Contacts" heading="Your contacts will live here"
-                     body="Bring them in from a CSV, or add people one at a time. TODD checks every email and fills in missing details as they land." data-cy="contacts-empty">
+                     body="Bring them in from a CSV, or add people one at a time. 16Ahead checks every email and fills in missing details as they land." data-cy="contacts-empty">
       <a class="nw-btn nw-btn--primary" routerLink="/contact-import" appWriteAction="import contacts">Import contacts</a>
       <button type="button" class="nw-btn nw-btn--on-surface" appWriteAction="add a contact" (click)="addContact()">Add one by hand</button>
     </app-empty-state>

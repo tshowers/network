@@ -54,7 +54,7 @@ describe( 'Paths to Outreach', () => {
 
     cy.get( '[data-cy="home-review-draft"]' ).click();
     cy.get( '@open' ).should( 'have.been.calledWith',
-      'https://outreach.taliferro.tech/compose-email?contactIds=c-1,c-2,c-3&source=network&draft=profile', '_blank', 'noopener' );
+      'https://outreach.16ahead.com/compose-email?contactIds=c-1,c-2,c-3&source=network&draft=profile', '_blank', 'noopener' );
     cy.contains( 'Opening Outreach with 3 contacts selected…' );
     cy.wait( '@patchOnboarding' ).its( 'request.body' ).should( 'deep.equal', { outreachOpened: true } );
     cy.get( '[data-cy="home-never-opened"]' ).should( 'not.exist' );
@@ -70,7 +70,7 @@ describe( 'Paths to Outreach', () => {
     cy.get( '[data-cy="home-never-opened"]' ).should( 'not.exist' );
     cy.get( '[data-cy="home-quiet-email"]' ).first().click();
     cy.get( '@open' ).should( 'have.been.calledWith',
-      'https://outreach.taliferro.tech/compose-email?contactIds=c-2&source=network&draft=profile', '_blank', 'noopener' );
+      'https://outreach.16ahead.com/compose-email?contactIds=c-2&source=network&draft=profile', '_blank', 'noopener' );
     cy.contains( 'Opening Outreach with Priya Raman selected…' );
     cy.wait( '@patchOnboarding' ).its( 'request.body' ).should( 'deep.equal', { outreachOpened: true } );
 

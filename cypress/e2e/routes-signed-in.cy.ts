@@ -108,7 +108,7 @@ describe( 'Network routes - signed in', () => {
     cy.get( '[data-cy="csv-import-shell"]' ).should( 'be.visible' );
     cy.get( '[data-cy="ci-sample"]' ).click();
 
-    // One confirm step: TODD matched the sample's columns, nothing to map.
+    // One confirm step: 16Ahead matched the sample's columns, nothing to map.
     cy.contains( '[data-cy="ci-preview"] h2', '12 contacts found' ).should( 'be.visible' );
     cy.get( '[data-cy="ci-preview"] .nw-pill' ).should( 'contain.text', 'Email Address' );
     cy.get( '[data-cy="ci-import"]' ).should( 'contain.text', 'Import 12 contacts' ).click();

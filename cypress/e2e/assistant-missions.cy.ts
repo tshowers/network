@@ -59,7 +59,7 @@ describe( 'Network assistant: Missions', () => {
   it( 'emailing investors becomes the segment Mission in the conversation, with the page as context', () => {
     missionAt( 'segment-proposed', 'pitch-segment' );
     openAssistant();
-    ask( 'I would like to send an email to investors about our TODD product' );
+    ask( 'I would like to send an email to investors about our 16Ahead product' );
     cy.wait( '@ask' ).its( 'request.body' ).should( ( body ) => {
       expect( body ).to.include( { origin: 'ask' } );
       expect( body.request ).to.contain( 'investors' );
@@ -69,7 +69,7 @@ describe( 'Network assistant: Missions', () => {
       cy.get( '[data-cy="mission-title"]' ).should( 'be.visible' ).and( 'contain.text', 'Email an industry segment' );
       cy.get( '[data-cy="start"]' ).should( 'be.visible' );
       cy.get( '[data-cy="plan-strip-list"]' ).should( 'exist' );
-      cy.contains( 'a', 'Open in Moves' ).should( 'have.attr', 'href', 'https://moves.taliferro.tech/missions/pitch-segment' );
+      cy.contains( 'a', 'Open in Moves' ).should( 'have.attr', 'href', 'https://moves.16ahead.com/missions/pitch-segment' );
     } );
     // No old-style text directions underneath.
     cy.get( '.todd-assistant-window-open .assistant-response' ).should( 'not.exist' );
