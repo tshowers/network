@@ -304,7 +304,7 @@ export class AssistantBoxComponent implements OnInit, OnChanges, OnDestroy {
         if ( looksLikeQuotaOrBilling ) {
             return [
                 '<div class="assistant-nudge">',
-                '<strong>TODD could not finish that right now.</strong><br>',
+                '<strong>16Ahead could not finish that right now.</strong><br>',
                 'It looks like the OpenAI Platform account may need attention because the balance, quota, or usage limit was reached.<br>',
                 'Please try again shortly.',
                 '</div>'
@@ -359,7 +359,7 @@ export class AssistantBoxComponent implements OnInit, OnChanges, OnDestroy {
         }
 
         if ( /\b(enriched|data expanded)\b/.test( normalized ) ) {
-            return `TODD shows ${enrichedContacts.toLocaleString()} enriched contacts on this Network view right now.`;
+            return `16Ahead shows ${enrichedContacts.toLocaleString()} enriched contacts on this Network view right now.`;
         }
 
         return null;

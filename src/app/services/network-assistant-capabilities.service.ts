@@ -313,7 +313,7 @@ export class NetworkAssistantCapabilitiesService {
       message: [
         '<p><strong>This sounds like contact-list work.</strong></p>',
         '<p>Open <strong>/contact-list</strong> to browse, filter, sort, select, export, or inspect individual records.</p>',
-        '<p>Once you are there, the TODD popup has page context and can help with the list you are looking at.</p>'
+        '<p>Once you are there, the 16Ahead popup has page context and can help with the list you are looking at.</p>'
       ].join( '' )
     },
     {
@@ -403,7 +403,7 @@ export class NetworkAssistantCapabilitiesService {
       message: [
         '<p><strong>This sounds like contact-import work.</strong></p>',
         '<p>Open <strong>/contact-import</strong> to upload a CSV, map fields, preview records, run the import, review results, or resolve contact-capacity issues.</p>',
-        '<p>Once you are there, the TODD popup has import-page context and can help with the current step.</p>'
+        '<p>Once you are there, the 16Ahead popup has import-page context and can help with the current step.</p>'
       ].join( '' )
     },
   ];

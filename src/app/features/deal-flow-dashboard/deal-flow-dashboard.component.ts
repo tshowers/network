@@ -249,11 +249,11 @@ export class DealFlowDashboardComponent implements OnInit, OnDestroy {
     const mapped = this.mappedStatusCount;
     const opportunity = this.opportunityCount;
     const catalog = [
-      { key: 'sales-handoff', windowLabel: '6:00 AM - 6:30 AM', title: 'Maya Status', owner: 'Maya', objective: "Report Maya's real 6am selection and hourly drafting-duty progress - drafted so far vs. planned, not a separate simulated queue. Leads the day since her real work starts here." },
-      { key: 'interest-intake', windowLabel: '6:30 AM - 7:00 AM', title: 'Interest Intake', owner: 'TODD', objective: "Report real reserve buckets - warm inbound, recent engagement, overdue follow-up, cold-lead fallback, and Lead Vault - and how many are already eligible for Maya's next selection." },
-      { key: 'lane-assignment', windowLabel: '7:00 AM - 7:30 AM', title: 'Lane Assignment', owner: 'TODD', objective: "Report the real state of Maya's live threads - plan/drafts/outbox/sent, and where each plan thread sits (needs you, engaged, watching, waiting, stalled)." },
-      { key: 'follow-up-loop', windowLabel: '7:30 AM - 8:30 AM', title: 'First Wave Execution', owner: 'TODD', objective: "Report the real queued and pending-approval counts from Maya's actual thread pool." },
-      { key: 'close-loop', windowLabel: '5:00 PM', title: 'Close Loop', owner: 'TODD + Sales', objective: "Close the day by reporting Maya's real drafting progress and queue state, and run the after-5 recovery push if the daily goal is still unmet." }
+      { key: 'sales-handoff', windowLabel: '6:00 AM - 6:30 AM', title: 'Marketing Assistant Status', owner: 'Marketing Assistant', objective: "Report the Marketing Assistant's real 6am selection and hourly drafting-duty progress - drafted so far vs. planned, not a separate simulated queue. Leads the day since its real work starts here." },
+      { key: 'interest-intake', windowLabel: '6:30 AM - 7:00 AM', title: 'Interest Intake', owner: '16Ahead', objective: "Report real reserve buckets - warm inbound, recent engagement, overdue follow-up, cold-lead fallback, and Lead Vault - and how many are already eligible for the Marketing Assistant's next selection." },
+      { key: 'lane-assignment', windowLabel: '7:00 AM - 7:30 AM', title: 'Lane Assignment', owner: '16Ahead', objective: "Report the real state of the Marketing Assistant's live threads - plan/drafts/outbox/sent, and where each plan thread sits (needs you, engaged, watching, waiting, stalled)." },
+      { key: 'follow-up-loop', windowLabel: '7:30 AM - 8:30 AM', title: 'First Wave Execution', owner: '16Ahead', objective: "Report the real queued and pending-approval counts from the Marketing Assistant's actual thread pool." },
+      { key: 'close-loop', windowLabel: '5:00 PM', title: 'Close Loop', owner: '16Ahead + Sales', objective: "Close the day by reporting the Marketing Assistant's real drafting progress and queue state, and run the after-5 recovery push if the daily goal is still unmet." }
     ];
     this.pipelineStatusSteps = catalog.map( step => ({
       ...step, summary: 'This step is staged but has not executed yet.', statusLabel: 'Waiting', count: 0, detail: '', logs: [], generatedItems: []
@@ -272,7 +272,7 @@ export class DealFlowDashboardComponent implements OnInit, OnDestroy {
       this.customerMomentumEngineState = state?.data?.engineState || null;
       this.customerMomentumActivityRows = Array.isArray( activity?.data?.items ) ? activity.data.items : [];
       this.applyMomentumStatusData();
-    } catch { this.customerMomentumError = 'TODD could not load the customer momentum workspace yet.'; }
+    } catch { this.customerMomentumError = '16Ahead could not load the customer momentum workspace yet.'; }
     finally { this.customerMomentumLoading = false; }
   }
 
@@ -289,8 +289,8 @@ export class DealFlowDashboardComponent implements OnInit, OnDestroy {
       { key:'sales-handoff', count:value(maya,'totalPlanned'), detail:`Drafted: ${value(maya,'draftedSoFar')}/${value(maya,'totalPlanned')} · Auto-send eligible: ${value(maya,'autoSendEligibleCount')} · Draft-only: ${value(maya,'draftOnlyEligibleCount')}`, items: bucketItems(maya,[['Auto-send eligible','autoSendEligibleCount'],['Draft-only (approval first)','draftOnlyEligibleCount']]) },
       { key:'interest-intake', count:value(target,'totalCount'), detail:`Warm inbound: ${value(target.warmInbound,'count')} · Recent click/open: ${value(target.recentClickOrOpen,'count')} · Due follow-up: ${value(target.dueFollowUp,'count')} · Cold fallback: ${value(target.bestFitColdLeads,'count')} · Lead Vault: ${value(target.leadVaultProspects,'count')}`, items: bucketItems(target,[['Warm inbound','warmInbound'],['Recent click/open','recentClickOrOpen'],['Due follow-up','dueFollowUp'],['Best-fit cold leads','bestFitColdLeads'],['Lead Vault prospects','leadVaultProspects']]) },
       { key:'lane-assignment', count:value(lanes.userLaneCounts,'plan'), detail:`Plan: ${value(lanes.userLaneCounts,'plan')} · Drafts: ${value(lanes.userLaneCounts,'drafts')} · Outbox: ${value(lanes.userLaneCounts,'outbox')} · Sent: ${value(lanes.userLaneCounts,'sent')}`, items: bucketItems(lanes.userLaneCounts,[['Plan','plan'],['Drafts','drafts'],['Outbox','outbox'],['Sent','sent']]) },
-      { key:'follow-up-loop', count:value(wave,'draftsPendingCount'), detail:`Queued: ${value(wave,'outboxCount')} · Approval pending: ${value(wave,'draftsPendingCount')} · Sent: ${value(wave,'sentCount')} · Not yet drafted: ${value(wave,'notYetDraftedCount')}`, items: bucketItems(wave,[['Queued (outbox)','outboxCount'],['Approval pending (drafts)','draftsPendingCount'],['Sent','sentCount'],['Not yet drafted by Maya','notYetDraftedCount']]) },
-      { key:'close-loop', count:value(close,'draftsPendingCount'), detail:`Maya drafted: ${value(close,'mayaDraftedCount')}/${value(close,'mayaTotalPlanned')} · Queued: ${value(close,'outboxCount')} · Approval pending: ${value(close,'draftsPendingCount')} · Sent: ${value(close,'sentCount')}`, items: bucketItems(close,[['Maya drafted vs. planned','mayaDraftedCount'],['Queued','outboxCount'],['Approval still pending','draftsPendingCount'],['Sent','sentCount']]) }
+      { key:'follow-up-loop', count:value(wave,'draftsPendingCount'), detail:`Queued: ${value(wave,'outboxCount')} · Approval pending: ${value(wave,'draftsPendingCount')} · Sent: ${value(wave,'sentCount')} · Not yet drafted: ${value(wave,'notYetDraftedCount')}`, items: bucketItems(wave,[['Queued (outbox)','outboxCount'],['Approval pending (drafts)','draftsPendingCount'],['Sent','sentCount'],['Not yet drafted by the Marketing Assistant','notYetDraftedCount']]) },
+      { key:'close-loop', count:value(close,'draftsPendingCount'), detail:`The Marketing Assistant drafted: ${value(close,'mayaDraftedCount')}/${value(close,'mayaTotalPlanned')} · Queued: ${value(close,'outboxCount')} · Approval pending: ${value(close,'draftsPendingCount')} · Sent: ${value(close,'sentCount')}`, items: bucketItems(close,[['The Marketing Assistant drafted vs. planned','mayaDraftedCount'],['Queued','outboxCount'],['Approval still pending','draftsPendingCount'],['Sent','sentCount']]) }
     ];
     this.pipelineStatusSteps = this.pipelineStatusSteps.map( step => {
       const config = configs.find( item => item.key === step.key );

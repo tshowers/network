@@ -6,12 +6,12 @@
   <button type="button" class="nw-link ci-back" (click)="goBack()" data-cy="ci-back"><svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</button>
   <h1>Import a CSV</h1>
 
-  <p class="ci-guest" *ngIf="!isSignedIn" role="status"><strong>You can try this out, but you won't be able to save.</strong> Drop a file and see what TODD matches; sign in before you import — guest sessions can't write new contacts. <a routerLink="/get-started">Sign in</a></p>
+  <p class="ci-guest" *ngIf="!isSignedIn" role="status"><strong>You can try this out, but you won't be able to save.</strong> Drop a file and see what 16Ahead matches; sign in before you import — guest sessions can't write new contacts. <a routerLink="/get-started">Sign in</a></p>
 
   <section class="ci-card" *ngIf="step === 'upload'">
     <div class="ci-drop" [class.is-busy]="processing" (drop)="onDrop($event)" (dragover)="onDragOver($event)" data-cy="ci-drop">
       <h2>Drop a CSV here</h2>
-      <p>{{ processing ? message : 'Any export works. TODD matches the columns for you.' }}</p>
+      <p>{{ processing ? message : 'Any export works. 16Ahead matches the columns for you.' }}</p>
       <div class="ci-drop__actions">
         <label class="nw-btn nw-btn--primary">Choose file<input type="file" accept=".csv" hidden (change)="onFileSelect($event)" /></label>
         <button type="button" class="nw-btn nw-btn--on-surface" (click)="importSample()" data-cy="ci-sample">Use sample file</button>
@@ -26,13 +26,13 @@
   <section class="ci-card" *ngIf="step === 'preview'" data-cy="ci-preview">
     <div class="ci-head">
       <h2>{{ contacts.length }} contact{{ contacts.length === 1 ? '' : 's' }} found</h2>
-      <p class="ci-muted">TODD matched these columns. You can <button type="button" class="ci-inline" (click)="changeColumns()" data-cy="ci-change">change them</button>.</p>
+      <p class="ci-muted">16Ahead matched these columns. You can <button type="button" class="ci-inline" (click)="changeColumns()" data-cy="ci-change">change them</button>.</p>
     </div>
     <div class="ci-tags">
       <span class="nw-pill" data-tint="green" *ngFor="let label of matchedLabels">{{ label }}</span>
       <span class="nw-pill ci-skipped" *ngFor="let header of skippedHeaders">{{ header }} · skipped</span>
     </div>
-    <p class="ci-line">As soon as they're in, TODD checks each email and fills in the gaps.</p>
+    <p class="ci-line">As soon as they're in, 16Ahead checks each email and fills in the gaps.</p>
     <p class="ci-note ci-note--warn" *ngIf="getImportAccessNote()">{{ getImportAccessNote() }}</p>
     <button type="button" class="nw-btn nw-btn--primary ci-go" [disabled]="processing || !contacts.length" appWriteAction="import these contacts" (click)="submitImport()" data-cy="ci-import">{{ getImportButtonLabel() }}</button>
   </section>
@@ -42,7 +42,7 @@
     <ng-container *ngIf="!processing && importCompleted">
       <span class="ci-result" data-tone="ok" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>
       <h2>{{ lastImportSuccessCount }} contact{{ lastImportSuccessCount === 1 ? '' : 's' }} imported<span *ngIf="lastImportFailureCount"> · {{ lastImportFailureCount }} failed</span></h2>
-      <p>TODD is checking them now. The setup checklist shows where it's up to.</p>
+      <p>16Ahead is checking them now. The setup checklist shows where it's up to.</p>
       <div class="ci-actions">
         <button type="button" class="nw-btn nw-btn--on-surface" (click)="goToContacts()">View contacts</button>
         <button type="button" class="nw-btn nw-btn--primary" (click)="goHome()" data-cy="ci-home">Back to Home</button>

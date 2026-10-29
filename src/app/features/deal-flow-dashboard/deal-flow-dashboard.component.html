@@ -76,7 +76,7 @@
       </div>
 
       <section class="pg-priorities" aria-labelledby="pg-pri-title">
-        <h2 id="pg-pri-title">TODD Action Priorities <span>Who needs your attention right now</span></h2>
+        <h2 id="pg-pri-title">16Ahead Action Priorities <span>Who needs your attention right now</span></h2>
         <div class="pg-pri-grid">
           <button type="button" class="pg-pri nw-tint" *ngFor="let priority of priorityStages" [attr.data-tint]="priorityTints[priority.label] || 'grey'" (click)="selectTab('lanes')">
             <span class="pg-pri__top"><i class="fa-solid fa-{{ priority.icon }}" aria-hidden="true"></i><svg class="nw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span>

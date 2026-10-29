@@ -11,4 +11,4 @@ Disallow: /mobile-handoff
 Disallow: /auth/callback
 Disallow: /success
 
-Sitemap: https://network.taliferro.tech/sitemap.xml
+Sitemap: https://network.16ahead.com/sitemap.xml

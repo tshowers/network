@@ -1,7 +1,7 @@
 <header class="ah">
   <a class="ah-brand" [routerLink]="isLoggedIn ? '/app' : '/'">
-    <img class="ah-logo" src="assets/seo/network-icon.png" alt="" width="36" height="36" />
-    <span class="ah-name"><span class="ah-wide">Network</span><span class="ah-phone">{{ section || 'Network' }}</span></span>
+    <img class="ah-logo brand-mark--light" src="assets/brand/products/svg/light/04-network.svg" alt="" width="36" height="36" /><img class="ah-logo brand-mark--dark" src="assets/brand/products/svg/dark/04-network.svg" alt="" width="36" height="36" />
+    <span class="ah-name"><span class="ah-wide">16Ahead <small>Network</small></span><span class="ah-phone">{{ section || 'Network' }}</span></span>
   </a>
 
   @if (isLoggedIn) {

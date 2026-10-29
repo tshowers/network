@@ -64,16 +64,16 @@ export class HelpComponent implements OnInit {
       void this.onboarding.refresh().then( ( progress ) => ( this.progress = progress ) );
     } );
 
-    const pageTitle = 'Network Help — How to work your relationships | Taliferro Tech';
-    const description = 'A walkthrough of Network: import or add contacts, give each relationship a stage, check relationship health, and act on TODD\'s weekly priorities.';
+    const pageTitle = 'Network Help — How to work your relationships | 16Ahead';
+    const description = 'A walkthrough of Network: import or add contacts, give each relationship a stage, check relationship health, and act on 16Ahead\'s weekly priorities.';
     this.title.setTitle(pageTitle);
     this.meta.updateTag({ name: 'description', content: description });
     this.meta.updateTag({ property: 'og:title', content: pageTitle });
     this.meta.updateTag({ property: 'og:description', content: description });
-    this.meta.updateTag({ property: 'og:url', content: 'https://network.taliferro.tech/help' });
+    this.meta.updateTag({ property: 'og:url', content: 'https://network.16ahead.com/help' });
     this.meta.updateTag({ name: 'twitter:title', content: pageTitle });
     this.meta.updateTag({ name: 'twitter:description', content: description });
-    this.seo.setCanonical('https://network.taliferro.tech/help');
+    this.seo.setCanonical('https://network.16ahead.com/help');
   }
 
   /** Stage number tints, in order (15i). */
@@ -88,7 +88,7 @@ export class HelpComponent implements OnInit {
     {
       icon: 'fa-bullseye',
       title: 'Know who to contact this week',
-      copy: 'TODD Action Priorities point to the relationships that need a closer look right now.',
+      copy: '16Ahead Action Priorities point to the relationships that need a closer look right now.',
     },
     {
       icon: 'fa-chart-line',
@@ -150,9 +150,9 @@ export class HelpComponent implements OnInit {
     {
       number: '05',
       title: 'Act on your priorities',
-      copy: 'Networking Progress shows where every relationship stands and which ones TODD thinks need a closer look.',
+      copy: 'Networking Progress shows where every relationship stands and which ones 16Ahead thinks need a closer look.',
       details: [
-        'Start with TODD Action Priorities. These are the people to reach out to next.',
+        'Start with 16Ahead Action Priorities. These are the people to reach out to next.',
         'Pipeline Flow shows how many people are at each stage and where momentum is building or stalling.',
         'Lane View lists the people behind each stage. Select anyone to open their record.',
         'Want a simpler board of cards by stage? Use Pipeline for a quick visual check.',
@@ -206,7 +206,7 @@ export class HelpComponent implements OnInit {
     {
       when: 'Monday',
       title: 'Pick 3–5 people',
-      copy: 'Choose from TODD Action Priorities on Networking Progress. Keep the list small enough to finish.',
+      copy: 'Choose from 16Ahead Action Priorities on Networking Progress. Keep the list small enough to finish.',
       route: '/contact-deal-flow-dashboard',
       action: 'Priorities',
     },

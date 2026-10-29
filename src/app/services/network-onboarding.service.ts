@@ -37,7 +37,7 @@ export interface NetworkOnboarding {
 
 export type OnboardingPatch = { weeklyDigest?: boolean; outreachOpened?: true; dismissNeverOpenedBanner?: true };
 
-const OUTREACH_URL = 'https://outreach.taliferro.tech';
+const OUTREACH_URL = 'https://outreach.16ahead.com';
 
 /**
  * Network's five-step setup checklist (`GET/PATCH /api/network/onboarding`,

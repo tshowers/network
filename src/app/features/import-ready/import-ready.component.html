@@ -7,7 +7,7 @@
     <header class="ir-intro">
       <span class="nw-tint ir-tag" data-tint="green">Cleanup finished</span>
       <h1 class="nw-title ir-title" data-cy="ready-heading">{{ readyCount }} {{ readyCount === 1 ? 'person is' : 'people are' }} ready to hear from you.</h1>
-      <p class="nw-sub">TODD verified their emails, fixed {{ fixedCount }} {{ fixedCount === 1 ? 'record' : 'records' }} and filled in {{ filledCount }} {{ filledCount === 1 ? 'company' : 'companies' }}.
+      <p class="nw-sub">16Ahead verified their emails, fixed {{ fixedCount }} {{ fixedCount === 1 ? 'record' : 'records' }} and filled in {{ filledCount }} {{ filledCount === 1 ? 'company' : 'companies' }}.
         @if (openFlags) { {{ openFlags }} {{ openFlags === 1 ? 'needs' : 'need' }} you. }
         @if (deferredCount) { {{ deferredCount }} more {{ deferredCount === 1 ? 'is' : 'are' }} checked tonight. }</p>
     </header>
@@ -51,7 +51,7 @@
       <section class="ir-flags" aria-labelledby="ir-flags-title" data-cy="ready-flags">
         <h2 id="ir-flags-title">Needs you · {{ openFlags }}</h2>
         @if (!flagged.length) {
-          <p class="ir-muted">Nothing flagged. Every address TODD checked looks like a real person.</p>
+          <p class="ir-muted">Nothing flagged. Every address 16Ahead checked looks like a real person.</p>
         }
         @for (row of flagged; track row.id) {
           <div class="ir-flag" data-cy="ready-flag">

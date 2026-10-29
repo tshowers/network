@@ -199,12 +199,12 @@ export class NetworkAssistantLauncherComponent implements OnInit, OnDestroy {
       tone: 'neutral',
       icon: 'fa-solid fa-compass',
       title: 'Network keeps your relationships connected',
-      message: 'TODD uses your contacts, companies, deals, and conversations to tell you who needs attention next and where revenue might be slipping away. Sign in to see it work with your own data.',
-      whyItMatters: "A contact list alone doesn't tell you what to do next - Network gives TODD the context to figure that out for you.",
+      message: '16Ahead uses your contacts, companies, deals, and conversations to tell you who needs attention next and where revenue might be slipping away. Sign in to see it work with your own data.',
+      whyItMatters: "A contact list alone doesn't tell you what to do next - Network gives 16Ahead the context to figure that out for you.",
       bullets: [
         'Import or add contacts to start tracking relationship health.',
-        'TODD flags who’s gone quiet and who’s ready for a follow-up.',
-        'Ask this chat how Network works, or what TODD actually does.',
+        '16Ahead flags who’s gone quiet and who’s ready for a follow-up.',
+        'Ask this chat how Network works, or what 16Ahead actually does.',
       ],
     };
   }
@@ -238,7 +238,7 @@ export class NetworkAssistantLauncherComponent implements OnInit, OnDestroy {
         tone: 'attention',
         icon: 'fa-solid fa-triangle-exclamation',
         title: "You've reached your contact limit",
-        message: blockerMessage || "TODD can't add more contacts until you free up space or upgrade.",
+        message: blockerMessage || "16Ahead can't add more contacts until you free up space or upgrade.",
         whyItMatters: "New contacts can't be imported or created while you're at capacity.",
         bullets: ['Review the contact list to remove or merge records.', 'Upgrade for more capacity if the network keeps growing.'],
       };
@@ -254,9 +254,9 @@ export class NetworkAssistantLauncherComponent implements OnInit, OnDestroy {
         tone: 'attention',
         icon: 'fa-solid fa-triangle-exclamation',
         title: 'Start building your network',
-        message: "TODD doesn't see any contacts yet. Import a list or add people one at a time to get relationship health tracking started.",
-        whyItMatters: 'Network is where TODD learns who exists before it can tell you who needs attention.',
-        bullets: ['Import a CSV of contacts, or add one manually.', 'TODD starts tracking health the moment contacts land here.'],
+        message: "16Ahead doesn't see any contacts yet. Import a list or add people one at a time to get relationship health tracking started.",
+        whyItMatters: 'Network is where 16Ahead learns who exists before it can tell you who needs attention.',
+        bullets: ['Import a CSV of contacts, or add one manually.', '16Ahead starts tracking health the moment contacts land here.'],
       };
     }
 
@@ -270,7 +270,7 @@ export class NetworkAssistantLauncherComponent implements OnInit, OnDestroy {
         tone: 'progress',
         icon: 'fa-solid fa-hourglass-half',
         title: 'Keep enrichment moving',
-        message: `TODD sees ${total.toLocaleString()} contacts. ${Math.round( enrichedPct * 100 )}% are enriched and ${Math.round( validPct * 100 )}% have valid emails so far.`,
+        message: `16Ahead sees ${total.toLocaleString()} contacts. ${Math.round( enrichedPct * 100 )}% are enriched and ${Math.round( validPct * 100 )}% have valid emails so far.`,
         whyItMatters: 'Enriched, verified records are what makes a contact actionable instead of just a name.',
         bullets: [
           `${Math.round( validPct * 100 )}% have valid, verified emails.`,
@@ -287,8 +287,8 @@ export class NetworkAssistantLauncherComponent implements OnInit, OnDestroy {
       tone: 'ready',
       icon: 'fa-solid fa-circle-check',
       title: 'The relationship graph is ready for its next layer',
-      message: `TODD sees ${total.toLocaleString()} contacts. Review the health signals, keep enrichment moving, and open Pipeline when you are ready to turn relationships into decisions.`,
-      whyItMatters: 'Network tells TODD who exists and how trustworthy the record is; Pipeline tells TODD what should happen next.',
+      message: `16Ahead sees ${total.toLocaleString()} contacts. Review the health signals, keep enrichment moving, and open Pipeline when you are ready to turn relationships into decisions.`,
+      whyItMatters: 'Network tells 16Ahead who exists and how trustworthy the record is; Pipeline tells 16Ahead what should happen next.',
       bullets: [
         `Valid email (${Math.round( validPct * 100 )}%) and enriched (${Math.round( enrichedPct * 100 )}%) counts show whether records are becoming actionable.`,
         'Open Pipeline when you’re ready to turn relationships into decisions.',
@@ -349,7 +349,7 @@ export class NetworkAssistantLauncherComponent implements OnInit, OnDestroy {
       icon: 'fa-solid fa-address-book',
       title: `Browsing ${total.toLocaleString()} contacts`,
       message: 'Click any contact to open their record, use the search box to narrow the list, or sort by clicking a column header.',
-      whyItMatters: 'This is the full-network view - Relationships (the cockpit) is where TODD surfaces who actually needs attention.',
+      whyItMatters: 'This is the full-network view - Relationships (the cockpit) is where 16Ahead surfaces who actually needs attention.',
       bullets: [],
     };
   }
@@ -424,7 +424,7 @@ export class NetworkAssistantLauncherComponent implements OnInit, OnDestroy {
         tone: 'progress',
         icon: 'fa-solid fa-hourglass-half',
         title: 'Match the columns to contact fields',
-        message: `The file is in (${csvRowCount.toLocaleString()} row${csvRowCount === 1 ? '' : 's'}) - tell TODD which column is name, company, email, and the rest so it can move safely into preview.`,
+        message: `The file is in (${csvRowCount.toLocaleString()} row${csvRowCount === 1 ? '' : 's'}) - tell 16Ahead which column is name, company, email, and the rest so it can move safely into preview.`,
         whyItMatters: 'The field map is what turns a spreadsheet into structured contacts.',
         bullets: [],
       };
@@ -436,7 +436,7 @@ export class NetworkAssistantLauncherComponent implements OnInit, OnDestroy {
       tone: 'neutral',
       icon: 'fa-solid fa-upload',
       title: 'Upload a CSV to get started',
-      message: 'Drop a CSV file here, or use the sample file to see how import works. TODD will help with mapping, review, and the final write.',
+      message: 'Drop a CSV file here, or use the sample file to see how import works. 16Ahead will help with mapping, review, and the final write.',
       whyItMatters: 'This is the front door for building your network in bulk instead of one contact at a time.',
       bullets: [],
     };
@@ -456,7 +456,7 @@ export class NetworkAssistantLauncherComponent implements OnInit, OnDestroy {
         icon: 'fa-solid fa-triangle-exclamation',
         title: 'Network subscription needed',
         message: limitMessage,
-        whyItMatters: "TODD can't save new contacts without a Network subscription.",
+        whyItMatters: "16Ahead can't save new contacts without a Network subscription.",
         bullets: [],
       };
     }
@@ -468,7 +468,7 @@ export class NetworkAssistantLauncherComponent implements OnInit, OnDestroy {
         tone: 'progress',
         icon: 'fa-solid fa-hourglass-half',
         title: 'A few fields are still missing',
-        message: `TODD is still missing: ${missing.join( ', ' )}. Fill in what you have - none of it is required to save, but more here means better matching and enrichment later.`,
+        message: `16Ahead is still missing: ${missing.join( ', ' )}. Fill in what you have - none of it is required to save, but more here means better matching and enrichment later.`,
         whyItMatters: 'Complete records are what makes search, enrichment, and pipeline tracking actually useful.',
         bullets: [],
       };
@@ -502,7 +502,7 @@ export class NetworkAssistantLauncherComponent implements OnInit, OnDestroy {
         icon: 'fa-solid fa-triangle-exclamation',
         title: 'No contacts are in a pipeline stage yet',
         message: 'Pipeline groups contacts by status (Lead Generation, Qualification, Negotiation, and so on). Set a status on a contact to see it show up here.',
-        whyItMatters: 'Without a stage, TODD can’t tell you what’s moving toward a close versus what’s stuck.',
+        whyItMatters: 'Without a stage, 16Ahead can’t tell you what’s moving toward a close versus what’s stuck.',
         bullets: [],
       };
     }

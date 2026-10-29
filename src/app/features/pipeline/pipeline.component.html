@@ -8,7 +8,7 @@
       <h1 class="nw-title">Pipeline</h1>
       <p class="nw-sub">{{ isSignedIn
         ? 'Track every stage from first contact to closed won, and see where deals are gaining or losing momentum.'
-        : 'Preview how TODD groups your contacts by stage and tracks momentum toward closed won.' }}</p>
+        : 'Preview how 16Ahead groups your contacts by stage and tracks momentum toward closed won.' }}</p>
     </div>
     <div class="pl-chips" *ngIf="isSignedIn && pipelineContactCount > 0">
       <div class="pl-chip" *ngFor="let meter of healthMeters" [title]="meter.detail">
@@ -18,7 +18,7 @@
     </div>
   </header>
 
-  <p class="nw-banner" *ngIf="isSignedIn === false" role="status"><strong>Sign in to view your Pipeline.</strong> Once you sign in, TODD will group your contacts here by stage - lead, qualification, engagement, and on through closed won. <a routerLink="/get-started">Sign in</a></p>
+  <p class="nw-banner" *ngIf="isSignedIn === false" role="status"><strong>Sign in to view your Pipeline.</strong> Once you sign in, 16Ahead will group your contacts here by stage - lead, qualification, engagement, and on through closed won. <a routerLink="/get-started">Sign in</a></p>
 
   <ng-container *ngIf="isSignedIn">
     <p class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</p>

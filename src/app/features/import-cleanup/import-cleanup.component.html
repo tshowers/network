@@ -7,7 +7,7 @@
     <header class="ic-top">
       <div class="ic-intro">
         <span class="nw-tint ic-tag" [attr.data-tint]="isDone ? 'green' : 'blue'">
-          <span class="ic-dot" [class.is-pulsing]="!isDone" aria-hidden="true"></span>{{ isDone ? 'Finished' : 'TODD is working' }}
+          <span class="ic-dot" [class.is-pulsing]="!isDone" aria-hidden="true"></span>{{ isDone ? 'Finished' : '16Ahead is working' }}
         </span>
         <h1 class="nw-title ic-title" data-cy="cleanup-heading">{{ heading }}</h1>
         <p class="nw-sub">{{ subline }}</p>
@@ -47,9 +47,9 @@
 
       <aside class="ic-side">
         @if (profile) {
-          <app-profile-question-card [profile]="profile" heading="While TODD works" [showProfileLink]="true" (saved)="onProfileSaved($event)" />
+          <app-profile-question-card [profile]="profile" heading="While 16Ahead works" [showProfileLink]="true" (saved)="onProfileSaved($event)" />
         }
-        <h2 class="ic-feed-title">What TODD changed</h2>
+        <h2 class="ic-feed-title">What 16Ahead changed</h2>
         @if (!s.fixLog.length) {
           <p class="ic-muted">Starting with the first contact…</p>
         }

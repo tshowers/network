@@ -1,7 +1,7 @@
 <section class="pq" aria-labelledby="pq-heading" data-cy="profile-question-card">
   <div class="pq-top">
     <span id="pq-heading" class="pq-heading">{{ heading }}</span>
-    <span>TODD knows {{ completion.completed }} of {{ completion.total }}</span>
+    <span>16Ahead knows {{ completion.completed }} of {{ completion.total }}</span>
   </div>
   <div class="pq-bar" role="progressbar" [attr.aria-valuenow]="completion.completed" aria-valuemin="0" [attr.aria-valuemax]="completion.total">
     <span [style.width.%]="completion.percent"></span>
@@ -23,7 +23,7 @@
       <span class="pq-step">{{ answeredCount + 1 }} of {{ questions.length }}</span>
     </div>
   } @else {
-    <p class="pq-done" data-cy="pq-done">TODD has what it needs. Outreach, Docs and Maya use this to write in your voice. Change it any time from your profile.</p>
+    <p class="pq-done" data-cy="pq-done">16Ahead has what it needs. Outreach, Docs and the Marketing Assistant use this to write in your voice. Change it any time from your profile.</p>
     @if (showProfileLink) {
       <a class="nw-btn nw-btn--on-surface pq-btn" routerLink="/profile">See your profile</a>
     }

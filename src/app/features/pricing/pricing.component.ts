@@ -21,7 +21,7 @@ const DEFAULT_HIGHLIGHTS = [
 const DEFAULT_NOTES = [
   'Free access includes a small working set of contacts.',
   'The paid plan unlocks more room to save and manage relationships.',
-  'Enterprise customers can use the shared TODD pricing page for multi-user deployment.'
+  'Enterprise customers can use the shared 16Ahead pricing page for multi-user deployment.'
 ];
 
 /**

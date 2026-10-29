@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { NetworkNotificationService } from './network-notification.service';
 import { NetworkOnboardingService } from './network-onboarding.service';
 
-const OUTREACH_URL = 'https://outreach.taliferro.tech';
+const OUTREACH_URL = 'https://outreach.16ahead.com';
 /** Ids per link; Outreach opens with these selected. */
 const MAX_CONTACTS = 50;
 

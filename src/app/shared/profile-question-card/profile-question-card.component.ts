@@ -30,7 +30,7 @@ import { WriteActionDirective } from '../write-access/write-action.directive';
 } )
 export class ProfileQuestionCardComponent {
   @Input( { required: true } ) profile!: ToddProfile;
-  @Input() heading = 'How well TODD knows you';
+  @Input() heading = 'How well 16Ahead knows you';
   @Input() showProfileLink = false;
   /** Jump to this question (the profile page's "Answer" buttons). */
   @Input() set ask ( field: ProfileAiField | null ) {

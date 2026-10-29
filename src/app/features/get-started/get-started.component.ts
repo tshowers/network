@@ -48,13 +48,13 @@ export class GetStartedComponent implements OnInit {
   ];
 
   readonly steps: Step[] = [
-    { key: 'firstName', section: 1, question: "What's your first name?", hint: 'Network and Maya use it to personalize everything you send.' },
+    { key: 'firstName', section: 1, question: "What's your first name?", hint: 'Network and the Marketing Assistant use it to personalize everything you send.' },
     { key: 'lastName', section: 1, question: 'And your last name?', hint: '' },
     { key: 'role', section: 1, question: "What's your role?", hint: 'Pick the closest fit.' },
-    { key: 'company', section: 2, question: "What's your company called?", hint: "We'll use it when Maya drafts outreach for you.", optional: true },
+    { key: 'company', section: 2, question: "What's your company called?", hint: "We'll use it when the Marketing Assistant drafts outreach for you.", optional: true },
     { key: 'helpWith', section: 2, question: 'What do you want Network to help you with?', hint: 'Pick as many as you like.' },
     { key: 'timezone', section: 3, question: 'What timezone is your workday in?', hint: 'So reminders and follow-ups land during your business hours.' },
-    { key: 'signIn', section: 3, question: 'Last step: create your account', hint: 'Sign in with TODD to save your answers and open Network.' },
+    { key: 'signIn', section: 3, question: 'Last step: create your account', hint: 'Sign in with 16Ahead to save your answers and open Network.' },
   ];
 
   readonly roleOptions = ROLE_OPTIONS;
@@ -75,7 +75,7 @@ export class GetStartedComponent implements OnInit {
   ) { }
 
   ngOnInit (): void {
-    this.title.setTitle( 'Get started — Network | Taliferro Tech' );
+    this.title.setTitle( 'Get started — Network | 16Ahead' );
     this.returnUrl = this.route.snapshot.queryParamMap.get( 'returnUrl' ) || '/app';
     this.draft = this.onboarding.load();
     if ( !this.draft.timezone ) this.draft.timezone = this.onboarding.detectTimezone();

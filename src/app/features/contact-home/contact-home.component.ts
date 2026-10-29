@@ -132,7 +132,7 @@ export class ContactHomeComponent implements OnInit, AfterViewInit, OnDestroy {
   quiet: GoingQuiet | null = null;
   private neverOpenedDismissed = false;
 
-  appStatusSummary = 'TODD is standing by. Connect the relationship graph to turn diagnosis, treatment, and relief monitoring on.';
+  appStatusSummary = '16Ahead is standing by. Connect the relationship graph to turn diagnosis, treatment, and relief monitoring on.';
 
   private readonly contactLimitAssistantMessage = 'You can’t generate more revenue because you’ve hit your contact limit.';
   private hasPushedLimitAssistantNudge = false;
@@ -200,12 +200,12 @@ export class ContactHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     if ( !setup || setup.counts.imported === 0 ) {
       return setup?.firstName ? `Welcome, ${setup.firstName}. Let’s get your contacts in.` : 'Welcome. Let’s get your contacts in.';
     }
-    return this.stepDone( 'cleanup' ) ? 'Your list is clean. Time to reach out.' : 'TODD is working on your contacts.';
+    return this.stepDone( 'cleanup' ) ? 'Your list is clean. Time to reach out.' : '16Ahead is working on your contacts.';
   }
 
   get setupSub (): string {
     return this.isFirstRun
-      ? 'Network is most useful once it has your people in it. Bring them in from wherever they are now, and TODD does the tidying.'
+      ? 'Network is most useful once it has your people in it. Bring them in from wherever they are now, and 16Ahead does the tidying.'
       : 'Your relationship dashboard fills in as contacts are checked. Pick up where you left off below.';
   }
 
@@ -445,7 +445,7 @@ export class ContactHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         tone: this.isLoggedIn ? this.healthToneFromSeverity( this.severityFromIssue( missingNextMove, totalContacts ) ) : 'info',
         detail: this.isLoggedIn
           ? `${counts.reconfiguredContacts} contacts are ready for the next move.`
-          : 'TODD will start surfacing next moves after sign-in.'
+          : '16Ahead will start surfacing next moves after sign-in.'
       }
     ];
   }
@@ -465,16 +465,16 @@ export class ContactHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         reliefStatus: this.reliefStatusFromIssue( counts.contactsNeedingFollowUp, counts.reconfiguredContacts ),
         symptom: this.isLoggedIn
           ? `${counts.contactsNeedingFollowUp} contacts have gone quiet long enough to risk lost momentum.`
-          : 'TODD watches for relationships that are cooling before they disappear from view.',
+          : '16Ahead watches for relationships that are cooling before they disappear from view.',
         evidence: this.isLoggedIn
           ? `${counts.importantContacts} important contacts are in the active relationship set.`
           : 'Live relationship evidence appears after sign-in.',
         treatment: this.isLoggedIn
-          ? 'TODD is prioritizing relationships by business value and staging the next best follow-ups.'
-          : 'TODD will rank warm relationships and prepare follow-ups once your workspace is connected.',
+          ? '16Ahead is prioritizing relationships by business value and staging the next best follow-ups.'
+          : '16Ahead will rank warm relationships and prepare follow-ups once your workspace is connected.',
         relief: this.isLoggedIn
           ? 'Re-engagement begins as the highest-value contacts get a recommended next move.'
-          : 'Relief appears when TODD can act on real relationship history.',
+          : 'Relief appears when 16Ahead can act on real relationship history.',
         // Proof of relief for cooling relationships is how many are still
         // warm - not staged next moves, which the last row already shows.
         proofLabel: 'Relationships up to date',
@@ -491,13 +491,13 @@ export class ContactHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         reliefStatus: this.reliefStatusFromIssue( missingEnrichment, counts.enrichedContacts ),
         symptom: this.isLoggedIn
           ? `${missingEnrichment} records are missing enough context to weaken targeting and follow-up quality.`
-          : 'TODD highlights where contact records are too thin to trust.',
+          : '16Ahead highlights where contact records are too thin to trust.',
         evidence: this.isLoggedIn
           ? `${counts.enrichedContacts} contacts already have expanded profile context.`
           : 'Enrichment evidence appears after sign-in.',
         treatment: this.isLoggedIn
-          ? 'TODD is enriching missing contact information and filling in usable account context.'
-          : 'TODD will enrich missing contact fields once live records are available.',
+          ? '16Ahead is enriching missing contact information and filling in usable account context.'
+          : '16Ahead will enrich missing contact fields once live records are available.',
         relief: this.isLoggedIn
           ? 'The network becomes more usable as records move from incomplete to outreach-ready.'
           : 'Relief appears when more records become usable.',
@@ -515,13 +515,13 @@ export class ContactHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         reliefStatus: this.reliefStatusFromIssue( missingReachability, counts.validEmailContacts ),
         symptom: this.isLoggedIn
           ? `${missingReachability} contacts still lack a verified email path for reliable outreach.`
-          : 'TODD flags where reachability is uncertain before outreach starts.',
+          : '16Ahead flags where reachability is uncertain before outreach starts.',
         evidence: this.isLoggedIn
           ? `${counts.validEmailContacts} contacts are currently safe to reach by email.`
           : 'Verification proof appears after sign-in.',
         treatment: this.isLoggedIn
-          ? 'TODD is verifying email addresses and isolating records that would weaken outreach.'
-          : 'TODD will verify email addresses once the network is live.',
+          ? '16Ahead is verifying email addresses and isolating records that would weaken outreach.'
+          : '16Ahead will verify email addresses once the network is live.',
         relief: this.isLoggedIn
           ? 'Bounce risk falls as more of the network becomes safely reachable.'
           : 'Relief appears once reachability can be measured.',
@@ -539,16 +539,16 @@ export class ContactHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         reliefStatus: this.reliefStatusFromIssue( missingNextMove, counts.reconfiguredContacts ),
         symptom: this.isLoggedIn
           ? `${missingNextMove} contacts still do not have a recommended next move attached to them.`
-          : 'TODD surfaces where opportunity motion is missing before the pipeline stalls.',
+          : '16Ahead surfaces where opportunity motion is missing before the pipeline stalls.',
         evidence: this.isLoggedIn
           ? `${counts.subscriberContacts} subscribed contacts are already showing stronger intent signals.`
           : 'Momentum evidence turns on once your audience data is connected.',
         treatment: this.isLoggedIn
-          ? 'TODD is identifying dormant opportunities, monitoring relationship activity, and recommending who should be contacted next.'
-          : 'TODD will monitor opportunity motion and recommend next actions after sign-in.',
+          ? '16Ahead is identifying dormant opportunities, monitoring relationship activity, and recommending who should be contacted next.'
+          : '16Ahead will monitor opportunity motion and recommend next actions after sign-in.',
         relief: this.isLoggedIn
           ? 'More opportunities stay active as recommended next moves accumulate.'
-          : 'Relief appears when TODD can observe and treat real opportunity drift.',
+          : 'Relief appears when 16Ahead can observe and treat real opportunity drift.',
         proofLabel: 'Active next steps',
         proofValue: counts.reconfiguredContacts,
         proofMax: totalContacts || 1,
@@ -568,11 +568,11 @@ export class ContactHomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private computeAppStatusSummary (): string {
     if ( !this.isLoggedIn ) {
-      return 'TODD is standing by. Connect the relationship graph to turn diagnosis, treatment, and relief monitoring on.';
+      return '16Ahead is standing by. Connect the relationship graph to turn diagnosis, treatment, and relief monitoring on.';
     }
 
     const counts = this.activeDashboardCounts;
-    return `TODD is treating relationship drift for ${counts.contactsNeedingFollowUp} contacts, enriching ${Math.max( 0, counts.totalContacts - counts.enrichedContacts )} incomplete records, and staging ${counts.reconfiguredContacts} next moves.`;
+    return `16Ahead is treating relationship drift for ${counts.contactsNeedingFollowUp} contacts, enriching ${Math.max( 0, counts.totalContacts - counts.enrichedContacts )} incomplete records, and staging ${counts.reconfiguredContacts} next moves.`;
   }
 
   trackById ( _index: number, item: { id: string } ): string {
@@ -793,7 +793,7 @@ export class ContactHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         importRoute: '/contact-import',
         pipelineRoute: '/contact-deal-flow',
         contactListRoute: '/contact-list',
-        outreachRoute: 'https://todd.taliferro.tech/outreach/app',
+        outreachRoute: 'https://app.16ahead.com/outreach/app',
         remaining: this.limits?.remaining || 0,
         atContactLimit: this.isAtContactLimit,
         suggestedAssistantNudge: this.isAtContactLimit ? this.contactLimitAssistantMessage : '',
@@ -904,7 +904,7 @@ export class ContactHomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
     switch ( status ) {
       case 'needs-relief': return 'Needs Relief';
-      case 'todd-working': return 'TODD Is Working';
+      case 'todd-working': return '16Ahead Is Working';
       case 'improving': return 'Improving';
       case 'relief-delivered': return 'Relief Delivered';
       case 'watching': return 'Watching';

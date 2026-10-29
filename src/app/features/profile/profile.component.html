@@ -3,7 +3,7 @@
     <header class="pf-header">
       <div>
         <h1>Your profile</h1>
-        <p>One profile for every TODD app. Network, Outreach, Docs and Maya read it to write in your voice and pick the right next move. Answer here, no need to go anywhere else.</p>
+        <p>One profile for every 16Ahead app. Network, Outreach, Docs and the Marketing Assistant read it to write in your voice and pick the right next move. Answer here, no need to go anywhere else.</p>
       </div>
       <button *ngIf="profile && !isEditing" type="button" class="pf-button" (click)="startEditing()" data-cy="profile-edit">
         {{ justSaved ? 'Saved' : 'Edit' }}</button>
@@ -50,7 +50,7 @@
 
     <section *ngIf="isSignedIn === false" class="pf-card" data-cy="profile-signed-out">
       <h2>Sign in to manage your profile</h2>
-      <p class="pf-note">Your profile is shared across Network, Maya, and TODD.</p>
+      <p class="pf-note">Your profile is shared across Network, the Marketing Assistant, and 16Ahead.</p>
       <button type="button" class="pf-button" (click)="signIn()" data-cy="profile-sign-in">Sign in</button>
     </section>
 
@@ -98,7 +98,7 @@
                     [attr.data-cy]="'profile-text-' + field.key"></textarea>
         </div>
 
-        <label class="pf-field"><span>What should TODD do for you each week?</span>
+        <label class="pf-field"><span>What should 16Ahead do for you each week?</span>
           <textarea class="pf-input" rows="2" name="jobDescriptionForTODD"
                     placeholder="For example: follow up faster and reconnect with quiet contacts."
                     [(ngModel)]="profile.jobDescriptionForTODD"></textarea></label>
@@ -126,10 +126,10 @@
     <ng-container *ngIf="profile && isEditing"><ng-container *ngTemplateOutlet="accountCards"></ng-container></ng-container>
     <ng-template #accountCards>
       <section class="pf-card">
-        <h2>More in TODD</h2>
+        <h2>More in 16Ahead</h2>
         <p class="pf-meta"><span>Email</span>{{ profile?.email || '—' }}</p>
-        <p class="pf-note">Products and services, social voice, email signature, inbox access and billing live in your full TODD profile.</p>
-        <a class="pf-link" [href]="toddProfileUrl" target="_blank" rel="noopener noreferrer">Open TODD profile <span aria-hidden="true">&#8599;</span></a>
+        <p class="pf-note">Products and services, social voice, email signature, inbox access and billing live in your full 16Ahead profile.</p>
+        <a class="pf-link" [href]="toddProfileUrl" target="_blank" rel="noopener noreferrer">Open 16Ahead profile <span aria-hidden="true">&#8599;</span></a>
       </section>
 
       <section class="pf-card pf-card--danger">

@@ -55,7 +55,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     { field: 'companyDescription', label: 'What your company does' },
     { field: 'valueProp', label: 'Value proposition' },
     { field: 'companyGoal', label: 'Mission' },
-    { field: 'jobDescriptionForTODD', label: 'What TODD should do for you each week' },
+    { field: 'jobDescriptionForTODD', label: 'What 16Ahead should do for you each week' },
   ];
   askField: ProfileAiField | null = null;
   readonly timezones = this.supportedTimezones();
@@ -86,7 +86,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   private loadedForUser = false;
 
   ngOnInit (): void {
-    this.title.setTitle( 'Profile — Network | Taliferro Tech' );
+    this.title.setTitle( 'Profile — Network | 16Ahead' );
     // React to auth state rather than checking once: a session that finishes
     // signing in after the page loads should still load the profile.
     this.authSubscription = this.authService.isLoggedIn().subscribe( ( signedIn ) => {

@@ -8,7 +8,7 @@
   <section class="ps-intro" *ngIf="!isConfirming && isSuccess" data-cy="paid-success-ready">
     <span class="nw-tint ps-tag" data-tint="green">Network is unlocked</span>
     <h1 class="nw-title ps-title">You're in{{ firstName ? ', ' + firstName : '' }}. Where are your contacts?</h1>
-    <p class="nw-sub">Bring them in and TODD gets to work right away. It checks every email, fixes typos, and fills in missing companies and titles while you watch.</p>
+    <p class="nw-sub">Bring them in and 16Ahead gets to work right away. It checks every email, fixes typos, and fills in missing companies and titles while you watch.</p>
     <div class="ps-tiles">
       <button type="button" class="ps-tile" *ngFor="let source of sources" (click)="pick(source)" [attr.data-cy]="'paid-source-' + source.id">
         <span class="ps-mark" aria-hidden="true">{{ source.mark }}</span>

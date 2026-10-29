@@ -35,18 +35,18 @@
   <div class="rel-banner" *ngIf="showNeverOpened" role="status" data-cy="home-never-opened">
     <div>
       <strong>Your {{ quiet!.readyContactIds.length }} verified {{ quiet!.readyContactIds.length === 1 ? 'contact hasn’t' : 'contacts haven’t' }} heard from you yet</strong>
-      <span>TODD has a first email drafted from your profile. Review it in Outreach and send when you’re happy.</span>
+      <span>16Ahead has a first email drafted from your profile. Review it in Outreach and send when you’re happy.</span>
     </div>
     <button type="button" class="nw-btn nw-btn--primary" (click)="emailReady()" data-cy="home-review-draft">Review the draft</button>
     <button type="button" class="nw-btn rel-banner__later" (click)="dismissNeverOpened()" data-cy="home-not-now">Not now</button>
   </div>
   <header class="rel-top" *ngIf="!isEmbedded" data-demo="contact-command-deck">
     <div>
-      <span class="nw-tag">TODD command deck</span>
+      <span class="nw-tag">16Ahead command deck</span>
       <h1 class="nw-title" data-cy="home-greeting">{{ greeting || 'Relationships' }}</h1>
       <p class="nw-sub">{{ greeting ? quietLine : isLoggedIn
-        ? 'Diagnose relationship pain, watch TODD treat it, and see which contacts are moving back toward momentum.'
-        : 'Preview how TODD diagnoses relationship pain, treats it, and proves relief once your relationship graph is connected.' }}</p>
+        ? 'Diagnose relationship pain, watch 16Ahead treat it, and see which contacts are moving back toward momentum.'
+        : 'Preview how 16Ahead diagnoses relationship pain, treats it, and proves relief once your relationship graph is connected.' }}</p>
     </div>
     <div class="rel-score">
       <span class="nw-eyebrow">{{ isLoggedIn ? 'Network health' : 'Preview health' }}</span>
@@ -55,7 +55,7 @@
   </header>
 
   <p class="nw-banner rel-guest" *ngIf="!isLoggedIn" role="status">
-    <strong>Browse mode.</strong> You're not signed in, so TODD is showing a preview of Relationships with live values turned off. <a routerLink="/get-started">Sign in</a> to connect your relationship graph.
+    <strong>Browse mode.</strong> You're not signed in, so 16Ahead is showing a preview of Relationships with live values turned off. <a routerLink="/get-started">Sign in</a> to connect your relationship graph.
   </p>
 
   <ng-container *ngIf="quiet && !isEmbedded">
@@ -77,7 +77,7 @@
           Email me this list every Monday
         </label>
       </div>
-      <p class="rel-muted" *ngIf="!quiet.items.length">Nobody’s gone quiet. TODD will put people here when it’s been a while.</p>
+      <p class="rel-muted" *ngIf="!quiet.items.length">Nobody’s gone quiet. 16Ahead will put people here when it’s been a while.</p>
       <div class="rel-quiet__cards">
         <article class="rel-quiet__card" *ngFor="let item of quiet.items; trackBy: trackByContact" data-cy="home-quiet-card">
           <div>
@@ -110,7 +110,7 @@
     <div class="rel-table" role="table" aria-label="Relationships diagnosis board">
       <div class="rel-head" role="row">
         <span role="columnheader">Symptom</span>
-        <span role="columnheader">What TODD is doing</span>
+        <span role="columnheader">What 16Ahead is doing</span>
         <span role="columnheader">Relief path</span>
         <span role="columnheader">Proof</span>
       </div>
@@ -129,7 +129,7 @@
           <p class="rel-muted" *ngIf="row.evidence">{{ row.evidence }}</p>
         </div>
         <div class="rel-cell" role="cell">
-          <span class="rel-label">What TODD is doing</span>
+          <span class="rel-label">What 16Ahead is doing</span>
           <p>{{ row.treatment }}</p>
         </div>
         <div class="rel-cell" role="cell">
@@ -185,7 +185,7 @@
     </section>
 
     <section class="nw-card rel-log" aria-labelledby="rel-log-title">
-      <h2 class="nw-eyebrow" id="rel-log-title">TODD treatment log</h2>
+      <h2 class="nw-eyebrow" id="rel-log-title">16Ahead treatment log</h2>
       <div class="rel-log__item" *ngFor="let row of diagnosisRows; trackBy: trackById">
         <span class="rel-led" [attr.data-tone]="ledTone(row.reliefStatus)" aria-hidden="true"></span>
         <div><strong>{{ row.title }}</strong><p>{{ row.treatment }}</p></div>

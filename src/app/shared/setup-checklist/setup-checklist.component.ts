@@ -96,7 +96,7 @@ export class SetupChecklistComponent implements OnChanges, OnDestroy {
     const after = await this.service.refresh();
     if ( this.cleanupRunning( before ) && after && !this.cleanupRunning( after ) && after.latestImport &&
       !this.router.url.startsWith( `/import/${after.latestImport.id}` ) ) {
-      this.notifications.show( 'TODD finished checking your contacts', 'Open the setup checklist to see who’s ready.', 'success' );
+      this.notifications.show( '16Ahead finished checking your contacts', 'Open the setup checklist to see who’s ready.', 'success' );
     }
     if ( this.watchTimer ) clearTimeout( this.watchTimer );
     this.watchTimer = this.isLoggedIn && this.cleanupRunning( after ) ? setTimeout( () => void this.load(), CLEANUP_WATCH_MS ) : null;

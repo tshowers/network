@@ -13,15 +13,15 @@ export class AppShowcaseComponent {
   readonly highlights = [
     {
       heading: 'Open the app to your signal, not your inbox',
-      copy: 'TODD shows you who needs attention and why — so you know where to focus before an opportunity goes quiet.'
+      copy: '16Ahead shows you who needs attention and why — so you know where to focus before an opportunity goes quiet.'
     },
     {
       heading: 'Capture the relationship while it’s happening',
-      copy: 'Meet someone. Add them in seconds. Network carries the new relationship into the same graph TODD is already watching.'
+      copy: 'Meet someone. Add them in seconds. Network carries the new relationship into the same graph 16Ahead is already watching.'
     },
     {
       heading: 'Walk into every conversation with context',
-      copy: 'Know the company, role, deal stage, history, and TODD insight before the call, meeting, or follow-up begins.'
+      copy: 'Know the company, role, deal stage, history, and 16Ahead insight before the call, meeting, or follow-up begins.'
     }
   ];
 

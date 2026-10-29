@@ -23,16 +23,16 @@ export class AboutComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    const pageTitle = 'About Network | Taliferro Tech';
-    const description = 'Network is Taliferro Tech\'s relationship system: every contact gets a stage, so TODD can surface who needs attention and what to do next.';
+    const pageTitle = 'About Network | 16Ahead';
+    const description = 'Network is Taliferro Tech\'s relationship system: every contact gets a stage, so 16Ahead can surface who needs attention and what to do next.';
     this.title.setTitle(pageTitle);
     this.meta.updateTag({ name: 'description', content: description });
     this.meta.updateTag({ property: 'og:title', content: pageTitle });
     this.meta.updateTag({ property: 'og:description', content: description });
-    this.meta.updateTag({ property: 'og:url', content: 'https://network.taliferro.tech/about' });
+    this.meta.updateTag({ property: 'og:url', content: 'https://network.16ahead.com/about' });
     this.meta.updateTag({ name: 'twitter:title', content: pageTitle });
     this.meta.updateTag({ name: 'twitter:description', content: description });
-    this.seo.setCanonical('https://network.taliferro.tech/about');
+    this.seo.setCanonical('https://network.16ahead.com/about');
     this.addStructuredData();
   }
 
@@ -57,19 +57,19 @@ export class AboutComponent implements OnInit, OnDestroy {
           '@id': 'https://taliferro.com/#organization',
           name: 'Taliferro Tech, LLC',
           url: 'https://taliferro.com',
-          logo: 'https://network.taliferro.tech/assets/find/entities/taliferro-tech/logo.png',
+          logo: 'https://network.16ahead.com/assets/find/entities/taliferro-tech/logo.png',
           description: 'Taliferro Tech creates software products that help people find information, build momentum, and act on useful context.',
         },
         {
           '@type': 'SoftwareApplication',
-          '@id': 'https://network.taliferro.tech/#software',
+          '@id': 'https://network.16ahead.com/#software',
           name: 'Network',
-          url: 'https://network.taliferro.tech/',
-          description: 'Network is a relationship-intelligence application: every contact gets a stage, so TODD can surface who needs attention and what to do next, instead of just storing names and emails.',
+          url: 'https://network.16ahead.com/',
+          description: 'Network is a relationship-intelligence application: every contact gets a stage, so 16Ahead can surface who needs attention and what to do next, instead of just storing names and emails.',
           applicationCategory: 'BusinessApplication',
           applicationSubCategory: 'Relationship management',
           operatingSystem: 'Web',
-          image: 'https://network.taliferro.tech/assets/seo/network-card-demo.webp',
+          image: 'https://network.16ahead.com/assets/seo/network-card-demo.webp',
           creator: { '@id': 'https://taliferro.com/#organization' },
           publisher: { '@id': 'https://taliferro.com/#organization' },
         },

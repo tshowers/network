@@ -57,7 +57,7 @@ export class GetTheAppComponent implements OnInit {
     this.product = GET_THE_APP_PRODUCTS[key];
     this.faqs = getTheAppFaqs( this.product );
     this.state$ = this.writeAccess.state( key );
-    this.title.setTitle( `Pricing — ${this.product.shortName} | Taliferro Tech` );
+    this.title.setTitle( `Pricing — ${this.product.shortName} | 16Ahead` );
     this.isLive = await isLiveOnAppStore( this.product );
     this.appStoreLink = this.isLive ? appStoreUrl( this.product ) : '';
     // Prerendered pages have no browser session; signed out there's nothing to check.

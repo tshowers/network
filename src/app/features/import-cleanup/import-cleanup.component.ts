@@ -56,7 +56,7 @@ export class ImportCleanupComponent implements OnInit, OnDestroy {
   private destroyed = false;
 
   ngOnInit (): void {
-    this.title.setTitle( 'TODD is working — Network' );
+    this.title.setTitle( '16Ahead is working — Network' );
     this.batchId = this.route.snapshot.paramMap.get( 'batchId' ) || '';
     void this.poll();
     this.profileApi.load().then( ( profile ) => ( this.profile = profile ) ).catch( () => ( this.profile = null ) );
@@ -107,17 +107,17 @@ export class ImportCleanupComponent implements OnInit, OnDestroy {
 
   get heading (): string {
     if ( !this.isDone ) return `Checking ${Math.min( this.counts.processed + 1, Math.max( this.total, 1 ) )} of ${this.total}…`;
-    if ( this.failed ) return 'TODD couldn’t finish checking.';
+    if ( this.failed ) return '16Ahead couldn’t finish checking.';
     const now = this.total - this.counts.deferred;
     return this.counts.deferred ? `${now} checked. ${this.counts.deferred} more tonight.` : `All ${this.total} checked.`;
   }
 
   get subline (): string {
-    if ( this.failed ) return 'Your contacts are in. TODD will retry tonight, and the setup checklist shows where it’s up to.';
+    if ( this.failed ) return 'Your contacts are in. 16Ahead will retry tonight, and the setup checklist shows where it’s up to.';
     if ( this.counts.deferred ) {
-      return `TODD checks up to ${this.state?.batch.dailyLimit || 25} emails a day. The rest are checked tonight, and the setup checklist keeps count.`;
+      return `16Ahead checks up to ${this.state?.batch.dailyLimit || 25} emails a day. The rest are checked tonight, and the setup checklist keeps count.`;
     }
-    return 'You can leave this page. TODD keeps going and the setup checklist shows where it’s up to.';
+    return 'You can leave this page. 16Ahead keeps going and the setup checklist shows where it’s up to.';
   }
 
   get counters (): Array<{ label: string; value: number }> {
