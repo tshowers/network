@@ -98,7 +98,7 @@ describe( 'Get started wizard', () => {
     cy.get( '[data-cy="get-started-next"]' ).click();
     cy.get( '[data-cy="get-started-next"]' ).click();
     cy.get( '[data-cy="get-started-sign-in"]' ).click();
-    cy.location( 'href', { timeout: 10000 } ).should( 'include', 'todd.taliferro.tech/login' );
+    cy.location( 'href', { timeout: 10000 } ).should( 'include', 'app.16ahead.com/login' );
   } );
 
   it( 'links returning users straight to sign-in', () => {

@@ -31,7 +31,7 @@ describe( 'Network routes - signed out', () => {
   it( 'redirects /login to the 16Ahead hosted login page', () => {
     cy.visit( '/login' );
     cy.get( '[data-cy="sign-in-shell"]' ).should( 'exist' );
-    cy.location( 'href', { timeout: 10000 } ).should( 'include', 'todd.taliferro.tech/login' );
+    cy.location( 'href', { timeout: 10000 } ).should( 'include', 'app.16ahead.com/login' );
   } );
 
   it( 'shows an error on /auth/callback with no token', () => {

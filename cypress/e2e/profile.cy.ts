@@ -104,13 +104,13 @@ describe( 'Profile page', () => {
     signIn( '/app' );
     cy.get( '.platform-menu-trigger, [aria-label*="menu" i]' ).first().click( { force: true } );
     cy.contains( '.um-row', 'Profile' ).should( 'have.attr', 'href', '/profile' );
-    cy.get( 'a[href*="todd.taliferro.tech/update-profile"]' ).should( 'not.exist' );
+    cy.get( 'a[href*="/update-profile"]' ).should( 'not.exist' );
   } );
 
   it( 'asks signed-out visitors to sign in', () => {
     cy.visit( '/profile' );
     cy.get( '[data-cy="profile-signed-out"]' ).should( 'be.visible' );
     cy.get( '[data-cy="profile-sign-in"]' ).click();
-    cy.location( 'href', { timeout: 10000 } ).should( 'include', 'todd.taliferro.tech/login' );
+    cy.location( 'href', { timeout: 10000 } ).should( 'include', 'app.16ahead.com/login' );
   } );
 } );
