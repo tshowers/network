@@ -44,6 +44,11 @@ export class MissionsApiService {
     return firstValueFrom( this.http.put<{ mission: MissionView }>( `${this.base}/${encodeURIComponent( id )}/plan`, { steps } ) ).then( ( res ) => res.mission );
   }
 
+  /** The goal's targets (and statement), changed by the owner. */
+  saveGoal ( id: string, goal: { statement?: string; measures: { metric: string; target: number }[] } ): Promise<MissionView> {
+    return firstValueFrom( this.http.put<{ mission: MissionView }>( `${this.base}/${encodeURIComponent( id )}/goal`, goal ) ).then( ( res ) => res.mission );
+  }
+
   act ( id: string, stepId: string, type: StepActionType, extra: { note?: string; value?: string; output?: Record<string, unknown>; attachment?: { name: string; text: string } } = {} ): Promise<unknown> {
     return firstValueFrom( this.http.post( `${this.base}/${encodeURIComponent( id )}/steps/${encodeURIComponent( stepId )}`, { type, ...extra } ) );
   }

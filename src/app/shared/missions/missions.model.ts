@@ -148,7 +148,17 @@ export interface MissionView {
   followUps?: FollowUp[];
   /** The Mission's emails: queued, how many have gone out (null if unknown), when the queue sends them. */
   sends?: MissionSends;
+  /** What success means (todd-backend orchestrator/goal.js), and how it's going. */
+  goal?: MissionGoal | null;
+  goalProgress?: GoalProgress | null;
+  /** Set when it finished: whether every measure was met. */
+  goalMet?: boolean;
 }
+
+export type GoalMetric = 'firms_reached' | 'people_emailed' | 'opened' | 'clicked' | 'replied' | 'kept';
+export interface GoalMeasure { metric: GoalMetric; target: number; label: string; value?: number; met?: boolean }
+export interface MissionGoal { statement: string; measures: GoalMeasure[] }
+export interface GoalProgress { statement: string; measures: GoalMeasure[]; met: boolean | null; line: string }
 
 export interface MissionSends { queued: number; sent: number | null; firstAt: string | null; lastAt: string | null }
 
@@ -450,6 +460,9 @@ export function missionState ( m: MissionView, columns: ColumnView[], viewerId: 
     const going = emailsGoingOut( m.sends );
     if ( going ) return { tone: 'waiting', label: `Done · ${plural( going, 'email' )} going out ${shortDate( m.sends!.lastAt! )}` };
     if ( open.length ) return { tone: 'waiting', label: `Done · ${plural( open.length, 'follow-up' )} with your team` };
+    // Judged on its goal, not on running out of steps (Ty, 2026-11-05).
+    if ( m.goalMet === false ) return { tone: 'stopped', label: 'Finished · goal not met' };
+    if ( m.goalMet === true ) return { tone: 'done', label: 'Done · goal met' };
     return { tone: 'done', label: 'Done' };
   }
   const column = currentColumn( columns );

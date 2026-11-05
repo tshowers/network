@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnDestroy, computed, effect, inject
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { EditPlanComponent } from './edit-plan.component';
+import { MissionGoalComponent } from './mission-goal.component';
 import { MissionOutcomeComponent } from './mission-outcome.component';
 import { MissionResultsPanelComponent, ResultsTab } from './mission-results-panel.component';
 import { MissionsApiService } from './missions-api.service';
@@ -22,7 +23,7 @@ const OUTCOME: Record<string, string> = { action: 'Action', insight: 'Insight', 
 @Component( {
   selector: 'tm-mission-detail',
   standalone: true,
-  imports: [OwnerTokenComponent, PlanStripComponent, StepDrawerComponent, EditPlanComponent, MissionResultsPanelComponent, MissionOutcomeComponent],
+  imports: [OwnerTokenComponent, PlanStripComponent, StepDrawerComponent, EditPlanComponent, MissionResultsPanelComponent, MissionOutcomeComponent, MissionGoalComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (mission(); as m) {
@@ -68,6 +69,8 @@ const OUTCOME: Record<string, string> = { action: 'Action', insight: 'Insight', 
               @if (!resultsReady()) { <span class="muted helper">Available when the mission finishes</span> }
             </div>
           }
+
+          @if (m.goal || m.goalProgress) { <tm-mission-goal [mission]="m" (saved)="onSaved($event)" /> }
 
           @if (banner(); as b) {
             <div class="banner" [style.background]="b.bg" data-cy="mission-banner" [attr.data-state]="b.state">
