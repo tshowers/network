@@ -100,15 +100,16 @@ describe( 'Paths to Outreach', () => {
     cy.emulatorSignUp( credentials ).then( ( account ) => {
       cy.seedContact( account, 'tom', { firstName: 'Tom', lastName: 'Alvarez', emailAddresses: [{ emailAddress: 'tom@alvarez.com' }] } );
       cy.seedContact( account, 'ben', { firstName: 'Ben', lastName: 'Carter', emailAddresses: [{ emailAddress: 'ben@carter.com' }] } );
-      // Sample contacts stay in Network: no checkbox, no Email.
+      // Sample contacts stay in Network: selectable (to delete), but never emailed.
       cy.seedContact( account, 'sample', { firstName: 'Sample', lastName: 'Person', emailAddresses: [{ emailAddress: 's@brightlane.example' }] } );
       cy.visitWithFirebaseEmulators( '/contact-list', credentials );
     } );
     stubOpen();
 
-    cy.get( '[data-cy="contact-select"]', { timeout: 10000 } ).should( 'have.length', 2 );
+    cy.get( '[data-cy="contact-select"]', { timeout: 10000 } ).should( 'have.length', 3 );
+    cy.contains( '.cl-row', 'Sample Person' ).find( '[data-cy="contact-email"]' ).should( 'not.exist' );
     cy.get( '[data-cy="contact-select"]' ).check( { multiple: true } );
-    cy.contains( '[data-cy="contacts-bulk"]', '2 selected' );
+    cy.contains( '[data-cy="contacts-bulk"]', '3 selected' );
     cy.get( '[data-cy="contacts-bulk-email"]' ).should( 'contain.text', 'Email 2 in Outreach' ).click();
     cy.get( '@open' ).its( 'firstCall.args.0' ).should( 'match', /\/compose-email\?contactIds=(ben,tom|tom,ben)&source=network&draft=profile$/ );
     cy.screenshot( 'outreach/contacts-selected', { capture: 'viewport' } );
