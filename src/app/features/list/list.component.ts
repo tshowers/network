@@ -20,6 +20,8 @@ import { OutreachLinkService } from '../../services/outreach-link.service';
 
 type ContactSortKey = 'name' | 'company' | 'email' | 'phone' | 'status';
 type SortDirection = 'asc' | 'desc';
+/** all, nobody can email them, or TODD/auto-cleanup marked them Deleted. */
+type ContactView = 'all' | 'cantEmail' | 'marked';
 
 /**
  * A ground-up rewrite, not a trim of features/contact/list/list.component.ts
@@ -34,7 +36,10 @@ type SortDirection = 'asc' | 'desc';
  * Signal Engine tab could be cleanly lifted out.
  *
  * What this delivers instead: the actual job of a contact list - browse
- * every contact, search by name/company/email, open one, delete one.
+ * every contact, search by name/company/email, open one, delete one or
+ * many. The "Can't email" and "Marked for deletion" views exist so a list
+ * can be cleaned up in one pass; deleting archives to Deleted Contacts,
+ * which feeds Lead Vault (NetworkDataService.deleteContacts).
  * Sorting, alternate view modes, CSV export, and inline editing are
  * deferred, not ported thin.
  */
@@ -51,6 +56,11 @@ export class ListComponent implements OnInit, OnDestroy {
   contacts: Contact[] = [];
   filteredContacts: Contact[] = [];
   searchText = '';
+  view: ContactView = 'all';
+  cantEmailCount = 0;
+  markedCount = 0;
+  isDeleting = false;
+  notice = '';
   isLoading = true;
   errorMessage = '';
   sortKey: ContactSortKey = 'name';
@@ -121,10 +131,25 @@ export class ListComponent implements OnInit, OnDestroy {
     }
   }
 
+  setView ( view: ContactView ): void {
+    this.view = view;
+    this.applyFilter();
+  }
+
+  private inView ( contact: Contact ): boolean {
+    if ( this.view === 'cantEmail' ) return this.cantEmail( contact );
+    if ( this.view === 'marked' ) return this.isMarkedForDeletion( contact );
+    return true;
+  }
+
   applyFilter (): void {
     const term = this.searchText.trim().toLowerCase();
+    const others = this.contacts.filter( ( contact ) => !this.isSelf( contact ) );
+    this.cantEmailCount = others.filter( ( contact ) => this.cantEmail( contact ) ).length;
+    this.markedCount = others.filter( ( contact ) => this.isMarkedForDeletion( contact ) ).length;
 
-    const matches = !term ? this.contacts : this.contacts.filter( ( contact ) => {
+    const inView = this.contacts.filter( ( contact ) => this.inView( contact ) );
+    const matches = !term ? inView : inView.filter( ( contact ) => {
       const haystack = [
         contact.firstName,
         contact.lastName,
@@ -147,6 +172,9 @@ export class ListComponent implements OnInit, OnDestroy {
         ...this.filteredContacts.filter( ( contact ) => !!contact.status?.trim() ),
       ];
     }
+    // Never act on rows the user can't see: a bulk delete only covers what's shown.
+    const shown = new Set( this.filteredContacts.map( ( contact ) => contact.id ) );
+    [...this.selected].forEach( ( id ) => { if ( !shown.has( id ) ) this.selected.delete( id ); } );
     this.publishAssistantContext();
   }
 
@@ -160,6 +188,9 @@ export class ListComponent implements OnInit, OnDestroy {
         totalContacts: this.contacts.length,
         filteredCount: this.filteredContacts.length,
         searchText: this.searchText.trim(),
+        view: this.view,
+        cantEmailCount: this.cantEmailCount,
+        markedForDeletionCount: this.markedCount,
       },
     } );
   }
@@ -201,14 +232,29 @@ export class ListComponent implements OnInit, OnDestroy {
   /** The signed-in user's own contact record (its id is their uid) - shown
    * with a "(You)" tag, the same cue TODD's contact list gives. */
   private readonly outreach = inject( OutreachLinkService );
-  /** Contacts picked for one Outreach email (design_handoff_network_onboarding 10). */
+  /** Contacts picked for an Outreach email or a bulk delete (design_handoff_network_onboarding 10). */
   readonly selected = new Set<string>();
 
-  /** Someone with an address that isn't known to bounce - not the user, not a sample. */
+  /** Someone with an address that isn't known to bounce - not the user, not a sample.
+   * The email check marks a bad address on emailAddresses[0].blocked (the
+   * same field TODD and Lead Vault read); emailBlocked is the older flag. */
   canEmail ( contact: Contact ): boolean {
-    if ( this.isSelf( contact ) || ( contact as any ).emailBlocked ) return false;
+    if ( this.isSelf( contact ) || ( contact as any ).emailBlocked || contact.emailAddresses?.[0]?.blocked ) return false;
     const email = this.primaryEmail( contact );
     return !!email && !/\.example$/i.test( email );
+  }
+
+  /** Anyone but the user who can't be emailed: no address, a blocked one, or a sample. */
+  cantEmail ( contact: Contact ): boolean {
+    return !this.isSelf( contact ) && !this.canEmail( contact );
+  }
+
+  /** Marked in TODD (status "Deleted") or by its auto-cleanup (deleted / notEngaged). */
+  isMarkedForDeletion ( contact: Contact ): boolean {
+    const flags = contact as any;
+    return !this.isSelf( contact ) && (
+      ( contact.status ?? '' ).trim().toLowerCase() === 'deleted' || flags.deleted === true || flags.notEngaged === true
+    );
   }
 
   toggleSelected ( contact: Contact ): void {
@@ -217,9 +263,55 @@ export class ListComponent implements OnInit, OnDestroy {
     else this.selected.add( id );
   }
 
+  /** Everyone shown except the user's own record. */
+  private get selectableShown (): Contact[] {
+    return this.filteredContacts.filter( ( contact ) => !this.isSelf( contact ) );
+  }
+
+  get allShownSelected (): boolean {
+    const shown = this.selectableShown;
+    return shown.length > 0 && shown.every( ( contact ) => this.selected.has( contact.id ) );
+  }
+
+  toggleAllShown (): void {
+    const shown = this.selectableShown;
+    if ( this.allShownSelected ) shown.forEach( ( contact ) => this.selected.delete( contact.id ) );
+    else shown.forEach( ( contact ) => this.selected.add( contact.id ) );
+  }
+
+  /** Selected contacts that can actually receive an email. */
+  get emailableSelectedIds (): string[] {
+    return this.contacts.filter( ( contact ) => this.selected.has( contact.id ) && this.canEmail( contact ) ).map( ( contact ) => contact.id );
+  }
+
   emailSelected (): void {
-    const ids = [...this.selected];
+    const ids = this.emailableSelectedIds;
+    if ( !ids.length ) return;
     this.outreach.open( ids, `${ids.length} ${ids.length === 1 ? 'contact' : 'contacts'}` );
+  }
+
+  async deleteSelected (): Promise<void> {
+    const toDelete = this.contacts.filter( ( contact ) => this.selected.has( contact.id ) && !this.isSelf( contact ) );
+    if ( !toDelete.length || this.isDeleting ) return;
+
+    const count = toDelete.length;
+    const noun = count === 1 ? 'contact' : 'contacts';
+    if ( !confirm( `Delete ${count} ${noun}? They'll move to Deleted Contacts.` ) ) return;
+
+    this.isDeleting = true;
+    this.errorMessage = '';
+    this.notice = '';
+    try {
+      const { deleted, failed } = await this.dataService.deleteContacts( this.tenantId, toDelete );
+      const gone = new Set( deleted );
+      this.contacts = this.contacts.filter( ( contact ) => !gone.has( contact.id ) );
+      deleted.forEach( ( id ) => this.selected.delete( id ) );
+      this.applyFilter();
+      if ( deleted.length ) this.notice = `Deleted ${deleted.length} ${deleted.length === 1 ? 'contact' : 'contacts'}.`;
+      if ( failed.length ) this.errorMessage = `Couldn't delete ${failed.length} ${failed.length === 1 ? 'contact' : 'contacts'}. They're still selected - try again.`;
+    } finally {
+      this.isDeleting = false;
+    }
   }
 
   emailOne ( event: Event, contact: Contact ): void {
@@ -291,8 +383,9 @@ export class ListComponent implements OnInit, OnDestroy {
     if ( !confirmation ) return;
 
     try {
-      await this.dataService.deleteContact( this.tenantId, contact.id );
+      await this.dataService.deleteContact( this.tenantId, contact );
       this.contacts = this.contacts.filter( ( c ) => c.id !== contact.id );
+      this.selected.delete( contact.id );
       this.applyFilter();
     } catch ( error ) {
       this.errorMessage = 'Unable to delete that contact.';

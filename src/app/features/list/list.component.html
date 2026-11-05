@@ -32,6 +32,21 @@
     </p>
 
     <p class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</p>
+    <p class="cl-notice" *ngIf="notice" role="status" data-cy="contacts-notice">{{ notice }}</p>
+
+    <div class="cl-views" *ngIf="!isLoading && hasContacts">
+      <div class="nw-seg" role="tablist" aria-label="Which contacts">
+        <button type="button" role="tab" [class.is-on]="view === 'all'" [attr.aria-selected]="view === 'all'" (click)="setView('all')" data-cy="view-all">All</button>
+        <button type="button" role="tab" [class.is-on]="view === 'cantEmail'" [attr.aria-selected]="view === 'cantEmail'" (click)="setView('cantEmail')" data-cy="view-cant-email">
+          Can't email <span class="cl-count">{{ cantEmailCount | number }}</span>
+        </button>
+        <button type="button" role="tab" [class.is-on]="view === 'marked'" [attr.aria-selected]="view === 'marked'" (click)="setView('marked')" data-cy="view-marked">
+          Marked for deletion <span class="cl-count">{{ markedCount | number }}</span>
+        </button>
+      </div>
+      <p class="cl-views__note" *ngIf="view === 'cantEmail'">No address, an address the email check blocked, or a sample. Select them and delete to move them to Deleted Contacts.</p>
+      <p class="cl-views__note" *ngIf="view === 'marked'">Marked Deleted in TODD, or flagged as not engaged. Select them and delete to move them to Deleted Contacts.</p>
+    </div>
 
     <app-preloader [isLoading]="isLoading" message="Loading your contacts…"></app-preloader>
 
@@ -40,17 +55,24 @@
       <a class="nw-btn nw-btn--primary" routerLink="/contact-import" appWriteAction="import contacts">Import contacts</a>
       <button type="button" class="nw-btn nw-btn--on-surface" appWriteAction="add a contact" (click)="addContact()">Add one by hand</button>
     </app-empty-state>
-    <p class="cl-empty" *ngIf="!isLoading && filteredContacts.length === 0 && !errorMessage && hasContacts">No contacts match your search.</p>
+    <p class="cl-empty" *ngIf="!isLoading && filteredContacts.length === 0 && !errorMessage && hasContacts">
+      {{ searchText.trim() ? 'No contacts match your search.' : view === 'cantEmail' ? 'Everyone here can be emailed.' : view === 'marked' ? 'No contacts are marked for deletion.' : 'No contacts yet.' }}
+    </p>
 
     <div class="cl-bulk" *ngIf="selected.size" role="status" data-cy="contacts-bulk">
       <span>{{ selected.size }} selected</span>
-      <button type="button" class="nw-btn nw-btn--primary" (click)="emailSelected()" data-cy="contacts-bulk-email">Email {{ selected.size }} in Outreach</button>
+      <button *ngIf="emailableSelectedIds.length" type="button" class="nw-btn nw-btn--primary" (click)="emailSelected()" data-cy="contacts-bulk-email">Email {{ emailableSelectedIds.length }} in Outreach</button>
+      <button type="button" class="nw-btn cl-bulk__delete" appWriteAction="delete contacts" (click)="deleteSelected()" [disabled]="isDeleting" data-cy="contacts-bulk-delete">
+        {{ isDeleting ? 'Deleting…' : 'Delete ' + selected.size }}
+      </button>
       <button type="button" class="cl-bulk__clear" (click)="selected.clear()" aria-label="Clear selection">✕</button>
     </div>
 
     <div class="cl-table" *ngIf="filteredContacts.length > 0" role="table" aria-label="Contacts">
       <div class="cl-row cl-row--head" role="row">
-        <span class="cl-check" aria-hidden="true"></span>
+        <span class="cl-check">
+          <input type="checkbox" [checked]="allShownSelected" (change)="toggleAllShown()" aria-label="Select all shown" data-cy="contact-select-all" />
+        </span>
         <button type="button" role="columnheader" (click)="sortBy('name')">Name <span>{{ sortIndicator('name') }}</span></button>
         <button type="button" role="columnheader" class="cl-hide-m" (click)="sortBy('company')">Company <span>{{ sortIndicator('company') }}</span></button>
         <button type="button" role="columnheader" class="cl-hide-m" (click)="sortBy('email')">Email <span>{{ sortIndicator('email') }}</span></button>
@@ -61,7 +83,7 @@
 
       <div class="cl-row" role="row" *ngFor="let contact of filteredContacts" (click)="openContact(contact)" (keydown.enter)="openContact(contact)" tabindex="0">
         <div class="cl-check" role="cell" (click)="$event.stopPropagation()">
-          <input *ngIf="canEmail(contact)" type="checkbox" [checked]="selected.has($any(contact).id)" (change)="toggleSelected(contact)"
+          <input *ngIf="!isSelf(contact)" type="checkbox" [checked]="selected.has($any(contact).id)" (change)="toggleSelected(contact)"
                  (keydown.enter)="$event.stopPropagation()" [attr.aria-label]="'Select ' + displayName(contact)" data-cy="contact-select" />
         </div>
         <div class="cl-name" role="cell">

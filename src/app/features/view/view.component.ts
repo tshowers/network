@@ -152,7 +152,7 @@ export class ViewComponent implements OnInit, OnDestroy {
     if ( !confirmation ) return;
 
     try {
-      await this.dataService.deleteContact( this.tenantId, this.contact.id );
+      await this.dataService.deleteContact( this.tenantId, this.contact );
       this.router.navigate( ['/contact-list'] );
     } catch ( error ) {
       this.errorMessage = 'Error deleting contact.';

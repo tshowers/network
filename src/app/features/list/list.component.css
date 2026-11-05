@@ -160,6 +160,13 @@
   justify-self: end;
 }
 .cl-bulk .nw-btn { height: 38px; font-size: 14px; }
+.cl-bulk__delete { background: var(--t-red); color: var(--t-red-fg); }
+
+.cl-views { display: grid; gap: 8px; justify-items: start; }
+.cl-views .nw-seg { flex-wrap: wrap; max-width: 100%; }
+.cl-views__note { margin: 0; font-size: 14px; color: var(--muted); }
+.cl-count { font-size: 13px; font-weight: 600; opacity: .7; }
+.cl-notice { margin: 0; padding: 12px 18px; border-radius: 18px; background: var(--t-green); color: var(--t-green-fg); font-size: 15px; }
 .cl-bulk__clear { width: 32px; height: 32px; min-height: 0; padding: 0; border: 0; border-radius: 50%; background: transparent; color: inherit; cursor: pointer; }
 
 .cl-picker {

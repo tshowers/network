@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import {
   addDoc,
   collection,
-  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -116,9 +115,58 @@ export class NetworkDataService {
     await setDoc( doc( this.contactsRef( tenantId ), contactId ), data, { merge: true } );
   }
 
-  /** Mirrors DataService.deleteDocument('CONTACTS', ...). */
-  async deleteContact ( tenantId: string, contactId: string ): Promise<void> {
-    await deleteDoc( doc( this.contactsRef( tenantId ), contactId ) );
+  /** Deletes one contact through deleteContacts, so it is archived too. */
+  async deleteContact ( tenantId: string, contact: Contact ): Promise<void> {
+    const { failed } = await this.deleteContacts( tenantId, [contact] );
+    if ( failed.length ) throw new Error( 'Unable to delete that contact.' );
+  }
+
+  /**
+   * Deletes contacts the way TODD does: each one is copied into
+   * tenants/{tenantId}/deleted-contacts under the same id and removed from
+   * contacts in the same batch, so a contact is never gone without its
+   * archive. The archive is what Lead Vault indexes (todd-backend
+   * triggers/leadVaultIndexSync.js) and what TODD's CSV import checks so a
+   * deleted person doesn't come back on the next import. Before this,
+   * Network deleted the doc outright and neither happened.
+   *
+   * Two writes per contact, so 200 per batch stays under Firestore's 500.
+   * A failed batch leaves its contacts untouched and reports them.
+   */
+  async deleteContacts ( tenantId: string, contacts: Contact[], reason = 'Deleted in Network' ): Promise<{ deleted: string[]; failed: string[] }> {
+    const live = this.contactsRef( tenantId );
+    const archive = collection( this.firestore, `tenants/${tenantId}/deleted-contacts` );
+    const deletedAt = new Date().toISOString();
+    const withIds = contacts.filter( ( contact ) => !!contact?.id );
+    const deleted: string[] = [];
+    const failed: string[] = [];
+
+    for ( let i = 0; i < withIds.length; i += 200 ) {
+      const chunk = withIds.slice( i, i + 200 );
+      const batch = writeBatch( this.firestore );
+
+      chunk.forEach( ( contact ) => {
+        batch.set( doc( archive, contact.id ), stripUndefined( {
+          ...contact,
+          id: contact.id,
+          statusBeforeDelete: contact.status ?? null,
+          status: 'Deleted',
+          deletedAt,
+          deletedFrom: 'network',
+          deletedReason: reason,
+        } ) );
+        batch.delete( doc( live, contact.id ) );
+      } );
+
+      try {
+        await batch.commit();
+        deleted.push( ...chunk.map( ( contact ) => contact.id ) );
+      } catch {
+        failed.push( ...chunk.map( ( contact ) => contact.id ) );
+      }
+    }
+
+    return { deleted, failed };
   }
 
   /**
@@ -183,4 +231,16 @@ export class NetworkDataService {
     } ) );
     return Array.from( byId.values() );
   }
+}
+
+/** Firestore rejects undefined values; drop them from plain objects and arrays
+ * (Timestamps and other class instances pass through untouched). */
+function stripUndefined<T> ( value: T ): T {
+  if ( Array.isArray( value ) ) return value.map( stripUndefined ) as unknown as T;
+  if ( value && typeof value === 'object' && Object.getPrototypeOf( value ) === Object.prototype ) {
+    return Object.fromEntries(
+      Object.entries( value ).filter( ( [, v] ) => v !== undefined ).map( ( [k, v] ) => [k, stripUndefined( v )] ),
+    ) as T;
+  }
+  return value;
 }
